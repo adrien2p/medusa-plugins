@@ -1,0 +1,8 @@
+.idea
+node_modules
+.DS_store
+.env*
+src
+coverage
+
+tsconfig.tsbuildinfo

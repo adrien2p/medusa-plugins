@@ -1,0 +1,27 @@
+{
+  "name": "medusa-plugins",
+  "version": "1.0.0",
+  "description": "A collection of awesome plugins for medusa :rocket:",
+  "scripts": {
+    "clean": "./node_modules/.bin/lerna run clean",
+    "build": "./node_modules/.bin/lerna run build",
+    "watch": "./node_modules/.bin/lerna run watch",
+    "test": "./node_modules/.bin/lerna run test",
+    "bootstrap": "./node_modules/.bin/lerna bootstrap",
+    "build:changelog": "npx lerna-changelog"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrien2p/medusa-plugins.git"
+  },
+  "author": "Adrien de Peretti <adrien.deperetti@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrien2p/medusa-plugins/issues"
+  },
+  "homepage": "https://github.com/adrien2p/medusa-plugins#readme",
+  "devDependencies": {
+    "lerna": "^4.0.0",
+    "lerna-changelog": "^2.2.0"
+  }
+}

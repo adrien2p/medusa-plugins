@@ -1,0 +1,10 @@
+.idea
+/lib
+node_modules
+.DS_store
+**/.DS_Store
+
+**/.env
+packages/payments/payment-paytr/dummy/server/.env
+dist
+coverage
