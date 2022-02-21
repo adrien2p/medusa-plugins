@@ -1,6 +1,6 @@
 import { IdMap } from "medusa-test-utils"
 
-const cartMockData = {
+export const cartMockData = {
     id: IdMap.getId("emptyCart"),
     region_id: 'region_1',
     customer: {

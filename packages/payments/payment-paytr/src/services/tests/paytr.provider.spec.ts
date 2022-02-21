@@ -4,7 +4,7 @@ import 'regenerator-runtime/runtime';
 import PayTRProviderService from "../paytr-provider";
 import { CustomerServiceMock } from "../../__mock__/customer";
 import { TotalsServiceMock } from "../../__mock__/totals";
-import { CartServiceMock } from "../../__mock__/cart";
+import { cartMockData, CartServiceMock } from "../../__mock__/cart";
 
 const merchantConfig: any = {
     token_endpoint: process.env.TOKEN_ENDPOINT,
