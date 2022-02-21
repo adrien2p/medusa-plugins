@@ -26,16 +26,16 @@ const cartMockData = {
     region_id: 'region_1',
     customer: {
         email: 'example@mail.com',
-        phone: '0000000000',
-        billing_address: {
-            first_name: "LeBron",
-            last_name: "James",
-            address_1: "Dunk St",
-            city: "Dunkville",
-            province: "CA",
-            postal_code: "12345",
-            country_code: "us",
-        }
+        phone: '0000000000'
+    },
+    billing_address: {
+        first_name: "LeBron",
+        last_name: "James",
+        address_1: "Dunk St",
+        city: "Dunkville",
+        province: "CA",
+        postal_code: "12345",
+        country_code: "us",
     },
     items: [
         {
