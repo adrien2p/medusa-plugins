@@ -1,0 +1,36 @@
+name: Tests pipeline
+on: [push]
+
+jobs:
+  payment-paytr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: Checkout
+        uses: actions/checkout@v2.3.5
+        with:
+          fetch-depth: 0
+
+      - name: Update working directory
+        working-directory: ./packages/payments/payment-paytr
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.4.1
+        with:
+          node-version: "14"
+          cache: "npm"
+
+      - name: 'npm install'
+        run: npm install
+
+      - name: 'run unit tests'
+        run: npm run test
+        env:
+          MERCHANT_ID: ${{secret.MERCHANT_ID}}
+          MERCHANT_KEY: ${{secret.MERCHANT_KEY}}
+          MERCHANT_SALT: ${{secret.MERCHANT_SALT}}
+          TOKEN_ENDPOINT: ${{secret.TOKEN_ENDPOINT}}
