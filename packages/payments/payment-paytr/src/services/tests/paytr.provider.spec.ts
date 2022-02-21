@@ -4,7 +4,6 @@ import 'regenerator-runtime/runtime';
 import PayTRProviderService from "../paytr-provider";
 import { CustomerServiceMock } from "../../__mock__/customer";
 import { TotalsServiceMock } from "../../__mock__/totals";
-import { IdMap } from "medusa-test-utils";
 import { CartServiceMock } from "../../__mock__/cart";
 
 const merchantConfig: any = {
@@ -19,34 +18,6 @@ const merchantConfig: any = {
     merchant_key: process.env.MERCHANT_KEY,
     merchant_salt: process.env.MERCHANT_SALT,
     timeout_limit: 30
-};
-
-const cartMockData = {
-    id: IdMap.getId("emptyCart"),
-    region_id: 'region_1',
-    customer: {
-        email: 'example@mail.com',
-        phone: '0000000000'
-    },
-    billing_address: {
-        first_name: "LeBron",
-        last_name: "James",
-        address_1: "Dunk St",
-        city: "Dunkville",
-        province: "CA",
-        postal_code: "12345",
-        country_code: "us",
-    },
-    items: [
-        {
-            title: "New Line",
-            description: "This is a new line",
-            thumbnail: "test-img-yeah.com/thumb",
-            variant_id: 'variant_1',
-            unit_price: 123,
-            quantity: 10,
-        }
-    ]
 };
 
 const RegionServiceMock = {
