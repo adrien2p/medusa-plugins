@@ -30,7 +30,7 @@ jobs:
       - name: 'run unit tests'
         run: npm run test
         env:
-          MERCHANT_ID: ${{secret.MERCHANT_ID}}
-          MERCHANT_KEY: ${{secret.MERCHANT_KEY}}
-          MERCHANT_SALT: ${{secret.MERCHANT_SALT}}
-          TOKEN_ENDPOINT: ${{secret.TOKEN_ENDPOINT}}
+          MERCHANT_ID: ${{secrets.MERCHANT_ID}}
+          MERCHANT_KEY: ${{secrets.MERCHANT_KEY}}
+          MERCHANT_SALT: ${{secrets.MERCHANT_SALT}}
+          TOKEN_ENDPOINT: ${{secrets.TOKEN_ENDPOINT}}
