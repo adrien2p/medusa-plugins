@@ -1,11 +1,10 @@
 import { IdMap } from "medusa-test-utils"
 
 export const cartMockData = {
-    id: IdMap.getId("emptyCart"),
+    id: IdMap.getId("mockCart"),
     region_id: 'region_1',
     customer: {
-        email: 'example@mail.com',
-        phone: '0000000000'
+        email: 'example@mail.com'
     },
     billing_address: {
         first_name: "LeBron",
@@ -15,6 +14,7 @@ export const cartMockData = {
         province: "CA",
         postal_code: "12345",
         country_code: "us",
+        phone: '0000000000'
     },
     items: [
         {
@@ -25,7 +25,10 @@ export const cartMockData = {
             unit_price: 123,
             quantity: 10,
         }
-    ]
+    ],
+    metadata: {
+        ip: 'XX.XXX.XXX.XX'
+    }
 };
 
 export const CartServiceMock = {

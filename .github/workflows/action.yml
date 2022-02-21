@@ -25,13 +25,21 @@ jobs:
           node-version: "14"
           cache: "npm"
 
+      - name: create test env file
+        run: |
+          touch .env.test
+          echo MERCHANT_ID=${{ secrets.PAYTR_MERCHANT_ID }} >> .env.test
+          echo MERCHANT_KEY=${{ secrets.PAYTR_MERCHANT_KEY }} >> .env.test
+          echo MERCHANT_SALT=${{ secrets.PAYTR_MERCHANT_SALT }} >> .env.test
+          echo TOKEN_ENDPOINT=${{ secrets.PAYTR_TOKEN_ENDPOINT }} >> .env.test
+        env:
+          MERCHANT_ID: ${{secrets.PAYTR_MERCHANT_ID}}
+          MERCHANT_KEY: ${{secrets.PAYTR_MERCHANT_KEY}}
+          MERCHANT_SALT: ${{secrets.PAYTR_MERCHANT_SALT}}
+          TOKEN_ENDPOINT: ${{secrets.PAYTR_TOKEN_ENDPOINT}}
+
       - name: 'npm install'
         run: npm install
 
       - name: 'run unit tests'
         run: npm run test
-        env:
-          MERCHANT_ID: ${{secrets.MERCHANT_ID}}
-          MERCHANT_KEY: ${{secrets.MERCHANT_KEY}}
-          MERCHANT_SALT: ${{secrets.MERCHANT_SALT}}
-          TOKEN_ENDPOINT: ${{secrets.TOKEN_ENDPOINT}}

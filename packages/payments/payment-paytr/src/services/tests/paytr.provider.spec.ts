@@ -1,5 +1,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import * as dotenv from 'dotenv';
+
+try {
+    dotenv.config({ path: __dirname + '/../../../.env.test' });
+} catch (e) {}
 
 import PayTRProviderService from "../paytr-provider";
 import { CustomerServiceMock } from "../../__mock__/customer";
@@ -32,7 +37,7 @@ describe('PayTrProvider', () => {
     let provider: PayTRProviderService;
 
     beforeAll(async () => {
-        jest.clearAllMocks()
+        jest.clearAllMocks();
         provider = new PayTRProviderService(
             {
                 cartService: CartServiceMock,
@@ -42,10 +47,11 @@ describe('PayTrProvider', () => {
                 orderService: OrderServiceMock
             },
             merchantConfig
-        )
+        );
+        PayTRProviderService.prototype.retrieveCart = jest.fn().mockReturnValue(Promise.resolve(cartMockData));
     });
 
-    it('should allow to create a payment', async () => {
+    it('should allow to generate a new token', async () => {
         const token = await provider.generateToken(cartMockData.id);
         expect(token).toBeDefined();
     });

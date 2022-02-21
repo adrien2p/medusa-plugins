@@ -1,8 +1,8 @@
 # Development
 
 ## Plugin
- 
-Build your local plugin
+
+Go to the plugin package directory and Build your local plugin
 
 ````bash
 npm run build

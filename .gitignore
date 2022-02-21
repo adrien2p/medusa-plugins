@@ -5,6 +5,6 @@ node_modules
 **/.DS_Store
 
 **/.env
-packages/payments/payment-paytr/dummy/server/.env
+**/.env.test
 dist
 coverage

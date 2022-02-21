@@ -163,7 +163,7 @@ export default class PayTRProviderService extends PaymentService {
         });
     }
 
-    private async retrieveCart(cartId: string): Promise<Cart> {
+    async retrieveCart(cartId: string): Promise<Cart> {
         return this.#cartService.retrieve(cartId, {
             select: [
                 "gift_card_total",

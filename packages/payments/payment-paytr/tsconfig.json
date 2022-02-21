@@ -1,7 +1,29 @@
 {
-  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": [
+      "es5",
+      "es6"
+    ],
+    "target": "esnext",
+    "esModuleInterop": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "declaration": false,
+    "sourceMap": false,
+    "outDir": "./",
+    "rootDir": "src",
+    "baseUrl": "src"
+  },
   "include": [
     "src"
   ],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/__mock__/**"]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/__mock__"
+  ]
 }
