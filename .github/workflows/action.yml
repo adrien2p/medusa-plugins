@@ -4,11 +4,11 @@ on: [push]
 jobs:
   payment-paytr:
     runs-on: ubuntu-latest
-    steps:
-      defaults:
-        run:
-          working-directory: ./packages/payments/payment-paytr
+    defaults:
+      run:
+        working-directory: ./packages/payments/payment-paytr
 
+    steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.1
         with:
