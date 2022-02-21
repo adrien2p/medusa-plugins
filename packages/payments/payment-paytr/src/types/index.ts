@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export type MerchantConfig = {
     token_endpoint: string;
     merchant_id: string;
@@ -17,3 +19,11 @@ export type PayTrResponse<TStatus = 'success' | 'failed'> = {
     token: TStatus extends 'success' ? string : never;
     reason: TStatus extends 'failed' ? string : never;
 };
+
+export type PaymentSessionData = {
+    status: number;
+    isPending: boolean;
+    merchantOid: string;
+};
+
+export type CustomRequest = Request & { scope: { resolve: <T>(name: string) => T } };

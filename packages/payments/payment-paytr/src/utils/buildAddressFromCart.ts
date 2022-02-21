@@ -1,14 +1,18 @@
 import { Cart } from "@medusajs/medusa/dist";
 
-export default function buildAddressFromCart(cart: Cart): string {
+export default function buildAddressFromCart(cart: Cart): string | never {
+    if (!cart?.billing_address) {
+        throw new Error('Missing billing address from cart.');
+    }
+
     return [
-        cart?.customer.billing_address.company,
-        cart?.customer.billing_address.address_1,
-        cart?.customer.billing_address.address_2,
-        cart?.customer.billing_address.city,
-        cart?.customer.billing_address.postal_code,
-        cart?.customer.billing_address.country,
-        cart?.customer.billing_address.province,
-        cart?.customer.billing_address.phone
-    ].join(' ');
+        cart.billing_address?.company ?? '',
+        cart.billing_address?.address_1 ?? '',
+        cart.billing_address?.address_2 ?? '',
+        cart.billing_address?.city ?? '',
+        cart.billing_address?.postal_code ?? '',
+        cart.billing_address?.country ?? '',
+        cart.billing_address?.province ?? '',
+        cart.billing_address?.phone ?? ''
+    ].join(' ').trim();
 }

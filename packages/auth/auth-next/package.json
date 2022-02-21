@@ -1,7 +1,7 @@
 {
-  "name": "medusa-payment-paytr",
+  "name": "medusa-auth-next",
   "version": "1.0.0",
-  "description": "A plugin starter for medusa using typescript and pre-configured",
+  "description": ":key: NextAuth.js bring to medusa",
   "main": "index.js",
   "types": "index.d.ts",
   "repository": {
@@ -15,7 +15,8 @@
     "typescript",
     "plugin",
     "ecommerce",
-    "e-commerce"
+    "e-commerce",
+    "nextauth.js"
   ],
   "author": "Adrien de Peretti <adrien.deperetti@gmail.com>",
   "license": "MIT",
@@ -54,7 +55,7 @@
     "crypto-js": "^4.1.1",
     "express": "^4.17.2",
     "form-data": "^4.0.0",
-    "nodejs-base64-converter": "^1.0.5",
+    "next-auth": "^4.2.1",
     "typeorm": "^0.2.41"
   },
   "jest": {

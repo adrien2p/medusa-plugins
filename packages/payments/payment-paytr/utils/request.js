@@ -4,7 +4,7 @@ const FormData = require("form-data");
 function request(endpoint, data) {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, value);
+        formData.append(key, value ?? '');
     });
     return new Promise((resolve, reject) => {
         formData.submit(endpoint, ((err, res) => {

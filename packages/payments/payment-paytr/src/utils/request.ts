@@ -1,13 +1,14 @@
 import { PayTrResponse } from "../types";
 import * as FormData from "form-data";
+import { IncomingMessage } from "http";
 
 export default function request(endpoint: string, data: Record<string, unknown>): Promise<string> {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, value);
+        formData.append(key, value ?? '');
     });
     return new Promise((resolve, reject) => {
-        formData.submit(endpoint, ((err, res) => {
+        formData.submit(endpoint, ((err: Error | null, res: IncomingMessage) => {
             if (err) {
                 return reject(err);
             }
