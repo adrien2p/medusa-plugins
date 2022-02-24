@@ -32,11 +32,13 @@ jobs:
           echo MERCHANT_KEY=${{ secrets.PAYTR_MERCHANT_KEY }} >> .env.test
           echo MERCHANT_SALT=${{ secrets.PAYTR_MERCHANT_SALT }} >> .env.test
           echo TOKEN_ENDPOINT=${{ secrets.PAYTR_TOKEN_ENDPOINT }} >> .env.test
+          echo REFUND_ENDPOINT=${{ secrets.PAYTR_REFUND_ENDPOINT }} >> .env.test
         env:
           MERCHANT_ID: ${{secrets.PAYTR_MERCHANT_ID}}
           MERCHANT_KEY: ${{secrets.PAYTR_MERCHANT_KEY}}
           MERCHANT_SALT: ${{secrets.PAYTR_MERCHANT_SALT}}
           TOKEN_ENDPOINT: ${{secrets.PAYTR_TOKEN_ENDPOINT}}
+          REFUND_ENDPOINT: ${{secrets.PAYTR_REFUND_ENDPOINT}}
 
       - name: 'npm install'
         run: npm install
