@@ -4,30 +4,20 @@
 
 Go to the plugin package directory and Build your local plugin
 
-````bash
-npm run build
-````
-
-Install production only packages
-
 ```bash
-rm -rf node_modules && npm i --only=production
-``` 
+npm run build
+npm pack
+```
+
+Then copy the tgz file newly creating by the `pack` command into your project.
 
 ## Target project
 
-In your target project that need to use a plugin that you want to test locally
+In your target project past the tgz file previously copied.
+then update your `package.json`
 
 ```bash
-npm link ... # The path the your local plugin
+"my-package": "file:my-package-1.0.0.tgz"
 ```
 
-update your package.json start script with 
-
-```json
-{
-  "scripts": {
-    "start": 'node node --preserve-symlinks ...'
-  }
-}
-```
+now run `npm i` and run your project
