@@ -9,6 +9,7 @@
     "test": "./node_modules/.bin/lerna run test",
     "bootstrap": "./node_modules/.bin/lerna bootstrap",
     "lint": "./node_modules/.bin/eslint 'packages/**/*.ts' --fix",
+    "format": "./node_modules/.bin/prettier 'packages/**/*.{ts,tsx,js,scss,css,md}' --write",
     "release": "npx lerna verion"
   },
   "repository": {
