@@ -9,8 +9,8 @@ coverage
 
 api/
 services/
-utils.*
-types.*
+./utils.*
+./types.*
 __mock__/
 index.*
 
@@ -18,5 +18,4 @@ index.*
 ./package-lock.json
 ./yarn.json
 
-.env.test
-./.env.test
+./.env.*
