@@ -9,15 +9,10 @@ coverage
 
 api/
 services/
-models/
-subscribers/
-migrations/
-utils/
-types/
-loaders/
+utils.*
+types.*
 __mock__/
-index.js.map
-index.js
+index.*
 
 ./tsconfig.tsbuildinfo
 ./package-lock.json

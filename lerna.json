@@ -8,15 +8,5 @@
     "publish": {
       "conventionalCommits": true
     }
-  },
-  "changelog": {
-    "ignoreCommitters": ["allcontributors"],
-    "labels": {
-      "feat": ":rocket: New Feature",
-      "chore": ":earth: Core",
-      "fix": ":bug: Bug Fix",
-      "docs": ":memo: Documentation",
-      "refactor": ":truck: Refactoring"
-    }
   }
 }

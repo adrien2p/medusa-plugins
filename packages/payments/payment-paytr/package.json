@@ -26,7 +26,7 @@
   "author": "Adrien de Peretti <adrien.deperetti@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "clean": "./node_modules/.bin/rimraf services/ api/ utils/ types/ index.js index.map.js",
+    "clean": "./node_modules/.bin/rimraf services/ api/ utils.* types.* index.*",
     "build": "npm run clean && tsc -p tsconfig.json",
     "watch": "tsc --watch",
     "test": "./node_modules/.bin/jest --config jest.config.js"

@@ -8,7 +8,8 @@
     "watch": "./node_modules/.bin/lerna run watch",
     "test": "./node_modules/.bin/lerna run test",
     "bootstrap": "./node_modules/.bin/lerna bootstrap",
-    "build:changelog": "npx lerna-changelog"
+    "lint": "./node_modules/.bin/eslint 'packages/**/*.ts' --fix",
+    "release": "npx lerna verion"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,17 @@
   "homepage": "https://github.com/adrien2p/medusa-plugins#readme",
   "devDependencies": {
     "lerna": "^4.0.0",
-    "lerna-changelog": "^2.2.0"
+    "@commitlint/cli": "^16.1.0",
+    "@commitlint/config-angular": "^16.0.0",
+    "@commitlint/config-conventional": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "eslint": "^8.3.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "prettier": "^2.5.0",
+    "rimraf": "^3.0.2",
+    "tslint": "~6.1.0"
   }
 }
