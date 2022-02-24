@@ -15,6 +15,8 @@ import buildPaytrToken from "../utils/buildPaytrToken";
 import { PaymentRepository } from "@medusajs/medusa/dist/repositories/payment";
 import { EntityManager } from "typeorm";
 
+const PAYTR_ORDER_PREFIX = 'PAYTRMED';
+
 export default class PayTRProviderService extends PaymentService {
     static identifier = "paytr";
 
@@ -53,7 +55,7 @@ export default class PayTRProviderService extends PaymentService {
         ]);
         const cartToken = nodeBase64.encode(JSON.stringify(formattedItems));
         const userIp = cart.context?.ip ?? 'xxx.x.xxx.xxx';
-        const merchantOid = cart.id.split('_').pop();
+        const merchantOid = PAYTR_ORDER_PREFIX + cart.id.split('_').pop();
         const payTrToken = await buildPaytrToken({
             amount,
             orderId: merchantOid,
@@ -64,7 +66,7 @@ export default class PayTRProviderService extends PaymentService {
             merchantConfig: this.#merchantConfig
         });
         const billingAddress = buildAddressFromCart(cart);
-        const { token_endpoint, ...config } = this.#merchantConfig;
+        const { token_endpoint, refund_endpoint, ...config } = this.#merchantConfig;
         const data = {
             ...config,
             paytr_token: payTrToken,
@@ -85,12 +87,13 @@ export default class PayTRProviderService extends PaymentService {
         try {
             return await request(token_endpoint, data);
         } catch (e) {
+            console.log(e);
             throw new Error(`An error occurred while trying to create the payment.\n${e?.message ?? e}`);
         }
     }
 
     async createPayment(cart: Cart): Promise<PaymentSessionData> {
-        const merchantOid = cart.id.split('_').pop();
+        const merchantOid = PAYTR_ORDER_PREFIX + cart.id.split('_').pop();
         return {
             merchantOid,
             paymentId: cart.payment_id,

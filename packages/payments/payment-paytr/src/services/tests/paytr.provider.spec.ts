@@ -6,6 +6,7 @@ try {
     dotenv.config({ path: __dirname + '/../../../.env.test' });
 } catch (e) {}
 
+import { MockManager, MockRepository } from 'medusa-test-utils';
 import PayTRProviderService from "../paytr-provider";
 import { CustomerServiceMock } from "../../__mock__/customer";
 import { TotalsServiceMock } from "../../__mock__/totals";
@@ -41,6 +42,8 @@ describe('PayTrProvider', () => {
         jest.clearAllMocks();
         provider = new PayTRProviderService(
             {
+                manager: MockManager,
+                paymentRepository: MockRepository,
                 cartService: CartServiceMock,
                 customerService: CustomerServiceMock,
                 regionService: RegionServiceMock,

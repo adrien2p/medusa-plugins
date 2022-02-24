@@ -23,5 +23,5 @@ index.js
 ./package-lock.json
 ./yarn.json
 
-./.env
+.env.test
 ./.env.test
