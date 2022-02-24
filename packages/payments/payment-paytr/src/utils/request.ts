@@ -8,7 +8,6 @@ export default function request(endpoint: string, data: Record<string, unknown>)
         formData.append(key, value ?? '');
     });
     return new Promise((resolve, reject) => {
-        console.log(endpoint, data);
         formData.submit(endpoint, ((err: Error | null, res: IncomingMessage) => {
             if (err) {
                 return reject(err);

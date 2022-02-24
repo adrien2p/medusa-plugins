@@ -1,8 +1,8 @@
 export const cartMockData = {
-    id: Date.now().toString(),
+    id: 'TEST' + Date.now(),
     region_id: 'region_1',
     customer: {
-        email: 'example@mail.com'
+        email: 'adrien.deperetti@mail.com'
     },
     billing_address: {
         first_name: "LeBron",

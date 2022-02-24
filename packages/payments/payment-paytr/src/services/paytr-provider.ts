@@ -22,8 +22,8 @@ export default class PayTRProviderService extends PaymentService {
     readonly #merchantConfig: MerchantConfig;
 
     readonly #manager: EntityManager;
-    readonly #orderService: OrderService;
     readonly #paymentRepository: typeof PaymentRepository;
+    readonly #orderService: OrderService;
     readonly #customerService: CustomerService;
     readonly #regionService: RegionService;
     readonly #totalsService: TotalsService;
@@ -86,7 +86,6 @@ export default class PayTRProviderService extends PaymentService {
         try {
             return await request(token_endpoint, data);
         } catch (e) {
-            console.log(e);
             throw new Error(`An error occurred while trying to create the payment.\n${e?.message ?? e}`);
         }
     }
