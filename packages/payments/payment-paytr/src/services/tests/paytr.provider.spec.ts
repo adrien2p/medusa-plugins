@@ -43,7 +43,7 @@ describe('PayTrProvider', () => {
 		provider = new PayTRProviderService(
 			{
 				manager: MockManager,
-				paymentRepository: MockRepository,
+				paymentSessionRepository: MockRepository,
 				cartService: CartServiceMock,
 				customerService: CustomerServiceMock,
 				regionService: RegionServiceMock,

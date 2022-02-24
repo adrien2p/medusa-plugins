@@ -7,16 +7,16 @@ import { PaymentSessionStatus } from '@medusajs/medusa/dist/models/payment-sessi
 import { MerchantConfig, PaymentData, PaymentSessionData } from '../types';
 import CartService from '@medusajs/medusa/dist/services/cart';
 import * as nodeBase64 from 'nodejs-base64-converter';
-import { PaymentRepository } from '@medusajs/medusa/dist/repositories/payment';
 import { EntityManager } from 'typeorm';
 import {
 	buildAddressFromCart,
 	buildOid,
 	buildPaymentToken,
 	buildPaytrToken,
-	findPendingPaymentSession,
+	findPendingPaymentSession, getCartIdFromOid,
 	request,
 } from '../utils';
+import { PaymentSessionRepository } from "@medusajs/medusa/dist/repositories/payment-session";
 
 export default class PayTRProviderService extends PaymentService {
 	static identifier = 'paytr';
@@ -24,7 +24,7 @@ export default class PayTRProviderService extends PaymentService {
 	readonly #merchantConfig: MerchantConfig;
 
 	readonly #manager: EntityManager;
-	readonly #paymentRepository: typeof PaymentRepository;
+	readonly #paymentSessionRepository: typeof PaymentSessionRepository;
 	readonly #orderService: OrderService;
 	readonly #customerService: CustomerService;
 	readonly #regionService: RegionService;
@@ -32,7 +32,7 @@ export default class PayTRProviderService extends PaymentService {
 	readonly #cartService: CartService;
 
 	constructor(
-		{ manager, paymentRepository, cartService, customerService, totalsService, regionService, orderService },
+		{ manager, paymentSessionRepository, cartService, customerService, totalsService, regionService, orderService },
 		options: MerchantConfig
 	) {
 		super();
@@ -40,7 +40,7 @@ export default class PayTRProviderService extends PaymentService {
 		this.#merchantConfig = options;
 
 		this.#manager = manager;
-		this.#paymentRepository = paymentRepository;
+		this.#paymentSessionRepository = paymentSessionRepository;
 		this.#orderService = orderService;
 		this.#customerService = customerService;
 		this.#regionService = regionService;
@@ -176,7 +176,7 @@ export default class PayTRProviderService extends PaymentService {
 		return { status: 'canceled' };
 	}
 
-	public async handleCallback({ merchant_oid, status, total_amount, hash, cartId }: any): Promise<void | never> {
+	public async handleCallback({ merchant_oid, status, total_amount, hash }: any): Promise<void | never> {
 		const tokenBody = merchant_oid + this.#merchantConfig.merchant_salt + status + total_amount;
 		const token = buildPaytrToken(tokenBody, { merchant_key: this.#merchantConfig.merchant_key });
 
@@ -184,6 +184,7 @@ export default class PayTRProviderService extends PaymentService {
 			throw new Error('PAYTR notification failed: bad hash');
 		}
 
+		const cartId = getCartIdFromOid(merchant_oid);
 		const cart = await this.retrieveCart(cartId);
 		const pendingPaymentSession = await findPendingPaymentSession(cart.payment_sessions, {
 			merchantOid: merchant_oid,
@@ -192,10 +193,12 @@ export default class PayTRProviderService extends PaymentService {
 			throw new Error('Unable to complete payment session. The payment session was not found.');
 		}
 
-		const paymentRepo = this.#manager.getCustomRepository(this.#paymentRepository);
-		const payment = await paymentRepo.findOne({ id: pendingPaymentSession.data.paymentId });
-		payment.data = { ...payment.data, merchantOid: merchant_oid };
-		await paymentRepo.save(payment);
+		const paymentSessionRepo = this.#manager.getCustomRepository(this.#paymentSessionRepository);
+		pendingPaymentSession.data = {
+			...pendingPaymentSession.data,
+			status: null
+		};
+		await paymentSessionRepo.save(pendingPaymentSession);
 	}
 
 	async retrieveCart(cartId: string): Promise<Cart> {

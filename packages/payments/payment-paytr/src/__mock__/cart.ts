@@ -1,5 +1,5 @@
 export const cartMockData = {
-	id: 'TEST' + Date.now(),
+	id: 'cart_' + Date.now(),
 	region_id: 'region_1',
 	customer: {
 		email: 'adrien.deperetti@mail.com',

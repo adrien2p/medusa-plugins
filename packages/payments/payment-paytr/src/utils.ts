@@ -30,6 +30,10 @@ export function buildOid(id: string): string {
 	return PAYTR_ORDER_PREFIX + id;
 }
 
+export function getCartIdFromOid(oid: string): string {
+	return ['cart_', oid.replace(PAYTR_ORDER_PREFIX, '')].join('');
+}
+
 export function buildPaymentToken({
 	orderId,
 	email,

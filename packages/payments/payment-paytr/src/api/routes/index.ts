@@ -10,7 +10,7 @@ const route = Router();
 export default (app: Router): Router => {
 	app.use('/pay-tr', route);
 
-	route.get('/callback', bodyParser.json(), middlewares.wrap(webhook));
+	route.post('/callback', bodyParser.json(), middlewares.wrap(webhook));
 
 	return app;
 };
