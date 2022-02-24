@@ -1,6 +1,6 @@
 {
   "name": "medusa-payment-paytr",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A plugin starter for medusa using typescript and pre-configured",
   "main": "index.js",
   "types": "index.d.ts",
