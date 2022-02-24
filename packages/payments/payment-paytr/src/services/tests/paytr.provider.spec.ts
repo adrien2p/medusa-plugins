@@ -13,6 +13,7 @@ import { cartMockData, CartServiceMock } from "../../__mock__/cart";
 
 const merchantConfig: any = {
     token_endpoint: process.env.TOKEN_ENDPOINT,
+    refund_endpoint: process.env.REFUND_ENDPOINT,
     debug_on: 1,
     test_mode: 1,
     max_installment: 0,

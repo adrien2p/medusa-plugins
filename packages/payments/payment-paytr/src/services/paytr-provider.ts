@@ -5,30 +5,36 @@ import { Cart, Payment } from "@medusajs/medusa/dist";
 import { CustomerService, RegionService } from "@medusajs/medusa/dist/services";
 import { PaymentService } from "medusa-interfaces";
 import { PaymentSessionStatus } from "@medusajs/medusa/dist/models/payment-session";
-import { MerchantConfig, PaymentSessionData } from "../types";
+import { MerchantConfig, PaymentData, PaymentSessionData } from "../types";
 import buildAddressFromCart from "../utils/buildAddressFromCart";
 import request from "../utils/request";
 import CartService from "@medusajs/medusa/dist/services/cart";
 import * as nodeBase64 from 'nodejs-base64-converter';
 import findPendingPaymentSession from "../utils/findPendingPaymentSession";
 import buildPaytrToken from "../utils/buildPaytrToken";
+import { PaymentRepository } from "@medusajs/medusa/dist/repositories/payment";
+import { EntityManager } from "typeorm";
 
 export default class PayTRProviderService extends PaymentService {
     static identifier = "paytr";
 
     readonly #merchantConfig: MerchantConfig;
 
+    readonly #manager: EntityManager;
     readonly #orderService: OrderService;
+    readonly #paymentRepository: typeof PaymentRepository;
     readonly #customerService: CustomerService;
     readonly #regionService: RegionService;
     readonly #totalsService: TotalsService;
     readonly #cartService: CartService;
 
-    constructor({ cartService, customerService, totalsService, regionService, orderService }, options: MerchantConfig) {
+    constructor({ manager, paymentRepository, cartService, customerService, totalsService, regionService, orderService }, options: MerchantConfig) {
         super();
 
         this.#merchantConfig = options;
 
+        this.#manager = manager;
+        this.#paymentRepository = paymentRepository;
         this.#orderService = orderService;
         this.#customerService = customerService;
         this.#regionService = regionService;
@@ -87,6 +93,7 @@ export default class PayTRProviderService extends PaymentService {
         const merchantOid = cart.id.split('_').pop();
         return {
             merchantOid,
+            paymentId: cart.payment_id,
             isPending: true,
             status: -1
         };
@@ -135,7 +142,22 @@ export default class PayTRProviderService extends PaymentService {
         return { status: "captured" }
     }
 
-    async refundPayment(payment: { data: unknown }): Promise<unknown> {
+    async refundPayment(payment: Payment, refundAmount: number): Promise<PaymentData> {
+        const token = crypto.createHmac('sha256', this.#merchantConfig.merchant_key).update(
+            this.#merchantConfig.merchant_id
+            + payment.data.merchantOid
+            + refundAmount
+            + this.#merchantConfig.merchant_salt
+        ).digest('base64');
+
+
+        await request(this.#merchantConfig.refund_endpoint, {
+            merchant_id: this.#merchantConfig.merchant_id,
+            merchant_oid: payment.data.merchantOid,
+            return_amount: refundAmount,
+            paytr_token: token,
+        });
+
         return payment.data;
     }
 
@@ -156,11 +178,11 @@ export default class PayTRProviderService extends PaymentService {
         if (!pendingPaymentSession) {
             throw new Error('Unable to complete payment session. The payment session was not found.');
         }
-        await this.updatePayment(pendingPaymentSession, {
-            status: status == 'success' ? null : 0,
-            isPending: false,
-            merchantOid: merchant_oid
-        });
+
+        const paymentRepo = this.#manager.getCustomRepository(this.#paymentRepository);
+        const payment = await paymentRepo.findOne({ id: pendingPaymentSession.data.paymentId });
+        payment.data = { ...payment.data, merchantOid: merchant_oid };
+        await paymentRepo.save(payment);
     }
 
     async retrieveCart(cartId: string): Promise<Cart> {

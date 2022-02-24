@@ -2,6 +2,7 @@ import { Request } from "express";
 
 export type MerchantConfig = {
     token_endpoint: string;
+    refund_endpoint: string;
     merchant_id: string;
     merchant_key: string;
     merchant_salt: string;
@@ -23,7 +24,10 @@ export type PayTrResponse<TStatus = 'success' | 'failed'> = {
 export type PaymentSessionData = {
     status: number;
     isPending: boolean;
+    paymentId: string;
     merchantOid: string;
 };
+
+export type PaymentData = Record<string, unknown>;
 
 export type CustomRequest = Request & { scope: { resolve: <T>(name: string) => T } };

@@ -5,7 +5,8 @@ export default async function findPendingPaymentSession(
     { merchantOid }: { merchantOid: string }
 ): Promise<PaymentSession> {
     return paymentsSessions.find(session => (
-        session.data.merchantOid === merchantOid && session.data.cart)
+        session.provider_id === 'paytr'
+        && session.data.merchantOid === merchantOid && session.data.cart)
         && session.data.isPending === true
         && session.data.status === -1
     );
