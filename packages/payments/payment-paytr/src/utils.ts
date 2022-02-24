@@ -2,7 +2,7 @@ import * as crypto from 'crypto';
 import { Cart, PaymentSession } from '@medusajs/medusa/dist';
 import * as FormData from 'form-data';
 import { IncomingMessage } from 'http';
-import { MerchantConfig, PayTrResponse } from '../types';
+import { MerchantConfig, PayTrResponse } from './types';
 import ipaddr = require('ipaddr.js');
 
 export function buildAddressFromCart(cart: Cart): string | never {
