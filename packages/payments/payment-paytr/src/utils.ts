@@ -98,7 +98,7 @@ export function findPendingPaymentSession(
 	);
 }
 
-export function request(endpoint: string, data: Record<string, unknown>): Promise<string> {
+export function request(endpoint: string, data: Record<string, unknown>): Promise<any> {
 	const formData = new FormData();
 	Object.entries(data).forEach(([key, value]) => {
 		formData.append(key, value ?? '');
@@ -116,10 +116,10 @@ export function request(endpoint: string, data: Record<string, unknown>): Promis
 			res.on('end', () => {
 				const resBody = resBodyChunks.join('').toString() || '{}';
 				const parsedRes: PayTrResponse = JSON.parse(resBody);
-				if (parsedRes.status === 'failed') {
-					return reject((parsedRes as PayTrResponse<'failed'>).reason);
+				if (parsedRes.status !== 'success') {
+					return reject(parsedRes.reason);
 				}
-				return resolve(parsedRes.token);
+				return resolve(parsedRes);
 			});
 		});
 	});

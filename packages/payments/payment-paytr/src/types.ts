@@ -17,7 +17,6 @@ export type MerchantConfig = {
 
 export type PayTrResponse<TStatus = 'success' | 'failed'> = {
 	status: TStatus;
-	token: TStatus extends 'success' ? string : never;
 	reason: TStatus extends 'failed' ? string : never;
 };
 

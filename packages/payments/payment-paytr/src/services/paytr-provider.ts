@@ -86,11 +86,13 @@ export default class PayTRProviderService extends PaymentService {
 			lang: cart.customer?.metadata?.lang ?? 'tr',
 		};
 
-		try {
-			return await request(token_endpoint, data);
-		} catch (e) {
-			throw new Error(`An error occurred while trying to create the payment.\n${e?.message ?? e}`);
-		}
+		return await request(token_endpoint, data)
+			.then((res: { token: string }) => {
+				return res.token;
+			})
+			.catch((e) => {
+				throw new Error(`An error occurred while trying to create the payment.\n${e?.message ?? e}`);
+			});
 	}
 
 	async createPayment(cart: Cart): Promise<PaymentSessionData> {
@@ -142,14 +144,18 @@ export default class PayTRProviderService extends PaymentService {
 			this.#merchantConfig.merchant_salt;
 		const token = buildPaytrToken(tokenBody, { merchant_key: this.#merchantConfig.merchant_key });
 
-		await request(this.#merchantConfig.refund_endpoint, {
+		return await request(this.#merchantConfig.refund_endpoint, {
 			merchant_id: this.#merchantConfig.merchant_id,
 			merchant_oid: payment.data.merchantOid,
 			return_amount: refundAmount,
 			paytr_token: token,
-		});
-
-		return payment.data;
+		})
+			.then(() => {
+				return payment.data;
+			})
+			.catch((e) => {
+				throw new Error(`An error occurred while trying to refund a payment.\n${e?.message ?? e}`);
+			});
 	}
 
 	async cancelPayment(payment: Payment): Promise<PaymentData> {
