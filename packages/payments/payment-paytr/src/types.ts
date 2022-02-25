@@ -22,9 +22,7 @@ export type PayTrResponse<TStatus = 'success' | 'failed'> = {
 };
 
 export type PaymentSessionData = {
-	status: number;
 	isPending: boolean;
-	paymentId: string;
 	merchantOid: string;
 };
 

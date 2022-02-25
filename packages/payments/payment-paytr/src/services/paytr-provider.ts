@@ -1,6 +1,6 @@
 import OrderService from '@medusajs/medusa/dist/services/order';
 import TotalsService from '@medusajs/medusa/dist/services/totals';
-import { Cart, Payment } from '@medusajs/medusa/dist';
+import { Cart, Payment, PaymentSession } from '@medusajs/medusa/dist';
 import { CustomerService, RegionService } from '@medusajs/medusa/dist/services';
 import { PaymentService } from 'medusa-interfaces';
 import { PaymentSessionStatus } from '@medusajs/medusa/dist/models/payment-session';
@@ -13,10 +13,11 @@ import {
 	buildOid,
 	buildPaymentToken,
 	buildPaytrToken,
-	findPendingPaymentSession, getCartIdFromOid,
+	findPendingPaymentSession,
+	getCartIdFromOid,
 	request,
 } from '../utils';
-import { PaymentSessionRepository } from "@medusajs/medusa/dist/repositories/payment-session";
+import { PaymentSessionRepository } from '@medusajs/medusa/dist/repositories/payment-session';
 
 export default class PayTRProviderService extends PaymentService {
 	static identifier = 'paytr';
@@ -98,42 +99,25 @@ export default class PayTRProviderService extends PaymentService {
 
 	async createPayment(cart: Cart): Promise<PaymentSessionData> {
 		const merchantOid = buildOid(cart.id.split('_').pop());
-		return {
-			merchantOid,
-			paymentId: cart.payment_id,
-			isPending: true,
-			status: -1,
-		};
+		return { merchantOid, isPending: true };
 	}
 
-	async getStatus(payment: Payment): Promise<PaymentSessionStatus> {
-		const {
-			data: { status },
-		} = payment;
+	async getStatus(data: PaymentData): Promise<PaymentSessionStatus> {
+		const { status } = data as { status: string | null };
 
-		if (status === -1) {
+		if (!status) {
 			return PaymentSessionStatus.PENDING;
 		}
 
-		const errorStatusCodes = [0, 1, 2, 3, 6, 9, 11, 99];
-
-		if (errorStatusCodes.includes(status)) {
-			return PaymentSessionStatus.ERROR;
-		}
-
-		return PaymentSessionStatus.AUTHORIZED;
-	}
-
-	async retrievePayment(data: unknown): Promise<unknown> {
-		return data;
+		return status === 'success' ? PaymentSessionStatus.AUTHORIZED : PaymentSessionStatus.ERROR;
 	}
 
 	async getPaymentData(sessionData: { data: PaymentSessionData }): Promise<PaymentSessionData> {
 		return sessionData.data;
 	}
 
-	async authorizePayment(): Promise<{ status: string; data: { status: string } }> {
-		return { status: 'authorized', data: { status: 'authorized' } };
+	async authorizePayment(paymentSession: PaymentSession): Promise<{ status: string; data: PaymentSessionData }> {
+		return { status: 'authorized', data: paymentSession.data };
 	}
 
 	async updatePayment(
@@ -150,8 +134,8 @@ export default class PayTRProviderService extends PaymentService {
 		return;
 	}
 
-	async capturePayment() {
-		return { status: 'captured' };
+	async capturePayment(payment: Payment): Promise<PaymentData> {
+		return payment.data;
 	}
 
 	async refundPayment(payment: Payment, refundAmount: number): Promise<PaymentData> {
@@ -172,11 +156,21 @@ export default class PayTRProviderService extends PaymentService {
 		return payment.data;
 	}
 
-	async cancelPayment(): Promise<{ status: string }> {
-		return { status: 'canceled' };
+	async cancelPayment(payment: Payment): Promise<PaymentData> {
+		return payment.data;
 	}
 
-	public async handleCallback({ merchant_oid, status, total_amount, hash }: any): Promise<void | never> {
+	public async handleCallback({
+		merchant_oid,
+		status,
+		total_amount,
+		hash,
+	}: {
+		merchant_oid: string;
+		status: 'success' | 'error';
+		total_amount: number;
+		hash: string;
+	}): Promise<void | never> {
 		const tokenBody = merchant_oid + this.#merchantConfig.merchant_salt + status + total_amount;
 		const token = buildPaytrToken(tokenBody, { merchant_key: this.#merchantConfig.merchant_key });
 
@@ -186,7 +180,7 @@ export default class PayTRProviderService extends PaymentService {
 
 		const cartId = getCartIdFromOid(merchant_oid);
 		const cart = await this.retrieveCart(cartId);
-		const pendingPaymentSession = await findPendingPaymentSession(cart.payment_sessions, {
+		const pendingPaymentSession = findPendingPaymentSession(cart.payment_sessions, {
 			merchantOid: merchant_oid,
 		});
 		if (!pendingPaymentSession) {
@@ -196,7 +190,8 @@ export default class PayTRProviderService extends PaymentService {
 		const paymentSessionRepo = this.#manager.getCustomRepository(this.#paymentSessionRepository);
 		pendingPaymentSession.data = {
 			...pendingPaymentSession.data,
-			status: null
+			isPending: !(status === 'success'),
+			status,
 		};
 		await paymentSessionRepo.save(pendingPaymentSession);
 	}

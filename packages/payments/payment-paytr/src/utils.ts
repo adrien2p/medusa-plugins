@@ -86,17 +86,15 @@ export function convertIpToIpv4(ip: string): string {
 	return result;
 }
 
-export async function findPendingPaymentSession(
+export function findPendingPaymentSession(
 	paymentsSessions: PaymentSession[],
 	{ merchantOid }: { merchantOid: string }
-): Promise<PaymentSession> {
+): PaymentSession {
 	return paymentsSessions.find(
 		(session) =>
 			session.provider_id === 'paytr' &&
 			session.data.merchantOid === merchantOid &&
-			session.data.cart &&
-			session.data.isPending === true &&
-			session.data.status === -1
+			session.data.isPending === true
 	);
 }
 
