@@ -53,11 +53,7 @@ export default class PayTRProviderService extends PaymentService {
 		const cart = await this.retrieveCart(cartId);
 		const amount = await this.#totalsService.getTotal(cart);
 		const { currency_code } = await this.#regionService.retrieve(cart.region_id);
-		const formattedItems = cart.items.map((item) => [
-			item.title,
-			(item.unit_price / 100).toFixed(2).toString(),
-			item.quantity.toString(),
-		]);
+		const formattedItems = cart.items.map((item) => [item.title, item.unit_price, item.quantity.toString()]);
 		const cartToken = nodeBase64.encode(JSON.stringify(formattedItems));
 		const userIp = cart.context?.ip ?? 'xxx.x.xxx.xxx';
 		const merchantOid = buildOid(cart.id.split('_').pop());
