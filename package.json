@@ -2,6 +2,9 @@
   "name": "medusa-plugins",
   "version": "1.0.0",
   "description": "A collection of awesome plugins for medusa :rocket:",
+  "engines": {
+    "node": "14.17.3"
+  },
   "scripts": {
     "clean": "./node_modules/.bin/lerna run clean",
     "build": "./node_modules/.bin/lerna run build",
@@ -24,9 +27,6 @@
   "homepage": "https://github.com/adrien2p/medusa-plugins#readme",
   "devDependencies": {
     "lerna": "^4.0.0",
-    "@commitlint/cli": "^16.1.0",
-    "@commitlint/config-angular": "^16.0.0",
-    "@commitlint/config-conventional": "^16.0.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "eslint": "^8.3.0",
