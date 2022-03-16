@@ -35,13 +35,45 @@
 
 # Getting started
 
-[![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#plugins)
+Installing the plugin
 
-# Plugins
+```bash
+npm i medusa-payment-paytr
+```
 
-| Name            | Target   | Badges |
-| --------------- | -------- | ------ |
-| `payment-paytr` | `medusa` |        |
+And then go to your `medusa-config.js` file and update the plugins configuration as follow
+
+```javascript
+{
+    /* ... */
+
+    plugins: [
+        /* ... */
+
+        {
+            resolve: 'medusa-payment-paytr',
+            options: {
+                token_endpoint: process.env.PAYTR_TOKEN_ENDPOINT,
+                refund_endpoint: process.env.PAYTR_REFUND_ENDPOINT,
+                debug_on: process.env.PAYTR_DEBUG_ON,
+                test_mode: process.env.PAYTR_TEST_MODE,
+                max_installment: process.env.PAYTR_MAX_INSTALLMENT,
+                no_installment: process.env.PAYTR_NO_INSTALLMENT,
+                merchant_fail_url: process.env.PAYTR_MERCHANT_FAIL_URL,
+                merchant_ok_url: process.env.PAYTR_MERCHANT_OK_URL,
+                merchant_id: process.env.PAYTR_MERCHANT_ID,
+                merchant_key: process.env.PAYTR_MERCHANT_KEY,
+                merchant_salt: process.env.PAYTR_MERCHANT_SALT,
+                timeout_limit: process.env.PAYTR_TIMEOUT_LIMIT
+            }
+        },
+
+        /* ... */
+    ]
+    
+    /* ... */
+}
+```
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#discussions)
 
