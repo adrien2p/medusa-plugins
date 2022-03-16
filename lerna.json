@@ -1,7 +1,8 @@
 {
   "npmClient": "npm",
   "packages": [
-    "packages/*"
+    "packages/medusa/*",
+    "packages/medusa-extender/*"
   ],
   "command": {
     "publish": {
@@ -10,8 +11,7 @@
       "ignoreChanges": [
         "**/*.spec.ts"
       ],
-      "message": "chore(release): publish",
-      "registry": "https://npm.pkg.github.com/"
+      "message": "chore(release): publish"
     }
   },
   "version": "independent"
