@@ -1,22 +1,18 @@
 {
+  "npmClient": "npm",
   "packages": [
-    "packages/*",
-    "packages/payments/*"
+    "packages/*"
   ],
-  "version": "independent",
   "command": {
     "publish": {
-      "conventionalCommits": true
+      "conventionalCommits": true,
+      "yes": true,
+      "ignoreChanges": [
+        "**/*.spec.ts"
+      ],
+      "message": "chore(release): publish",
+      "registry": "https://npm.pkg.github.com/"
     }
   },
-  "changelog": {
-    "ignoreCommitters": ["allcontributors"],
-    "labels": {
-      "feat": ":rocket: New Feature",
-      "chore": ":earth: Core",
-      "fix": ":bug: Bug Fix",
-      "docs": ":memo: Documentation",
-      "refactor": ":truck: Refactoring"
-    }
-  }
+  "version": "independent"
 }

@@ -1,10 +1,10 @@
 export const EventBusServiceMock = {
-    emit: jest.fn(),
-    subscribe: jest.fn(),
+	emit: jest.fn(),
+	subscribe: jest.fn(),
 };
 
 const mock = jest.fn().mockImplementation(() => {
-    return EventBusServiceMock
+	return EventBusServiceMock;
 });
 
 export default mock;

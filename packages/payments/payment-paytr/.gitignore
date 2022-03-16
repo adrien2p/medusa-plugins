@@ -3,24 +3,18 @@
 node_modules
 .DS_store
 **/.DS_Store
-/*.js
 
 dist
 coverage
 
 api/
 services/
-models/
-subscribers/
-migrations/
-loaders/
-__mock__/
-index.js.map
-
-!src/**
+utils.js
+types.js
+index.js
 
 ./tsconfig.tsbuildinfo
 ./package-lock.json
 ./yarn.json
 
-dummy/server/.env
+./.env.*

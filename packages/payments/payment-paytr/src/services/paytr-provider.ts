@@ -1,169 +1,219 @@
-import * as CryptoJS from 'crypto-js';
-import OrderService from "@medusajs/medusa/dist/services/order";
-import TotalsService from "@medusajs/medusa/dist/services/totals";
-import { Cart, Payment } from "@medusajs/medusa/dist";
-import { CustomerService, RegionService } from "@medusajs/medusa/dist/services";
-import { PaymentService } from "medusa-interfaces";
-import { PaymentSessionStatus } from "@medusajs/medusa/dist/models/payment-session";
-import { MerchantConfig } from "../types";
-import buildAddressFromCart from "../utils/buildAddressFromCart";
-import request from "../utils/request";
-
-type PaymentData = Record<string, unknown>;
-type PaymentSessionData = Record<string, unknown>;
+import OrderService from '@medusajs/medusa/dist/services/order';
+import TotalsService from '@medusajs/medusa/dist/services/totals';
+import { Cart, Payment, PaymentSession } from '@medusajs/medusa/dist';
+import { CustomerService, RegionService } from '@medusajs/medusa/dist/services';
+import { PaymentService } from 'medusa-interfaces';
+import { PaymentSessionStatus } from '@medusajs/medusa/dist/models/payment-session';
+import { MerchantConfig, PaymentData, PaymentSessionData } from '../types';
+import CartService from '@medusajs/medusa/dist/services/cart';
+import * as nodeBase64 from 'nodejs-base64-converter';
+import { EntityManager } from 'typeorm';
+import {
+	buildAddressFromCart,
+	buildOid,
+	buildPaymentToken,
+	buildPaytrToken,
+	findPendingPaymentSession,
+	getCartIdFromOid,
+	request,
+} from '../utils';
+import { PaymentSessionRepository } from '@medusajs/medusa/dist/repositories/payment-session';
 
 export default class PayTRProviderService extends PaymentService {
-    static identifier = "paytr";
+	static identifier = 'paytr';
 
-    #merchantConfig: MerchantConfig;
+	readonly #merchantConfig: MerchantConfig;
 
-    #orderService: OrderService;
-    #customerService: CustomerService;
-    #regionService: RegionService;
-    #totalsService: TotalsService;
+	readonly #manager: EntityManager;
+	readonly #paymentSessionRepository: typeof PaymentSessionRepository;
+	readonly #orderService: OrderService;
+	readonly #customerService: CustomerService;
+	readonly #regionService: RegionService;
+	readonly #totalsService: TotalsService;
+	readonly #cartService: CartService;
 
-    constructor({ customerService, totalsService, regionService, orderService }, options: MerchantConfig) {
-        super();
+	constructor(
+		{ manager, paymentSessionRepository, cartService, customerService, totalsService, regionService, orderService },
+		options: MerchantConfig
+	) {
+		super();
 
-        this.#merchantConfig = options;
+		this.#merchantConfig = options;
 
-        this.#orderService = orderService;
-        this.#customerService = customerService;
-        this.#regionService = regionService;
-        this.#totalsService = totalsService;
-    }
+		this.#manager = manager;
+		this.#paymentSessionRepository = paymentSessionRepository;
+		this.#orderService = orderService;
+		this.#customerService = customerService;
+		this.#regionService = regionService;
+		this.#totalsService = totalsService;
+		this.#cartService = cartService;
+	}
 
-    async createPayment(cart: Cart): Promise<PaymentSessionData> {
-        const amount = await this.#totalsService.getTotal(cart);
-        const { currency_code } = await this.#regionService.retrieve(cart.region_id);
-        const { id: orderId } = await this.#orderService.retrieveByCartId(cart.id);
-        const formattedOrderId = orderId.replace('_', '');
-        const formattedItems = cart.items.map(item => {
-            return [item.title, item.unit_price, item.quantity];
-        });
-        const cartToken = btoa(decodeURI(encodeURIComponent(JSON.stringify(formattedItems))));
-        const payTrToken = this.buildPayTrKey({
-            amount,
-            email: cart?.customer.email,
-            ip: cart?.metadata?.ip ?? 'xxx.x.xxx.xxx',
-            currency_code,
-            orderId: formattedOrderId,
-            cartToken
-        });
-        const billingAddress = buildAddressFromCart(cart);
-        const { token_endpoint, merchant_key, merchant_salt, ...config } = this.#merchantConfig;
-        const data = {
-            ...config,
-            paytr_token: payTrToken,
-            no_installment: this.#merchantConfig.no_installment,
-            max_installment: this.#merchantConfig.max_installment,
-            payment_amount: amount,
-            currency: currency_code,
-            user_name: cart?.customer?.billing_address.first_name + ' ' + cart?.customer?.billing_address.last_name,
-            user_address: billingAddress,
-            email: cart?.customer.email,
-            user_phone: cart?.customer.phone,
-            user_ip: cart?.metadata?.ip ?? 'xxx.x.xxx.xxx',
-            user_basket: cartToken,
-            merchant_oid: formattedOrderId,
-            lang: cart?.customer?.metadata?.lang ?? 'tr',
-        };
+	async generateToken(cartId: string): Promise<string | never> {
+		const cart = await this.retrieveCart(cartId);
+		const amount = await this.#totalsService.getTotal(cart);
+		const { currency_code } = await this.#regionService.retrieve(cart.region_id);
+		const formattedItems = cart.items.map((item) => [item.title, item.unit_price, item.quantity.toString()]);
+		const cartToken = nodeBase64.encode(JSON.stringify(formattedItems));
+		const userIp = cart.context?.ip ?? 'xxx.x.xxx.xxx';
+		const merchantOid = buildOid(cart.id.split('_').pop());
+		const payTrToken = await buildPaymentToken({
+			amount,
+			orderId: merchantOid,
+			email: cart.customer?.email,
+			ip: userIp,
+			currency_code,
+			cartToken,
+			merchantConfig: this.#merchantConfig,
+		});
+		const billingAddress = buildAddressFromCart(cart);
+		/* eslint-disable @typescript-eslint/no-unused-vars */
+		const { token_endpoint, refund_endpoint, ...config } = this.#merchantConfig;
+		const data = {
+			...config,
+			paytr_token: payTrToken,
+			no_installment: this.#merchantConfig.no_installment,
+			max_installment: this.#merchantConfig.max_installment,
+			payment_amount: amount,
+			currency: currency_code,
+			user_name: (cart?.billing_address?.first_name + ' ' + cart?.billing_address?.last_name).trim(),
+			user_address: billingAddress,
+			email: cart.customer?.email,
+			user_phone: cart.billing_address?.phone,
+			user_ip: userIp,
+			user_basket: cartToken,
+			merchant_oid: merchantOid,
+			lang: cart.customer?.metadata?.lang ?? 'tr',
+		};
 
-        try {
-            const token = await request(token_endpoint, data);
-            return {
-                id: 'pi_' + cartToken,
-                cart_id: cart.id,
-                amount,
-                currency_code,
-                ip: cart?.metadata?.ip ?? 'xxx.x.xxx.xxx',
-                data: {
-                    token,
-                    status: -1
-                },
-            };
-        } catch (e) {
-            throw new Error(`An error occurred while trying to create the payment.\n${e?.message}`);
-        }
-    }
+		return await request(token_endpoint, data)
+			.then((res: { token: string }) => {
+				return res.token;
+			})
+			.catch((e) => {
+				throw new Error(`An error occurred while trying to create the payment.\n${e?.message ?? e}`);
+			});
+	}
 
-    async getStatus(payment: Payment): Promise<PaymentSessionStatus> {
-        const { data: { status } } = payment;
+	async createPayment(cart: Cart): Promise<PaymentSessionData> {
+		const merchantOid = buildOid(cart.id.split('_').pop());
+		return { merchantOid, isPending: true };
+	}
 
-        if (status === -1) {
-            return PaymentSessionStatus.REQUIRES_MORE;
-        }
+	async getStatus(data: PaymentData): Promise<PaymentSessionStatus> {
+		const { status } = data as { status: string | null };
 
-        const errorStatusCodes = [0, 1, 2, 3, 6, 9, 11, 99];
+		if (!status) {
+			return PaymentSessionStatus.PENDING;
+		}
 
-        if (errorStatusCodes.includes(status)) {
-            return PaymentSessionStatus.ERROR;
-        }
+		return status === 'success' ? PaymentSessionStatus.AUTHORIZED : PaymentSessionStatus.ERROR;
+	}
 
-        return PaymentSessionStatus.AUTHORIZED;
-    }
+	async getPaymentData(sessionData: { data: PaymentSessionData }): Promise<PaymentSessionData> {
+		return sessionData.data;
+	}
 
-    async retrievePayment(data: unknown): Promise<unknown> {
-        return data;
-    }
+	async authorizePayment(paymentSession: PaymentSession): Promise<{ status: string; data: PaymentSessionData }> {
+		return { status: 'authorized', data: paymentSession.data };
+	}
 
-    async getPaymentData(sessionData: { data: unknown }): Promise<unknown> {
-        return sessionData.data;
-    }
+	async updatePayment(
+		sessionData: { data: PaymentSessionData },
+		updateData: PaymentSessionData
+	): Promise<PaymentSessionData> {
+		return {
+			...sessionData.data,
+			...updateData,
+		};
+	}
 
-    async authorizePayment(): Promise<{ status: string; data: { status: string; } }> {
-        return { status: "authorized", data: { status: "authorized" } };
-    }
+	async deletePayment(): Promise<void> {
+		return;
+	}
 
-    async updatePayment(sessionData: { data: unknown; }, updateData: unknown): Promise<unknown> {
-        console.log(updateData);
-        return sessionData.data;
-    }
+	async capturePayment(payment: Payment): Promise<PaymentData> {
+		return payment.data;
+	}
 
-    async deletePayment(): Promise<void> {
-        return;
-    }
+	async refundPayment(payment: Payment, refundAmount: number): Promise<PaymentData> {
+		const tokenBody =
+			this.#merchantConfig.merchant_id +
+			payment.data.merchantOid +
+			refundAmount +
+			this.#merchantConfig.merchant_salt;
+		const token = buildPaytrToken(tokenBody, { merchant_key: this.#merchantConfig.merchant_key });
 
-    async capturePayment() {
-        return { status: "captured" }
-    }
+		return await request(this.#merchantConfig.refund_endpoint, {
+			merchant_id: this.#merchantConfig.merchant_id,
+			merchant_oid: payment.data.merchantOid,
+			return_amount: refundAmount,
+			paytr_token: token,
+		})
+			.then(() => {
+				return payment.data;
+			})
+			.catch((e) => {
+				throw new Error(`An error occurred while trying to refund a payment.\n${e?.message ?? e}`);
+			});
+	}
 
-    async refundPayment(payment: { data: unknown }): Promise<unknown> {
-        return payment.data;
-    }
+	async cancelPayment(payment: Payment): Promise<PaymentData> {
+		return payment.data;
+	}
 
-    async cancelPayment(): Promise<{ status: string; }> {
-        return { status: "canceled" };
-    }
+	public async handleCallback({
+		merchant_oid,
+		status,
+		total_amount,
+		hash,
+	}: {
+		merchant_oid: string;
+		status: 'success' | 'error';
+		total_amount: number;
+		hash: string;
+	}): Promise<void | never> {
+		const tokenBody = merchant_oid + this.#merchantConfig.merchant_salt + status + total_amount;
+		const token = buildPaytrToken(tokenBody, { merchant_key: this.#merchantConfig.merchant_key });
 
-    private buildPayTrKey(
-        {
-            orderId,
-            email,
-            amount,
-            ip,
-            cartToken,
-            currency_code
-        }: {
-            orderId: string;
-            email: string;
-            amount: number;
-            ip: string;
-            cartToken: string;
-            currency_code: string;
-        }
-    ): string {
-        const body = this.#merchantConfig.merchant_id
-            + ip
-            + orderId
-            + email
-            + amount
-            + cartToken
-            + this.#merchantConfig.no_installment
-            + this.#merchantConfig.max_installment
-            + currency_code
-            + this.#merchantConfig.test_mode;
-        const hash = CryptoJS.HmacSHA256(body + this.#merchantConfig.merchant_salt, this.#merchantConfig.merchant_key);
-        return CryptoJS.enc.Base64.stringify(hash);
-    }
+		if (token != hash) {
+			throw new Error('PAYTR notification failed: bad hash');
+		}
+
+		const cartId = getCartIdFromOid(merchant_oid);
+		const cart = await this.retrieveCart(cartId);
+		const pendingPaymentSession = findPendingPaymentSession(cart.payment_sessions, {
+			merchantOid: merchant_oid,
+		});
+		if (!pendingPaymentSession) {
+			throw new Error('Unable to complete payment session. The payment session was not found.');
+		}
+
+		const paymentSessionRepo = this.#manager.getCustomRepository(this.#paymentSessionRepository);
+		pendingPaymentSession.data = {
+			...pendingPaymentSession.data,
+			isPending: !(status === 'success'),
+			status,
+		};
+		await paymentSessionRepo.save(pendingPaymentSession);
+	}
+
+	async retrieveCart(cartId: string): Promise<Cart> {
+		return this.#cartService.retrieve(cartId, {
+			select: ['gift_card_total', 'subtotal', 'tax_total', 'shipping_total', 'discount_total', 'total'],
+			relations: [
+				'items',
+				'discounts',
+				'discounts.rule',
+				'discounts.rule.valid_for',
+				'gift_cards',
+				'billing_address',
+				'shipping_address',
+				'region',
+				'region.payment_providers',
+				'payment_sessions',
+				'customer',
+			],
+		});
+	}
 }

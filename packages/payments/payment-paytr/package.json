@@ -1,6 +1,6 @@
 {
   "name": "medusa-payment-paytr",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A plugin starter for medusa using typescript and pre-configured",
   "main": "index.js",
   "types": "index.d.ts",
@@ -8,6 +8,12 @@
     "type": "git",
     "url": "https://github.com/adrien2p/medusa-plugin-paytr"
   },
+  "files": [
+    "api",
+    "services",
+    "utils.js",
+    "types.js"
+  ],
   "keywords": [
     "medusa",
     "medusajs",
@@ -20,22 +26,23 @@
   "author": "Adrien de Peretti <adrien.deperetti@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "clean": "./node_modules/.bin/rimraf services/ models/ migrations/ api/ subscribers/ index.js index.map.js",
+    "clean": "./node_modules/.bin/rimraf services/ api/ utils.* types.* index.*",
     "build": "npm run clean && tsc -p tsconfig.json",
     "watch": "tsc --watch",
-    "test": "jest"
+    "test": "./node_modules/.bin/jest --config jest.config.js"
   },
   "devDependencies": {
-    "@medusajs/medusa": "1.1.x",
+    "@medusajs/medusa": "1.2.1",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.15",
     "core-js": "^3.21.0",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.0",
     "eslint": "^8.8.0",
     "jest": "^27.5.0",
-    "medusa-core-utils": "1.1.x",
-    "medusa-interfaces": "1.1.x",
+    "medusa-core-utils": "^1.1.31",
+    "medusa-interfaces": "^1.2.1",
     "medusa-test-utils": "^1.1.37",
     "mongoose": "^6.2.0",
     "regenerator-runtime": "^0.13.9",
@@ -45,8 +52,9 @@
     "typescript": "^4.5.5"
   },
   "peerDependencies": {
-    "medusa-interfaces": "1.1.x",
-    "@medusajs/medusa": "1.1.x"
+    "medusa-interfaces": "^1.2.1",
+    "medusa-core-utils": "^1.1.31",
+    "@medusajs/medusa": "^1.2.1"
   },
   "dependencies": {
     "body-parser": "^1.19.1",
@@ -54,32 +62,7 @@
     "crypto-js": "^4.1.1",
     "express": "^4.17.2",
     "form-data": "^4.0.0",
+    "nodejs-base64-converter": "^1.0.5",
     "typeorm": "^0.2.41"
-  },
-  "jest": {
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.spec.json"
-      }
-    },
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "<rootDir>/node_modules/"
-    ],
-    "rootDir": "src",
-    "testRegex": "(/tests/.*|\\.(test|spec))\\.(ts|js)$",
-    "transform": {
-      ".ts": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "./coverage",
-    "testEnvironment": "node"
   }
 }
