@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medua-plugins-logo.png?raw=true" alt="Medusa-plugins logo" width="500" height="auto" />
 </p>
-<h1 align="center">medusa-plugins</h1>
+<h1 align="center">medusa-payment-paytr</h1>
 
 <p align="center">
 <a href="https://github.com/adrien2p/awesome-medusajs"><img alt="Awesome medusajs" src="https://awesome.re/badge.svg" height="20"/></a>
@@ -13,7 +13,7 @@
 	</p>
 
 <p align="center">
-  <b>A collection of awesome plugins for medusa and medusa-extender :rocket:</b></br>
+  <b>A payment provider for PayTR</b></br>
 </p>
 
 <br />
