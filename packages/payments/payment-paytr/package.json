@@ -11,8 +11,8 @@
   "files": [
     "api",
     "services",
-    "uitls",
-    "types"
+    "utils.js",
+    "types.js"
   ],
   "keywords": [
     "medusa",
@@ -32,7 +32,7 @@
     "test": "./node_modules/.bin/jest --config jest.config.js"
   },
   "devDependencies": {
-    "@medusajs/medusa": "1.1.x",
+    "@medusajs/medusa": "1.2.1",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.15",
@@ -41,8 +41,8 @@
     "dotenv": "^16.0.0",
     "eslint": "^8.8.0",
     "jest": "^27.5.0",
-    "medusa-core-utils": "1.1.x",
-    "medusa-interfaces": "1.1.x",
+    "medusa-core-utils": "^1.1.31",
+    "medusa-interfaces": "^1.2.1",
     "medusa-test-utils": "^1.1.37",
     "mongoose": "^6.2.0",
     "regenerator-runtime": "^0.13.9",
@@ -52,8 +52,9 @@
     "typescript": "^4.5.5"
   },
   "peerDependencies": {
-    "medusa-interfaces": "1.1.x",
-    "@medusajs/medusa": "1.1.x"
+    "medusa-interfaces": "^1.2.1",
+    "medusa-core-utils": "^1.1.31",
+    "@medusajs/medusa": "^1.2.1"
   },
   "dependencies": {
     "body-parser": "^1.19.1",
