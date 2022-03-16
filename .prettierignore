@@ -1,5 +1,6 @@
 packages/**/*.d.ts
 packages/**/*.js
+packages/**/*.md
 
 .jest-cache/*
 .jest-coverage/*

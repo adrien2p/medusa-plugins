@@ -1,12 +1,12 @@
-name: Tests pipeline
+name: Payment-paytr tests pipeline
 on: [push]
 
 jobs:
-  payment-paytr:
+  unit-tests:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./packages/payments/payment-paytr
+        working-directory: ./packages/medusa/payment-paytr
 
     steps:
       - name: Cancel Previous Runs

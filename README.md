@@ -4,14 +4,13 @@
 <h1 align="center">medusa-plugins</h1>
 
 <p align="center">
-<a href="https://github.com/adrien2p/medusa-extender/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/adrien2p/medusa-plugins.svg" height="20"/></a>
+<a href="https://github.com/adrien2p/medusa-plugins/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/adrien2p/medusa-plugins.svg" height="20"/></a>
 <a href="https://github.com/adrien2p/awesome-medusajs"><img alt="Awesome medusajs" src="https://awesome.re/badge.svg" height="20"/></a>
 <a href="https://discord.gg/xpCwq3Kfn8"><img alt="Discord" src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" height="20"/></a>
 <a href="https://github.com/adrien2p/medusa-plugins/commits/main"><img alt="Activity" src="https://img.shields.io/github/commit-activity/m/adrien2p/medusa-plugins?style=flat" height="20"/></a>
-<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-extender?style=flat" height="20"/></a>
+<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 <a href="https://github.com/adrien2p/medusa-plugins/blob/main/LICENSE"><img alt="Licence" src="https://img.shields.io/github/license/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 <a href="https://github.com/adrien2p/medusa-plugins/blob/main/CONTRIBUTING.md"><img alt="Contributing" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" height="20"/></a>
-<a href="https://github.com/adrien2p/medusa-plugins/actions/workflows/action.yml"><img alt="Test pipeline status" src="https://github.com/adrien2p/medusa-plugins/actions/workflows/action.yml/badge.svg" height="20"/></a>
 <a href="https://github.com/adrien2p/medusa-plugins/actions/workflows/codeql-analysis.yml"><img alt="CodeQL security analysis status" src="https://github.com/adrien2p/medusa-plugins/actions/workflows/codeql-analysis.yml/badge.svg" height="20"/></a>
 	</p>
 
@@ -57,7 +56,7 @@ make it easier for you to find them :rocket:
 
 # Discussions
 
-If you are interesting to participate in any discussions you can follow that [links](https://github.com/adrien2p/medusa-extender/discussions)
+If you are interesting to participate in any discussions you can follow that [links](https://github.com/adrien2p/medusa-plugins/discussions)
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#like-my-work-heartbeat)
 

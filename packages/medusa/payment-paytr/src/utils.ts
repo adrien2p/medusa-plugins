@@ -98,7 +98,7 @@ export function findPendingPaymentSession(
 	);
 }
 
-export function request(endpoint: string, data: Record<string, unknown>): Promise<any> {
+export function request(endpoint: string, data: Record<string, unknown>): Promise<unknown> {
 	const formData = new FormData();
 	Object.entries(data).forEach(([key, value]) => {
 		formData.append(key, value ?? '');

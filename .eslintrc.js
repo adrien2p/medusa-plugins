@@ -4,7 +4,7 @@ module.exports = {
     project: 'tsconfig.json',
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', "prettier"],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -16,16 +16,12 @@ module.exports = {
   },
   ignorePatterns: [
       '.eslintrc.js',
-      'packages/**/*.spec.ts',
-      'packages/**/*.d.ts',
-      'packages/**/*.map.js'
+      '**/.prettier*',
+      '**/.version*',
+      '**/*.md',
+      '**/*.js'
   ],
   rules: {
-    '@typescript-eslint/no-empty-interface': 'off',
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': "off",
-    "@typescript-eslint/indent": 'off'
+    "prettier/prettier": "error"
   },
 };

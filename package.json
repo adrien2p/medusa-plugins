@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugins",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "A collection of awesome plugins for medusa and medusa-extender :rocket:",
   "engines": {
     "node": "14.17.3"
@@ -10,9 +10,10 @@
     "build": "./node_modules/.bin/lerna run build",
     "watch": "./node_modules/.bin/lerna run watch",
     "test": "./node_modules/.bin/lerna run test",
-    "bootstrap": "./node_modules/.bin/lerna bootstrap",
+    "test:local": "./node_modules/.bin/lerna run test:local",
+    "bootstrap": "./node_modules/.bin/lerna bootstrap --no-hoist",
     "lint": "./node_modules/.bin/eslint 'packages/**/*.ts' --fix",
-    "format": "./node_modules/.bin/prettier 'packages/**/*.{ts,tsx,js,scss,css,md}' --write",
+    "format": "./node_modules/.bin/prettier 'packages/**/*.ts' --write",
     "release": "npx lerna verion"
   },
   "repository": {

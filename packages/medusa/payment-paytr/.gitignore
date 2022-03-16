@@ -1,5 +1,6 @@
 .idea
 /lib
+/dist
 node_modules
 .DS_store
 **/.DS_Store
@@ -17,4 +18,4 @@ index.js
 ./package-lock.json
 ./yarn.json
 
-./.env.*
+.env.*
