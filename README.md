@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medusa-plugins-logo.png?raw=true" alt="Medusa-plugins logo" width="500" height="auto" />
+  <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medua-plugins-logo.png?raw=true" alt="Medusa-plugins logo" width="500" height="auto" />
 </p>
 <h1 align="center">medusa-plugins</h1>
 
@@ -74,9 +74,7 @@ If you found the package helpful consider supporting me with a coffee
 
 Contributions are welcome! You can look at the contribution [guidelines](./CONTRIBUTING.md)
 
-# Development
-
-## Plugin
+## Test a package locally
 
 Go to the plugin package directory and Build your local plugin
 
