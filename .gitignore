@@ -1,10 +1,15 @@
 .idea
 /lib
+/dist
 node_modules
 .DS_store
 **/.DS_Store
 
-**/.env
-**/.env.test
 dist
 coverage
+
+/tsconfig.tsbuildinfo
+/package-lock.json
+/yarn.json
+
+.env.*

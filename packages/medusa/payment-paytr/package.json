@@ -30,8 +30,8 @@
     "clean": "./node_modules/.bin/rimraf services api/ utils.* types.* index.*",
     "build": "npm run clean && tsc -p tsconfig.json",
     "watch": "tsc --watch",
-    "test": "NODE_ENV=test ./node_modules/.bin/jest -i --collect-coverage && npm run coverage:badges",
-    "test:local": "NODE_ENV=test ./node_modules/.bin/jest --maxWorkers=75% --collect-coverage && npm run coverage:badges"
+    "test": "NODE_ENV=test ./node_modules/.bin/jest -i",
+    "test:local": "NODE_ENV=test ./node_modules/.bin/jest --maxWorkers=75%"
   },
   "devDependencies": {
     "@medusajs/medusa": "1.2.1",

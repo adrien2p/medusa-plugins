@@ -8,14 +8,14 @@ node_modules
 dist
 coverage
 
-api/
-services/
+/api/
+/services/
 utils.js
 types.js
 index.js
 
-./tsconfig.tsbuildinfo
-./package-lock.json
-./yarn.json
+/tsconfig.tsbuildinfo
+/package-lock.json
+/yarn.json
 
 .env.*
