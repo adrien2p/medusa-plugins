@@ -4,7 +4,7 @@
       "es5",
       "es6"
     ],
-    "target": "esnext",
+    "target": "ES2017",
     "esModuleInterop": false,
     "module": "commonjs",
     "moduleResolution": "node",

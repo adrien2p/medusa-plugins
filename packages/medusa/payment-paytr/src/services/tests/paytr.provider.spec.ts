@@ -11,8 +11,9 @@ import PayTRProviderService from '../paytr-provider';
 import { CustomerServiceMock } from '../../__mock__/customer';
 import { TotalsServiceMock } from '../../__mock__/totals';
 import { cartMockData, CartServiceMock } from '../../__mock__/cart';
+import { MerchantConfig } from "../../types";
 
-const merchantConfig = {
+const merchantConfig: MerchantConfig = {
 	token_endpoint: process.env.TOKEN_ENDPOINT,
 	refund_endpoint: process.env.REFUND_ENDPOINT,
 	debug_on: 1,
@@ -28,7 +29,7 @@ const merchantConfig = {
 };
 
 const RegionServiceMock = {
-	retrieve: jest.fn().mockReturnValue(Promise.resolve({ currency_code: 'TL' })),
+	retrieve: jest.fn().mockReturnValue(Promise.resolve({ currency_code: 'TL', currency: { symbol: 'TL' }})),
 };
 
 const OrderServiceMock = {

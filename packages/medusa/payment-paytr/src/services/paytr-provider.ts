@@ -52,7 +52,11 @@ export default class PayTRProviderService extends PaymentService {
 	async generateToken(cartId: string): Promise<string | never> {
 		const cart = await this.retrieveCart(cartId);
 		const amount = await this.#totalsService.getTotal(cart);
-		const { currency_code } = await this.#regionService.retrieve(cart.region_id);
+		const region = await this.#regionService.retrieve(cart.region_id, { relations: ['currency']});
+		if (region?.currency?.symbol.toLowerCase() !== 'tl') {
+			throw new Error('Unable to use the payTr payment provider with currency: ' + region.currency.symbol + '. Expected TL');
+		}
+
 		const formattedItems = cart.items.map((item) => [item.title, item.unit_price, item.quantity.toString()]);
 		const cartToken = nodeBase64.encode(JSON.stringify(formattedItems));
 		const userIp = cart.context?.ip ?? 'xxx.x.xxx.xxx';
@@ -62,7 +66,7 @@ export default class PayTRProviderService extends PaymentService {
 			orderId: merchantOid,
 			email: cart.customer?.email,
 			ip: userIp,
-			currency_code,
+			currency_code: region.currency.symbol.toUpperCase(),
 			cartToken,
 			merchantConfig: this.#merchantConfig,
 		});
@@ -75,7 +79,7 @@ export default class PayTRProviderService extends PaymentService {
 			no_installment: this.#merchantConfig.no_installment,
 			max_installment: this.#merchantConfig.max_installment,
 			payment_amount: amount,
-			currency: currency_code,
+			currency: region.currency.symbol.toUpperCase(),
 			user_name: (cart?.billing_address?.first_name + ' ' + cart?.billing_address?.last_name).trim(),
 			user_address: billingAddress,
 			email: cart.customer?.email,
