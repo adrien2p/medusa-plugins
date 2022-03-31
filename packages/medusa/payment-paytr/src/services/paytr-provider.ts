@@ -200,6 +200,11 @@ export default class PayTRProviderService extends PaymentService {
 			status,
 		};
 		await paymentSessionRepo.save(pendingPaymentSession);
+		let order = await this.#orderService.retrieveByCartId(cartId);
+		if (!order) {
+			order = await this.#orderService.createFromCart(cartId);
+		}
+		await this.#orderService.capturePayment(order.id);
 	}
 
 	async retrieveCart(cartId: string): Promise<Cart> {
