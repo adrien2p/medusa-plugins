@@ -192,8 +192,11 @@ export default class PayTRProviderService extends PaymentService {
 		}
 
 		const paymentSessionRepo = this.#manager.getCustomRepository(this.#paymentSessionRepository);
-		cart.payment_session.status = PaymentSessionStatus.AUTHORIZED;
+		cart.payment_session.status =
+			status === 'success' ? PaymentSessionStatus.AUTHORIZED : PaymentSessionStatus.ERROR;
 		await paymentSessionRepo.save(cart.payment_session);
+		if (status === 'error') return;
+
 		let order = await this.#orderService.retrieveByCartId(cartId);
 		if (!order) {
 			order = await this.#orderService.createFromCart(cartId);

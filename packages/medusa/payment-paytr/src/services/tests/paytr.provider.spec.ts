@@ -86,20 +86,40 @@ describe('PayTrProvider', () => {
 		expect(status).toBe(PaymentSessionStatus.ERROR);
 	});
 
-	it('should create an order on success callback', async () => {
+	describe('on handleCallback calls', () => {
 		const merchantOid = buildOid(cartMockData.id.split('_').pop());
-		const successCallbackData = {
+		const getCallbackData = (status: 'success' | 'error') => ({
 			merchant_oid: merchantOid,
-			status: 'success' as 'success' | 'error',
+			status,
 			total_amount: 100,
-			hash: buildPaytrToken(merchantOid + merchantConfig.merchant_salt + 'success' + 100, {
+			hash: buildPaytrToken(merchantOid + merchantConfig.merchant_salt + status + 100, {
 				merchant_key: merchantConfig.merchant_key,
 			}),
-		};
-		await provider.handleCallback(successCallbackData);
-		const expectedCartId = getCartIdFromOid(merchantOid);
-		expect(OrderServiceMock.retrieveByCartId).toHaveBeenCalledWith(expectedCartId);
-		expect(OrderServiceMock.createFromCart).toHaveBeenCalledWith(expectedCartId);
-		expect(OrderServiceMock.capturePayment).toHaveBeenCalledWith('or_dzlkfzengzelkgvnz');
+		});
+
+		it('should not create an order on fail', async () => {
+			await provider.handleCallback(getCallbackData('error'));
+			expect(PaymentMockRepository.save).toHaveBeenCalledWith(
+				expect.objectContaining({
+					status: PaymentSessionStatus.ERROR,
+				})
+			);
+			expect(OrderServiceMock.retrieveByCartId).not.toHaveBeenCalledWith();
+			expect(OrderServiceMock.createFromCart).not.toHaveBeenCalledWith();
+			expect(OrderServiceMock.capturePayment).not.toHaveBeenCalledWith();
+		});
+
+		it('should create an order on success', async () => {
+			await provider.handleCallback(getCallbackData('success'));
+			expect(PaymentMockRepository.save).toHaveBeenCalledWith(
+				expect.objectContaining({
+					status: PaymentSessionStatus.AUTHORIZED,
+				})
+			);
+			const expectedCartId = getCartIdFromOid(merchantOid);
+			expect(OrderServiceMock.retrieveByCartId).toHaveBeenCalledWith(expectedCartId);
+			expect(OrderServiceMock.createFromCart).toHaveBeenCalledWith(expectedCartId);
+			expect(OrderServiceMock.capturePayment).toHaveBeenCalledWith('or_dzlkfzengzelkgvnz');
+		});
 	});
 });
