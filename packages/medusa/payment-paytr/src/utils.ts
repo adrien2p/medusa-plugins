@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { Cart, PaymentSession } from '@medusajs/medusa/dist';
+import { Cart } from '@medusajs/medusa/dist';
 import * as FormData from 'form-data';
 import { IncomingMessage } from 'http';
 import { MerchantConfig, PayTrResponse } from './types';
@@ -84,18 +84,6 @@ export function convertIpToIpv4(ip: string): string {
 	}
 
 	return result;
-}
-
-export function findPendingPaymentSession(
-	paymentsSessions: PaymentSession[],
-	{ merchantOid }: { merchantOid: string }
-): PaymentSession {
-	return paymentsSessions.find(
-		(session) =>
-			session.provider_id === 'paytr' &&
-			session.data.merchantOid === merchantOid &&
-			session.data.isPending === true
-	);
 }
 
 export function request(endpoint: string, data: Record<string, unknown>): Promise<unknown> {

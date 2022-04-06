@@ -13,7 +13,6 @@ import {
 	buildOid,
 	buildPaymentToken,
 	buildPaytrToken,
-	findPendingPaymentSession,
 	getCartIdFromOid,
 	request,
 } from '../utils';
@@ -52,9 +51,11 @@ export default class PayTRProviderService extends PaymentService {
 	async generateToken(cartId: string): Promise<string | never> {
 		const cart = await this.retrieveCart(cartId);
 		const amount = await this.#totalsService.getTotal(cart);
-		const region = await this.#regionService.retrieve(cart.region_id, { relations: ['currency']});
+		const region = await this.#regionService.retrieve(cart.region_id, { relations: ['currency'] });
 		if (region?.currency?.symbol.toLowerCase() !== 'tl') {
-			throw new Error('Unable to use the payTr payment provider with currency: ' + region.currency.symbol + '. Expected TL');
+			throw new Error(
+				'Unable to use the payTr payment provider with currency: ' + region.currency.symbol + '. Expected TL'
+			);
 		}
 
 		const formattedItems = cart.items.map((item) => [item.title, item.unit_price, item.quantity.toString()]);
@@ -101,7 +102,7 @@ export default class PayTRProviderService extends PaymentService {
 
 	async createPayment(cart: Cart): Promise<PaymentSessionData> {
 		const merchantOid = buildOid(cart.id.split('_').pop());
-		return { merchantOid, isPending: true };
+		return { merchantOid };
 	}
 
 	async getStatus(data: PaymentData): Promise<PaymentSessionStatus> {
@@ -186,20 +187,13 @@ export default class PayTRProviderService extends PaymentService {
 
 		const cartId = getCartIdFromOid(merchant_oid);
 		const cart = await this.retrieveCart(cartId);
-		const pendingPaymentSession = findPendingPaymentSession(cart.payment_sessions, {
-			merchantOid: merchant_oid,
-		});
-		if (!pendingPaymentSession) {
+		if (!cart.payment_session) {
 			throw new Error('Unable to complete payment session. The payment session was not found.');
 		}
 
 		const paymentSessionRepo = this.#manager.getCustomRepository(this.#paymentSessionRepository);
-		pendingPaymentSession.data = {
-			...pendingPaymentSession.data,
-			isPending: !(status === 'success'),
-			status,
-		};
-		await paymentSessionRepo.save(pendingPaymentSession);
+		cart.payment_session.status = PaymentSessionStatus.AUTHORIZED;
+		await paymentSessionRepo.save(cart.payment_session);
 		let order = await this.#orderService.retrieveByCartId(cartId);
 		if (!order) {
 			order = await this.#orderService.createFromCart(cartId);

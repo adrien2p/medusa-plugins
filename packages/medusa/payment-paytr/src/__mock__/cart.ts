@@ -24,6 +24,9 @@ export const cartMockData = {
 			quantity: 10,
 		},
 	],
+	payment_session: {
+		status: 'pending',
+	},
 	metadata: {
 		ip: 'XX.XXX.XXX.XX',
 	},
