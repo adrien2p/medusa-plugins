@@ -16,14 +16,9 @@ export default (app: Router): Router => {
 };
 
 async function webhook(req: CustomRequest, res: Response): Promise<void> {
-	try {
-		const data = req.body;
+	const data = req.body;
 
-		const payTRProviderService = req.scope.resolve('pp_paytr') as PayTRProviderService;
-		await payTRProviderService.handleCallback(data);
-
-		res.send('OK');
-	} catch (err) {
-		res.status(400).json({ message: err.message });
-	}
+	const payTRProviderService = req.scope.resolve('pp_paytr') as PayTRProviderService;
+	await payTRProviderService.handleCallback(data);
+	res.send('OK');
 }

@@ -13,7 +13,7 @@ import { TotalsServiceMock } from '../../__mock__/totals';
 import { cartMockData, CartServiceMock } from '../../__mock__/cart';
 import { MerchantConfig } from '../../types';
 import { Cart } from '@medusajs/medusa/dist';
-import { buildOid, buildPaytrToken, getCartIdFromOid } from '../../utils';
+import { buildOid } from '../../utils';
 import { PaymentSessionStatus } from '@medusajs/medusa/dist/models/payment-session';
 
 const merchantConfig: MerchantConfig = {
@@ -35,12 +35,6 @@ const RegionServiceMock = {
 	retrieve: jest.fn().mockReturnValue(Promise.resolve({ currency_code: 'TL', currency: { symbol: 'TL' } })),
 };
 
-const OrderServiceMock = {
-	retrieveByCartId: jest.fn().mockReturnValue(Promise.resolve()),
-	createFromCart: jest.fn().mockReturnValue(Promise.resolve({ id: 'or_dzlkfzengzelkgvnz' })),
-	capturePayment: jest.fn().mockReturnValue(Promise.resolve()),
-};
-
 const PaymentMockRepository = MockRepository({
 	save: jest.fn().mockReturnValue(Promise.resolve()),
 });
@@ -58,7 +52,6 @@ describe('PayTrProvider', () => {
 				customerService: CustomerServiceMock,
 				regionService: RegionServiceMock,
 				totalsService: TotalsServiceMock,
-				orderService: OrderServiceMock,
 			},
 			merchantConfig
 		);
@@ -84,42 +77,5 @@ describe('PayTrProvider', () => {
 
 		status = await provider.getStatus({ status: 'rejected' });
 		expect(status).toBe(PaymentSessionStatus.ERROR);
-	});
-
-	describe('on handleCallback calls', () => {
-		const merchantOid = buildOid(cartMockData.id.split('_').pop());
-		const getCallbackData = (status: 'success' | 'error') => ({
-			merchant_oid: merchantOid,
-			status,
-			total_amount: 100,
-			hash: buildPaytrToken(merchantOid + merchantConfig.merchant_salt + status + 100, {
-				merchant_key: merchantConfig.merchant_key,
-			}),
-		});
-
-		it('should not create an order on fail', async () => {
-			await provider.handleCallback(getCallbackData('error'));
-			expect(PaymentMockRepository.save).toHaveBeenCalledWith(
-				expect.objectContaining({
-					status: PaymentSessionStatus.ERROR,
-				})
-			);
-			expect(OrderServiceMock.retrieveByCartId).not.toHaveBeenCalledWith();
-			expect(OrderServiceMock.createFromCart).not.toHaveBeenCalledWith();
-			expect(OrderServiceMock.capturePayment).not.toHaveBeenCalledWith();
-		});
-
-		it('should create an order on success', async () => {
-			await provider.handleCallback(getCallbackData('success'));
-			expect(PaymentMockRepository.save).toHaveBeenCalledWith(
-				expect.objectContaining({
-					status: PaymentSessionStatus.AUTHORIZED,
-				})
-			);
-			const expectedCartId = getCartIdFromOid(merchantOid);
-			expect(OrderServiceMock.retrieveByCartId).toHaveBeenCalledWith(expectedCartId);
-			expect(OrderServiceMock.createFromCart).toHaveBeenCalledWith(expectedCartId);
-			expect(OrderServiceMock.capturePayment).toHaveBeenCalledWith('or_dzlkfzengzelkgvnz');
-		});
 	});
 });

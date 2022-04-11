@@ -10,6 +10,7 @@ coverage
 
 /api/
 /services/
+/subscribers/
 utils.js
 types.js
 index.js

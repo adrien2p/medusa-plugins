@@ -1,9 +1,7 @@
-import OrderService from '@medusajs/medusa/dist/services/order';
 import TotalsService from '@medusajs/medusa/dist/services/totals';
-import { Cart, Payment, PaymentSession } from '@medusajs/medusa/dist';
+import { Cart, Payment, PaymentSession, PaymentSessionStatus } from '@medusajs/medusa/dist';
 import { CustomerService, RegionService } from '@medusajs/medusa/dist/services';
 import { PaymentService } from 'medusa-interfaces';
-import { PaymentSessionStatus } from '@medusajs/medusa/dist/models/payment-session';
 import { MerchantConfig, PaymentData, PaymentSessionData } from '../types';
 import CartService from '@medusajs/medusa/dist/services/cart';
 import * as nodeBase64 from 'nodejs-base64-converter';
@@ -25,14 +23,13 @@ export default class PayTRProviderService extends PaymentService {
 
 	readonly #manager: EntityManager;
 	readonly #paymentSessionRepository: typeof PaymentSessionRepository;
-	readonly #orderService: OrderService;
 	readonly #customerService: CustomerService;
 	readonly #regionService: RegionService;
 	readonly #totalsService: TotalsService;
 	readonly #cartService: CartService;
 
 	constructor(
-		{ manager, paymentSessionRepository, cartService, customerService, totalsService, regionService, orderService },
+		{ manager, paymentSessionRepository, cartService, customerService, totalsService, regionService },
 		options: MerchantConfig
 	) {
 		super();
@@ -41,7 +38,6 @@ export default class PayTRProviderService extends PaymentService {
 
 		this.#manager = manager;
 		this.#paymentSessionRepository = paymentSessionRepository;
-		this.#orderService = orderService;
 		this.#customerService = customerService;
 		this.#regionService = regionService;
 		this.#totalsService = totalsService;
@@ -115,12 +111,19 @@ export default class PayTRProviderService extends PaymentService {
 		return status === 'success' ? PaymentSessionStatus.AUTHORIZED : PaymentSessionStatus.ERROR;
 	}
 
-	async getPaymentData(sessionData: { data: PaymentSessionData }): Promise<PaymentSessionData> {
+	async getPaymentData(sessionData: { data: PaymentSessionData }): Promise<PaymentData> {
 		return sessionData.data;
 	}
 
 	async authorizePayment(paymentSession: PaymentSession): Promise<{ status: string; data: PaymentSessionData }> {
-		return { status: 'authorized', data: paymentSession.data };
+		return {
+			status: !paymentSession.data.status
+				? PaymentSessionStatus.PENDING
+				: paymentSession.data.status === 'success'
+				? PaymentSessionStatus.AUTHORIZED
+				: PaymentSessionStatus.ERROR,
+			data: paymentSession.data,
+		};
 	}
 
 	async updatePayment(
@@ -194,14 +197,8 @@ export default class PayTRProviderService extends PaymentService {
 		const paymentSessionRepo = this.#manager.getCustomRepository(this.#paymentSessionRepository);
 		cart.payment_session.status =
 			status === 'success' ? PaymentSessionStatus.AUTHORIZED : PaymentSessionStatus.ERROR;
+		cart.payment_session.data.status = status;
 		await paymentSessionRepo.save(cart.payment_session);
-		if (status === 'error') return;
-
-		let order = await this.#orderService.retrieveByCartId(cartId);
-		if (!order) {
-			order = await this.#orderService.createFromCart(cartId);
-		}
-		await this.#orderService.capturePayment(order.id);
 	}
 
 	async retrieveCart(cartId: string): Promise<Cart> {
