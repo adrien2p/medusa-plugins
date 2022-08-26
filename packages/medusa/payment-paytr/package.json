@@ -46,7 +46,7 @@
     "medusa-core-utils": "^1.1.31",
     "medusa-interfaces": "^1.2.1",
     "medusa-test-utils": "^1.1.37",
-    "mongoose": "^6.2.0",
+    "mongoose": "^6.4.6",
     "regenerator-runtime": "^0.13.9",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.3",
