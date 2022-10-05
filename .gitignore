@@ -9,6 +9,7 @@ dist
 coverage
 
 /tsconfig.tsbuildinfo
+/packages/tsconfig.tsbuildinfo
 /package-lock.json
 /yarn.json
 
