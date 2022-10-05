@@ -1,20 +1,26 @@
 {
-  "name": "medusa-plugins",
+  "name": "@medusa-plugins/medusa-plugins",
+  "private": true,
   "version": "0.0.0",
   "description": "A collection of awesome plugins for medusa and medusa-extender :rocket:",
   "engines": {
-    "node": "14.17.3"
+    "node": ">14.17.3"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
   },
   "scripts": {
-    "clean": "./node_modules/.bin/lerna run clean",
-    "build": "./node_modules/.bin/lerna run build",
+    "build": "run-p clean run-s build:api /node_modules/.bin/lerna/tsc -b ./packages/tsconfig.api-base.json",
+    "bootstrap": "./node_modules/.bin/lerna/lerna bootstrap",
+    "clean": "./node_modules/.bin/lerna/lerna run --parallel clean",
+    "release": "./node_modules/.bin/lerna/lerna publish",
     "watch": "./node_modules/.bin/lerna run watch",
     "test": "./node_modules/.bin/lerna run test",
     "test:local": "./node_modules/.bin/lerna run test:local",
-    "bootstrap": "./node_modules/.bin/lerna bootstrap --no-hoist",
     "lint": "./node_modules/.bin/eslint 'packages/**/*.ts' --fix",
-    "format": "./node_modules/.bin/prettier 'packages/**/*.ts' --write",
-    "release": "npx lerna verion"
+    "format": "./node_modules/.bin/prettier 'packages/**/*.ts' --write"
   },
   "repository": {
     "type": "git",
@@ -26,6 +32,9 @@
     "url": "https://github.com/adrien2p/medusa-plugins/issues"
   },
   "homepage": "https://github.com/adrien2p/medusa-plugins#readme",
+  "dependencies": {
+    "rimraf": "^3.0.1"
+  },
   "devDependencies": {
     "lerna": "^4.0.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
@@ -34,8 +43,9 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.5.0",
-    "rimraf": "^3.0.2",
-    "tslint": "~6.1.0"
+    "tslint": "~6.1.0",
+    "typescript": "^3.7.5"
   }
 }

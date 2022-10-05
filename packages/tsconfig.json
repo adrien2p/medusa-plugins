@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "emitDecoratorMetadata": true,
+    "module": "commonjs",
+    "noEmit": false,
+    "composite": true
+  },
+  "files": [],
+  "references": [{ "path": "./medusa-plugin-sentry" }]
+}

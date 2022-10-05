@@ -1,19 +1,13 @@
 .idea
 /lib
 /dist
+api/
 node_modules
 .DS_store
 **/.DS_Store
 
 dist
 coverage
-
-/api/
-/services/
-/subscribers/
-utils.js
-types.js
-index.js
 
 /tsconfig.tsbuildinfo
 /package-lock.json

@@ -1,9 +1,9 @@
 {
-  "npmClient": "npm",
   "packages": [
-    "packages/medusa/*",
-    "packages/medusa-extender/*"
+    "packages/*"
   ],
+  "npmClient": "yarn",
+  "useWorkspaces": true,
   "command": {
     "publish": {
       "conventionalCommits": true,
