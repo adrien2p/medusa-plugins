@@ -1,19 +1,16 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
+import cors from 'cors';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
-import { NodeOptions } from '@sentry/node/types/types';
-import { Integration } from '@sentry/types/types/integration';
-import { RequestHandlerOptions } from '@sentry/node/types/handlers';
+import authenticate from '@medusajs/medusa/dist/api/middlewares/authenticate';
+import wrapHandler from '@medusajs/medusa/dist/api/middlewares/await-middleware';
+import { getConfigFile } from 'medusa-core-utils';
 
-export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
-	integrations: Integration[] | ((router: Router, sentry: typeof Sentry, tracing: typeof Tracing) => Integration[]);
-	shouldHandleError: (code: number) => boolean;
-	requestHandlerOptions?: RequestHandlerOptions;
-	enableRequestHandler?: boolean;
-	enableTracing?: boolean;
-};
-
-export default function (rootDirectory, pluginOptions: SentryOptions) {
+import { SentryOptions, SentryWebHookOptions } from '../types';
+import sentryTransactionsHandler from './handlers/sentry-transaction';
+import sentryTransactionEventsHandler from './handlers/sentry-transaction-events';
+import sentryWebHookHandler from './handlers/sentry-web-hook';
+export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 	const router = Router();
 
 	const {
@@ -22,6 +19,7 @@ export default function (rootDirectory, pluginOptions: SentryOptions) {
 		requestHandlerOptions = {},
 		enableTracing = true,
 		enableRequestHandler = true,
+		webHookOptions,
 		...options
 	} = pluginOptions;
 
@@ -41,6 +39,23 @@ export default function (rootDirectory, pluginOptions: SentryOptions) {
 		router.use(Sentry.Handlers.tracingHandler());
 	}
 
+	attachSentryErrorHandler(shouldHandleError);
+
+	if (webHookOptions) {
+		attachSentryWebHook(router, webHookOptions);
+	}
+
+	attachAdminEndPoints(router, rootDirectory, pluginOptions);
+
+	return router;
+}
+
+/**
+ * Attach the sentry error handler in the medusa core
+ * @param shouldHandleError
+ */
+function attachSentryErrorHandler(shouldHandleError) {
+	/* eslint-disable @typescript-eslint/no-var-requires */
 	const medusaErrorHandler = require('@medusajs/medusa/dist/api/middlewares/error-handler');
 	const originalMedusaErrorHandler = medusaErrorHandler.default;
 	medusaErrorHandler.default = () => {
@@ -59,6 +74,47 @@ export default function (rootDirectory, pluginOptions: SentryOptions) {
 			})(err, req, res, () => void 0);
 		};
 	};
+}
 
-	return router;
+/**
+ * Attach sentry web hook
+ * @param router
+ * @param webHookOptions
+ */
+function attachSentryWebHook(router: Router, webHookOptions: SentryWebHookOptions): void {
+	router.post(
+		'/admin' + webHookOptions.path,
+		express.json(),
+		express.urlencoded({ extended: true }),
+		sentryWebHookHandler(webHookOptions)
+	);
+}
+
+/**
+ * Attach specific sentry end point to fetch data under the admin domain
+ * @param router
+ * @param rootDirectory
+ * @param pluginOptions
+ */
+function attachAdminEndPoints(router, rootDirectory, pluginOptions) {
+	const { apiToken } = pluginOptions;
+	const { configModule } = getConfigFile(rootDirectory, 'medusa-config') as {
+		configModule: { projectConfig: { admin_cors: string } };
+	};
+	const { projectConfig } = configModule;
+
+	const corsOptions = {
+		origin: projectConfig.admin_cors.split(','),
+		credentials: true,
+	};
+
+	router.options('/admin/sentry-transactions', cors(corsOptions));
+	router.get('/admin/sentry-transactions', authenticate(), wrapHandler(sentryTransactionsHandler(apiToken)));
+
+	router.options('/admin/sentry-transaction-events', cors(corsOptions));
+	router.get(
+		'/admin/sentry-transaction-events',
+		authenticate(),
+		wrapHandler(sentryTransactionEventsHandler(apiToken))
+	);
 }

@@ -1,0 +1,219 @@
+<p align="center">
+	<a href="https://npmcharts.com/compare/medusa-plugin-sentry?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/medusa-plugin-sentry.svg" height="20"/></a>
+	<a href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugin-sentry/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/adrien2p/medusa-plugin-sentry.svg" height="20"/></a>
+	<a href="https://github.com/adrien2p/awesome-medusajs"><img alt="Awesome medusajs" src="https://awesome.re/badge.svg" height="20"/></a>
+	<a href="https://adrien2p.github.io/medusa-plugin-sentry/#/"><img alt="Documentation" src="https://img.shields.io/badge/documentation-online-important" height="20"/></a>
+	<a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20The%20new%20medusa%sentry%20plugin&url=https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry"><img alt="Twitter" src="https://badgen.net/badge/icon/twitter?icon=twitter&label=Share%20it%20on" height="20"/></a>
+	<a href="https://discord.gg/xpCwq3Kfn8"><img alt="Discord" src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" height="20"/></a>
+	<a href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="Npm download" src="https://img.shields.io/npm/dt/medusa-plugin-sentry" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugin-sentry/commits/main"><img alt="Activity" src="https://img.shields.io/github/commit-activity/m/adrien2p/medusa-plugin-sentry?style=flat" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugin-sentry/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugin-sentry?style=flat" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugin-sentry/blob/main/LICENSE"><img alt="Licence" src="https://img.shields.io/github/license/adrien2p/medusa-plugin-sentry?style=flat" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugin-sentry/blob/main/CONTRIBUTING.md"><img alt="Contributing" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" height="20"/></a>
+</p>
+
+# Medusa Sentry plugin
+
+## Getting started
+
+First of all, you need to install the plugin as follow  
+`yarn add @medusa-plugins/medusa-plugni-sentry`
+
+Then, go to your `medusa-config.js` file and in the plugins collection property add the following at the beginning to be registered first
+```javascript
+{
+  resolve: `@medusa-plugins/medusa-plugin-sentry`,
+  options: {
+    dsn: "__YOUR_DSN__",
+    apiToken: "__YOUR_API_TOKEN__",
+    integrations: (router, Sentry, Tracing) => {
+      return [
+        new Sentry.Integrations.Http({ tracing: true }),
+        new Tracing.Integrations.Express({ router }),
+      ];
+    },
+    tracesSampleRate: 1.0,
+    shouldHandleError: (code) => code >= 400,
+    webHookOptions: {
+      path: "/sentry/webhook",
+      secret: "__YOUR_SECRET__",
+      emitOnIssue: true,
+      emitOnError: false,
+      emitOnComment: true,
+      emitOnEventOrMetricAlert: true,
+      emitOnInstallOrDeleted: false,
+    }
+  },
+},
+```
+
+> The `webHookOptions.path` is always attached on the `/admin` domain. Which means that if you specify something like `/sentry` the result path will be `/admin/sentry`
+
+## Configuration
+
+You can see above some configuration for the plugin. To be able to know all the options available
+you can have a look at
+- [NodeOptions](https://github.com/getsentry/sentry-javascript/blob/7304215d875decf0bf555cab82aa90fc1341b27e/packages/node/src/types.ts#L30)
+
+And here are the plugin configuration types
+```typescript
+export type SentryWebHookOptions = {
+    path: string;
+    secret: string;
+    emitOnIssue?: boolean | ((req) => Promise<void>);
+    emitOnError?: boolean | ((req) => Promise<void>);
+    emitOnComment?: boolean | ((req) => Promise<void>);
+    emitOnEventOrMetricAlert?: boolean | ((req) => Promise<void>);
+    emitOnInstallOrDeleted?: boolean | ((req) => Promise<void>);
+}
+
+export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
+    integrations: Integration[] | ((router: Router, sentry: typeof Sentry, tracing: typeof Tracing) => Integration[]);
+    shouldHandleError: (code: number) => boolean;
+    requestHandlerOptions?: RequestHandlerOptions;
+    enableRequestHandler?: boolean;
+    enableTracing?: boolean;
+    webHookOptions?: SentryWebHookOptions,
+};
+```
+
+## Web hooks
+
+> Learn more about sentry integration [here](https://docs.sentry.io/product/integrations/integration-platform/)
+
+With this plugin, you can register the path and options to the web hook you want to make available for sentry
+using the `webHookOptions` from the [config](#getting-started).
+
+To activate the web hook you have to provide the appropriate configurations.
+
+Once sentry send an event to the web hook, each type of resource will emit 
+his own event that you can subscribe to using the medusa [subscribers](https://docs.medusajs.com/advanced/backend/subscribers/overview/).
+
+Here is the list of the event that can be emitted
+
+```typescript
+export enum SentryWebHookEvent {
+    SENTRY_RECEIVED_ISSUE = 'SentryReceivedIssue',
+    SENTRY_RECEIVED_ERROR = 'SentryReceivedError',
+    SENTRY_RECEIVED_COMMENT = 'SentryReceivedComment',
+    SENTRY_RECEIVED_EVENT_OR_METRIC_ALERT = 'SentryReceivedEventOrMetricAlert',
+    SENTRY_RECEIVED_INSTALL_OR_DELETED = 'SentryReceivedInstallOrDeleted',
+}
+```
+
+It is also possible to specify a function for each of the `emitOn*` options which take the request as the parameter. From that method you can
+resolve any of your services and call it to handle the event. In that case, the even bus will not fire the corresponding event.
+
+## API
+
+The sentry plugins will provide you some authenticated end points if you want to get some data about your transactions and events related to the transactions.
+
+### /admin/sentry-transactions
+
+This end point allow you to retrieve all your transactions for a given period, here are the allowed query parameters
+
+```markdown
+- organisation    - The organisation to fetch the transactions from
+- project         - The project to fetch the transactions from
+- statsPeriod     - The period from when to fetch the transactions (default: 24h) 
+- perPage         - The number of transaction per page
+- cursor          - The cursor to send to fetch the transactions for a given page
+```
+
+The output of that query looks like the following
+
+```json
+{
+    "data": [
+        {
+            "transaction": "POST /admin/customers/:id",
+            "id": "***",
+            "project.name": "node-express"
+        },
+        // ... 19 other items
+    ],
+    "meta": {
+        "fields": {
+            "transaction": "string",
+            "id": "string",
+            "project.name": "string"
+        },
+        "units": {
+            "transaction": null,
+            "id": null,
+            "project.name": null
+        },
+        "isMetricsData": false,
+        "tips": {
+            "query": null,
+            "columns": null
+        }
+    },
+    "next_cursor": "0:20:0",
+    "prev_cursor": "0:0:0"
+}
+```
+
+### /admin/sentry-transaction-events
+
+This end point allow you to retrieve all your transaction events for a given period, here are the allowed query parameters
+
+```markdown
+- transaction     - The transaction for which the events must be retrieved (e.g "GET /admin/users")
+- organisation    - The organisation to fetch the transactions from
+- project         - The project to fetch the transactions from
+- statsPeriod     - The period from when to fetch the transactions (default: 24h) 
+- perPage         - The number of transaction per page
+- cursor          - The cursor to send to fetch the transactions for a given page
+```
+
+The output of that query looks like the following
+
+```json
+{
+    "data": [
+        {
+            "spans.db": 46.443939,
+            "timestamp": "2022-10-11T14:00:11+00:00",
+            "id": "***",
+            "transaction.duration": 115,
+            "spans.http": null,
+            "project.name": "node-express"
+        },
+        {
+            "spans.db": 5.561113,
+            "timestamp": "2022-10-11T13:30:43+00:00",
+            "id": "***",
+            "transaction.duration": 18,
+            "spans.http": null,
+            "project.name": "node-express"
+        }
+    ],
+    "meta": {
+        "fields": {
+            "spans.db": "duration",
+            "timestamp": "date",
+            "id": "string",
+            "transaction.duration": "duration",
+            "spans.http": "duration",
+            "project.name": "string"
+        },
+        "units": {
+            "spans.db": "millisecond",
+            "timestamp": null,
+            "id": null,
+            "transaction.duration": "millisecond",
+            "spans.http": "millisecond",
+            "project.name": null
+        },
+        "isMetricsData": false,
+        "tips": {
+            "query": null,
+            "columns": null
+        }
+    },
+    "prev_cursor": "0:0:0",
+    "next_cursor": "0:100:0"
+}
+```

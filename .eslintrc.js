@@ -19,9 +19,28 @@ module.exports = {
       '**/.prettier*',
       '**/.version*',
       '**/*.md',
-      '**/*.js'
+      '**/*.js',
+      '**/*.js.map',
+      '**/*.d.ts'
+  ],
+  overrides: [
+    {
+      files: ["*"],
+      "rules": {
+        "prefer-rest-params": "off"
+      }
+    }
   ],
   rules: {
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        "types": {
+          "Function": false
+        },
+        "extendDefaults": true
+      }
+    ]
   },
 };

@@ -11,7 +11,6 @@
 <a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 <a href="https://github.com/adrien2p/medusa-plugins/blob/main/LICENSE"><img alt="Licence" src="https://img.shields.io/github/license/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 <a href="https://github.com/adrien2p/medusa-plugins/blob/main/CONTRIBUTING.md"><img alt="Contributing" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" height="20"/></a>
-<a href="https://github.com/adrien2p/medusa-plugins/actions/workflows/codeql-analysis.yml"><img alt="CodeQL security analysis status" src="https://github.com/adrien2p/medusa-plugins/actions/workflows/codeql-analysis.yml/badge.svg" height="20"/></a>
 	</p>
 
 <p align="center">
@@ -48,9 +47,9 @@ make it easier for you to find them :rocket:
 
 # Plugins
 
-| Name                      | Target        | Badges                                       |
-|---------------------------|---------------|----------------------------------------------|
-| `payment-paytr`           | `medusa`      |                                              |
+| Name                                                                                                                | Target        | Badges                                                                                                                                                                                                                                                                                                                                                    |
+|---------------------------------------------------------------------------------------------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [`medusa-plugin-sentry (Link)`](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry) | `medusa`      | <a href="https://npmcharts.com/compare/medusa-plugin-sentry?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/medusa-plugin-sentry.svg" height="20"/></a> <a href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a> |
 
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#discussions)
 
@@ -72,25 +71,3 @@ If you found the package helpful consider supporting me with a coffee
 # Contribute
 
 Contributions are welcome! You can look at the contribution [guidelines](./CONTRIBUTING.md)
-
-## Test a package locally
-
-Go to the plugin package directory and Build your local plugin
-
-```bash
-npm run build
-npm pack
-```
-
-Then copy the tgz file newly creating by the `pack` command into your project.
-
-## Target project
-
-In your target project past the tgz file previously copied.
-then update your `package.json`
-
-```bash
-"my-package": "file:my-package-1.0.0.tgz"
-```
-
-now run `npm i` and run your project
