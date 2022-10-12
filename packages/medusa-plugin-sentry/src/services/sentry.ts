@@ -121,7 +121,7 @@ export default class SentryService extends TransactionBaseService {
 	async handleIssues(data: SentryWebHookData): Promise<void> {
 		await this.manager_.transaction(async (transactionManager) => {
 			if (isFunction(this.config_.webHookOptions.emitOnIssue)) {
-				return await this.config_.webHookOptions.emitOnIssue(this.__container__);
+				return await this.config_.webHookOptions.emitOnIssue(this.__container__, data);
 			}
 			await this.eventBusService_
 				.withTransaction(transactionManager)
@@ -132,7 +132,7 @@ export default class SentryService extends TransactionBaseService {
 	async handleErrors(data: SentryWebHookData): Promise<void> {
 		await this.manager_.transaction(async (transactionManager) => {
 			if (isFunction(this.config_.webHookOptions.emitOnError)) {
-				return await this.config_.webHookOptions.emitOnError(this.__container__);
+				return await this.config_.webHookOptions.emitOnError(this.__container__, data);
 			}
 			await this.eventBusService_
 				.withTransaction(transactionManager)
@@ -143,7 +143,7 @@ export default class SentryService extends TransactionBaseService {
 	async handleComments(data: SentryWebHookData): Promise<void> {
 		await this.manager_.transaction(async (transactionManager) => {
 			if (isFunction(this.config_.webHookOptions.emitOnComment)) {
-				return await this.config_.webHookOptions.emitOnComment(this.__container__);
+				return await this.config_.webHookOptions.emitOnComment(this.__container__, data);
 			}
 			await this.eventBusService_
 				.withTransaction(transactionManager)
@@ -154,7 +154,7 @@ export default class SentryService extends TransactionBaseService {
 	async handleAlerts(data: SentryWebHookData): Promise<void> {
 		await this.manager_.transaction(async (transactionManager) => {
 			if (isFunction(this.config_.webHookOptions.emitOnEventOrMetricAlert)) {
-				return await this.config_.webHookOptions.emitOnEventOrMetricAlert(this.__container__);
+				return await this.config_.webHookOptions.emitOnEventOrMetricAlert(this.__container__, data);
 			}
 			await this.eventBusService_
 				.withTransaction(transactionManager)
@@ -165,7 +165,7 @@ export default class SentryService extends TransactionBaseService {
 	async handleInstallation(data: SentryWebHookData): Promise<void> {
 		await this.manager_.transaction(async (transactionManager) => {
 			if (isFunction(this.config_.webHookOptions.emitOnInstallOrDeleted)) {
-				return await this.config_.webHookOptions.emitOnInstallOrDeleted(this.__container__);
+				return await this.config_.webHookOptions.emitOnInstallOrDeleted(this.__container__, data);
 			}
 			await this.eventBusService_
 				.withTransaction(transactionManager)

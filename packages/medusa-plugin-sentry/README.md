@@ -61,12 +61,12 @@ And here are the plugin configuration types
 export type SentryWebHookOptions = {
     path: string;
     secret: string;
-    emitOnIssue?: boolean | ((req) => Promise<void>);
-    emitOnError?: boolean | ((req) => Promise<void>);
-    emitOnComment?: boolean | ((req) => Promise<void>);
-    emitOnEventOrMetricAlert?: boolean | ((req) => Promise<void>);
-    emitOnInstallOrDeleted?: boolean | ((req) => Promise<void>);
-}
+    emitOnIssue?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+    emitOnError?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+    emitOnComment?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+    emitOnEventOrMetricAlert?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+    emitOnInstallOrDeleted?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+};
 
 export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
     integrations: Integration[] | ((router: Router, sentry: typeof Sentry, tracing: typeof Tracing) => Integration[]);
