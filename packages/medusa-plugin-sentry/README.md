@@ -1,4 +1,10 @@
 <p align="center">
+  <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medusa-plugin-sentry.png?raw=true" alt="Medusa-plugins logo" width="500" height="auto" />
+</p>
+
+<h1 align="center">medusa-plugin-sentry</h1>
+
+<p align="center">
 	<a href="https://npmcharts.com/compare/medusa-plugin-sentry?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/medusa-plugin-sentry.svg" height="20"/></a>
 	<a href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugin-sentry/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/adrien2p/medusa-plugin-sentry.svg" height="20"/></a>
@@ -12,8 +18,6 @@
 	<a href="https://github.com/adrien2p/medusa-plugin-sentry/blob/main/LICENSE"><img alt="Licence" src="https://img.shields.io/github/license/adrien2p/medusa-plugin-sentry?style=flat" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugin-sentry/blob/main/CONTRIBUTING.md"><img alt="Contributing" src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" height="20"/></a>
 </p>
-
-# Medusa Sentry plugin
 
 ## Getting started
 
