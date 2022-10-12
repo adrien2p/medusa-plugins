@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-sentry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Adrien de Peretti",
   "description": "Sentry plugin for medusajs",
   "keywords": [
