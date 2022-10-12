@@ -16,7 +16,8 @@
     "api",
     "handlers",
     "utils",
-    "types"
+    "types",
+    "services"
   ],
   "scripts": {
     "build": "run-s clean build:tsc",
