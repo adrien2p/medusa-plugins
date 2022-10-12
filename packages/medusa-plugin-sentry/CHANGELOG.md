@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.1...medusa-plugin-sentry@1.1.2) (2022-10-12)
+
+
+### Features
+
+* **medusa-plugin-sentry:** add repo to package.json ([2a407f0](https://github.com/adrien2p/medusa-plugins/commit/2a407f03af0aaaa1ab48d8ca9ff0753cc3edb508))
+* **medusa-plugin-sentry:** Fix package.json ([09664c7](https://github.com/adrien2p/medusa-plugins/commit/09664c719931825ec030828afcef51273544f5e1))
+
+
+
+
+
 ## [1.1.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.0...medusa-plugin-sentry@1.1.1) (2022-10-12)
 
 
