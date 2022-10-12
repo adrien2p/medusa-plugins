@@ -1,7 +1,6 @@
 {
   "name": "medusa-plugin-sentry",
   "version": "1.1.1",
-  "author": "Adrien de Peretti",
   "description": "Sentry plugin for medusajs",
   "keywords": [
     "analytics",
@@ -12,6 +11,11 @@
     "error-management"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrien2p/medusa-plugins.git"
+  },
+  "author": "Adrien de Peretti <adrien.deperetti@gmail.com",
   "files": [
     "api",
     "handlers",
