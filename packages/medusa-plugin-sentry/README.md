@@ -5,13 +5,11 @@
 <h1 align="center">medusa-plugin-sentry</h1>
 
 <p align="center">
-	<a href="https://npmcharts.com/compare/medusa-plugin-sentry?minimal=true"><img alt="Downloads per month" src="https://img.shields.io/npm/dm/medusa-plugin-sentry.svg" height="20"/></a>
 	<a href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugins/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/adrien2p/medusa-plugins.svg" height="20"/></a>
 	<a href="https://github.com/adrien2p/awesome-medusajs"><img alt="Awesome medusajs" src="https://awesome.re/badge.svg" height="20"/></a>
 	<a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20The%20new%20medusa%sentry%20plugin&url=https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry"><img alt="Twitter" src="https://badgen.net/badge/icon/twitter?icon=twitter&label=Share%20it%20on" height="20"/></a>
 	<a href="https://discord.gg/xpCwq3Kfn8"><img alt="Discord" src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" height="20"/></a>
-	<a href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="Npm download" src="https://img.shields.io/npm/dt/medusa-plugin-sentry" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugins/commits/main"><img alt="Activity" src="https://img.shields.io/github/commit-activity/m/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 </p>
