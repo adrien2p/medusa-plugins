@@ -12,9 +12,9 @@
     ]
   },
   "scripts": {
-    "bootstrap": "./node_modules/.bin/lerna/lerna bootstrap",
-    "clean": "./node_modules/.bin/lerna/lerna run --parallel clean",
-    "release": "./node_modules/.bin/lerna/lerna publish",
+    "bootstrap": "./node_modules/.bin/lerna bootstrap",
+    "clean": "./node_modules/.bin/lerna run --parallel clean",
+    "release": "./node_modules/.bin/lerna publish",
     "watch": "./node_modules/.bin/lerna run watch",
     "test": "./node_modules/.bin/lerna run test",
     "test:local": "./node_modules/.bin/lerna run test:local",
