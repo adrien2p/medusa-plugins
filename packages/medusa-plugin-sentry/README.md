@@ -27,7 +27,7 @@ First of all, you need to install the plugin as follow
 Then, go to your `medusa-config.js` file and in the plugins collection property add the following at the beginning to be registered first
 ```javascript
 {
-  resolve: `@medusa-plugins/medusa-plugin-sentry`,
+  resolve: `medusa-plugin-sentry`,
   options: {
     dsn: "__YOUR_DSN__",
     apiToken: "__YOUR_API_TOKEN__",
