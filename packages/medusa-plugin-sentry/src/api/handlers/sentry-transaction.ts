@@ -5,15 +5,16 @@ import { IsOptional, IsString } from 'class-validator';
 
 export default (token: string) => {
 	return async (req: Request, res: Response) => {
-		const { organisation, project, statsPeriod, perPage, cursor } = await validator(
+		const { organisation, project, statsPeriod, perPage, cursor, query } = await validator(
 			GetSentryTransactionsParams,
 			req.query
 		);
 
 		const sentryService: SentryService = req.scope.resolve(SentryService.RESOLVE_KEY);
-		const result = await sentryService.fetchSentryTransactions({
+		const result = await sentryService.fetchTransactions({
 			organisation,
 			project,
+			query,
 			statsPeriod,
 			perPage,
 			cursor,
@@ -40,4 +41,8 @@ export class GetSentryTransactionsParams {
 	@IsOptional()
 	@IsString()
 	cursor?: string;
+
+	@IsOptional()
+	@IsString()
+	query?: string;
 }

@@ -41,15 +41,17 @@ export default class SentryService extends TransactionBaseService {
 	 * Fetch paginated transactions from an organisation project on sentry
 	 * @param organisation The organisation on which to fetch the transactions
 	 * @param project The project in the organisation on which to fetch the transactions
+	 * @param query Equation to filter the result (https://docs.sentry.io/product/sentry-basics/search/)
 	 * @param statsPeriod The period from when to fetch the transactions (default: 24h)
 	 * @param perPage The number of transaction per page
 	 * @param token The token to use to send request to sentry
 	 * @param cursor The cursor to send to fetch the transactions for a given page
 	 * @return The result is composed of the data and the next cursor for the pagination purpose
 	 */
-	async fetchSentryTransactions({
+	async fetchTransactions({
 		organisation,
 		project,
+		query,
 		statsPeriod,
 		perPage,
 		token,
@@ -61,8 +63,9 @@ export default class SentryService extends TransactionBaseService {
 			field: 'transaction',
 			per_page: Number(perPage),
 			project,
-			query: `event.type:transaction`,
+			query: `event.type:transaction${query ? " AND " + query : ""}`,
 			statsPeriod,
+			sort: '-transaction',
 			// The three values from cursor are: cursor identifier (integer, usually 0), row offset, and is_prev (1 or 0).
 			// e.g 0:10:0
 			cursor,
@@ -81,6 +84,7 @@ export default class SentryService extends TransactionBaseService {
 	 * @param transaction The transaction for which to fetch the events (e.g "GET /admin/users")
 	 * @param organisation The organisation on which to fetch the transactions
 	 * @param project The project in the organisation on which to fetch the transactions
+	 * @param query Equation to filter the result (https://docs.sentry.io/product/sentry-basics/search/)
 	 * @param statsPeriod The period from when to fetch the transactions (default: 24h)
 	 * @param perPage The number of transaction per page
 	 * @param token The token to use to send request to sentry
@@ -91,6 +95,7 @@ export default class SentryService extends TransactionBaseService {
 		transaction,
 		organisation,
 		project,
+		query,
 		statsPeriod,
 		perPage,
 		token,
@@ -102,7 +107,7 @@ export default class SentryService extends TransactionBaseService {
 			field: ['id', 'transaction.duration', 'timestamp', 'spans.db'],
 			per_page: Number(perPage),
 			project,
-			query: `event.type:transaction transaction:"${transaction}"`,
+			query: `event.type:transaction AND transaction:"${transaction}"${query ? " AND " + query : ""}`,
 			statsPeriod,
 			sort: '-timestamp',
 			// The three values from cursor are: cursor identifier (integer, usually 0), row offset, and is_prev (1 or 0).
