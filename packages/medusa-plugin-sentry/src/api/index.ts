@@ -108,10 +108,10 @@ function attachAdminEndPoints(router, rootDirectory, pluginOptions) {
 		credentials: true,
 	};
 
-	router.options('/admin/sentry-transactions', cors(corsOptions));
+	router.use('/admin/sentry-transactions', cors(corsOptions));
 	router.get('/admin/sentry-transactions', authenticate(), wrapHandler(sentryTransactionsHandler(apiToken)));
 
-	router.options('/admin/sentry-transaction-events', cors(corsOptions));
+	router.use('/admin/sentry-transaction-events', cors(corsOptions));
 	router.get(
 		'/admin/sentry-transaction-events',
 		authenticate(),
