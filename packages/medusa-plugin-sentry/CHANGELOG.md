@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.2...medusa-plugin-sentry@1.1.3) (2022-10-13)
+
+
+### Bug Fixes
+
+* Cors issue ([d14d8f2](https://github.com/adrien2p/medusa-plugins/commit/d14d8f23cb0279f69ca161896ac5c6e9b9afd081))
+
+
+### Features
+
+* **api:** Add support for equation in 'query' query param for sentry end points ([19c5e1e](https://github.com/adrien2p/medusa-plugins/commit/19c5e1eff1dde7a7a32e0c91985748483b0daaa7))
+
+
+
+
+
 ## [1.1.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.1...medusa-plugin-sentry@1.1.2) (2022-10-12)
 
 
