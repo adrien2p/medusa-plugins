@@ -63,7 +63,7 @@ export default class SentryService extends TransactionBaseService {
 			field: 'transaction',
 			per_page: Number(perPage),
 			project,
-			query: `event.type:transaction${query ? " AND " + query : ""}`,
+			query: `event.type:transaction${query ? ' AND ' + query : ''}`,
 			statsPeriod,
 			sort: '-transaction',
 			// The three values from cursor are: cursor identifier (integer, usually 0), row offset, and is_prev (1 or 0).
@@ -107,7 +107,7 @@ export default class SentryService extends TransactionBaseService {
 			field: ['id', 'transaction.duration', 'timestamp', 'spans.db'],
 			per_page: Number(perPage),
 			project,
-			query: `event.type:transaction AND transaction:"${transaction}"${query ? " AND " + query : ""}`,
+			query: `event.type:transaction AND transaction:"${transaction}"${query ? ' AND ' + query : ''}`,
 			statsPeriod,
 			sort: '-timestamp',
 			// The three values from cursor are: cursor identifier (integer, usually 0), row offset, and is_prev (1 or 0).

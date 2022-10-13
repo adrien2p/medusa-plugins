@@ -32,5 +32,5 @@ export class GetSentryTransactionEventsParams extends GetSentryTransactionsParam
 
 	@IsOptional()
 	@IsString()
-	query?: string
+	query?: string;
 }
