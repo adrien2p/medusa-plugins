@@ -115,6 +115,7 @@ This end point allow you to retrieve all your transactions for a given period, h
 ```markdown
 - organisation    - The organisation to fetch the transactions from
 - project         - The project to fetch the transactions from
+- query           - Equation to filter the result (https://docs.sentry.io/product/sentry-basics/search/)
 - statsPeriod     - The period from when to fetch the transactions (default: 24h) 
 - perPage         - The number of transaction per page
 - cursor          - The cursor to send to fetch the transactions for a given page
@@ -162,6 +163,7 @@ This end point allow you to retrieve all your transaction events for a given per
 - transaction     - The transaction for which the events must be retrieved (e.g "GET /admin/users")
 - organisation    - The organisation to fetch the transactions from
 - project         - The project to fetch the transactions from
+- query           - Equation to filter the result (https://docs.sentry.io/product/sentry-basics/search/)
 - statsPeriod     - The period from when to fetch the transactions (default: 24h) 
 - perPage         - The number of transaction per page
 - cursor          - The cursor to send to fetch the transactions for a given page
