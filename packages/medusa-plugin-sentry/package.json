@@ -27,7 +27,8 @@
     "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
     "clean": "rimraf api handlers utils types coverage tsconfig.tsbuildinfo",
-    "test": "jest"
+    "test": "jest",
+    "test:ci": "yarn add @medusajs/medusa@${MEDUSAJS_VERSION} && jest -i --collect-coverage && npm run coverage:badges"
   },
   "peerDependencies": {
     "@medusajs/medusa": "^1.4.1",
