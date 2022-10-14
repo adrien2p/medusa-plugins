@@ -15,7 +15,7 @@ describe('sentry service', () => {
 		emit: jest.fn().mockImplementation(() => Promise.resolve()),
 	} as unknown as EventBusService;
 
-	let config = {
+	const config = {
 		apiToken: 'fake_api_token',
 		dsn: 'fake_dsn',
 		integrations: (router, Sentry, Tracing) => {

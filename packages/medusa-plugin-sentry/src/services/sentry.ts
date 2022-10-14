@@ -104,7 +104,7 @@ export default class SentryService extends TransactionBaseService {
 		perPage = perPage ?? 100;
 
 		const queryParams = {
-			field: ['id', 'transaction.duration', 'timestamp', 'spans.db'],
+			field: ['id', 'transaction.duration', 'timestamp', 'spans.db', 'project'],
 			per_page: Number(perPage),
 			project,
 			query: `event.type:transaction AND transaction:"${transaction}"${query ? ' AND ' + query : ''}`,
@@ -203,7 +203,7 @@ export default class SentryService extends TransactionBaseService {
 		});
 
 		const nextCursor = SentryService.buildNextCursor(headers['link']);
-		const currentCursor = SentryService.buildCurrentCursor(headers['link'], perPage)
+		const currentCursor = SentryService.buildCurrentCursor(headers['link'], perPage);
 
 		let prevCursor: string;
 		if (currentCursor) {
@@ -235,7 +235,7 @@ export default class SentryService extends TransactionBaseService {
 			result = nextCursorMatch[1]?.split(',')[0];
 		}
 
-		return this.buildPrevCursor(result, perPage)
+		return this.buildPrevCursor(result, perPage);
 	}
 
 	protected static buildPrevCursor(nextCursor: string, perPage: number): string | undefined {
