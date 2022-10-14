@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.4](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.3...medusa-plugin-sentry@1.1.4) (2022-10-14)
+
+
+### Features
+
+* Include more data from the fetched sentry transactions and improve pagination ([e476e50](https://github.com/adrien2p/medusa-plugins/commit/e476e5097d28a4828714d741f48fc8f1cf2ec7fd))
+
+
+
+
+
 ## [1.1.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.2...medusa-plugin-sentry@1.1.3) (2022-10-13)
 
 
