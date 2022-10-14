@@ -10,7 +10,6 @@ on:
 jobs:
   medusa-plugin-sentry-unit-test:
     runs-on: ubuntu-latest
-    working-directory: ./packages/medusa-plugin-sentry
     strategy:
       matrix:
         node-verion: [16.x]
@@ -32,9 +31,11 @@ jobs:
           node-version: ${{ matrix.node-verion }}
 
       - name: 'yarn install'
+        working-directory: ./packages/medusa-plugin-sentry
         run: yarn
 
       - name: 'run unit tests'
+        working-directory: ./packages/medusa-plugin-sentry
         run: yarn run test:ci
         env:
           MEDUSAJS_VERSION: ${{ matrix.medusajs-version }}
