@@ -10,6 +10,7 @@ import { SentryOptions, SentryWebHookOptions } from '../types';
 import sentryTransactionsHandler from './handlers/sentry-transaction';
 import sentryTransactionEventsHandler from './handlers/sentry-transaction-events';
 import sentryWebHookHandler from './handlers/sentry-web-hook';
+
 export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 	const router = Router();
 

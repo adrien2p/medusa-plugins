@@ -60,7 +60,7 @@ export default class SentryService extends TransactionBaseService {
 		perPage = perPage ?? 100;
 
 		const queryParams = {
-			field: 'transaction',
+			field: ['transaction', 'tpm()', 'p50()', 'p75()', 'p95()', 'failure_rate', 'apdex()'],
 			per_page: Number(perPage),
 			project,
 			query: `event.type:transaction${query ? ' AND ' + query : ''}`,
@@ -202,30 +202,48 @@ export default class SentryService extends TransactionBaseService {
 			params: searchParams,
 		});
 
-		const nextCursor: string = SentryService.buildNextCursor(headers['link']);
+		const nextCursor = SentryService.buildNextCursor(headers['link']);
+		const currentCursor = SentryService.buildCurrentCursor(headers['link'], perPage)
 
 		let prevCursor: string;
-		if (nextCursor) {
-			prevCursor = SentryService.buildPrevCursor(nextCursor, perPage);
+		if (currentCursor) {
+			prevCursor = SentryService.buildPrevCursor(currentCursor, perPage);
 		}
 
 		return { data, meta, prev_cursor: prevCursor, next_cursor: nextCursor };
 	}
 
-	protected static buildNextCursor(link: string): string {
-		let result = '';
+	protected static buildNextCursor(link: string): string | undefined {
+		let result;
+
+		const nextCursorMatch = link?.match(/.*cursor="(.*)"$/);
+		const hasResults = link?.match(/.*results="(.*)";/);
+		if (hasResults && hasResults[1] === 'true') {
+			if (nextCursorMatch && nextCursorMatch[1]) {
+				result = nextCursorMatch[1]?.split(',')[0];
+			}
+		}
+
+		return result;
+	}
+
+	protected static buildCurrentCursor(link: string, perPage: number): string | undefined {
+		let result;
 
 		const nextCursorMatch = link?.match(/.*cursor="(.*)"$/);
 		if (nextCursorMatch && nextCursorMatch[1]) {
 			result = nextCursorMatch[1]?.split(',')[0];
 		}
 
-		return result;
+		return this.buildPrevCursor(result, perPage)
 	}
 
-	protected static buildPrevCursor(nextCursor: string, perPage: number): string {
+	protected static buildPrevCursor(nextCursor: string, perPage: number): string | undefined {
 		const parts = nextCursor.split(':');
-		const prevCursorItems = Math.max(0, Number(parts[1]) - perPage * 2);
+		const prevCursorItems = Number(parts[1]) - perPage;
+		if (prevCursorItems < 0) {
+			return;
+		}
 		return `${parts[0]}:${prevCursorItems}:${parts[2]}`;
 	}
 }
