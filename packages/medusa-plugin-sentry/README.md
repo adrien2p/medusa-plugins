@@ -21,8 +21,7 @@ Resolve JavaScript errors with max efficiency, not max effort. Get actionable in
 
 ## Getting started
 
-First of all, you need to install the plugin as follow  
-`yarn add @medusa-plugins/medusa-plugni-sentry`
+First of all, you need to install the plugin as follow `yarn add medusa-plugnin-sentry`
 
 Then, go to your `medusa-config.js` file and in the plugins collection property add the following at the beginning to be registered first
 ```javascript
