@@ -1,7 +1,7 @@
 import { OpenAPI } from 'openapi-types';
 import { NextFunction } from 'express';
 
-export type PrometheusOptions = {
+export type SwaggerStats = {
 	name?: string;
 	version?: string;
 	hostname?: string;

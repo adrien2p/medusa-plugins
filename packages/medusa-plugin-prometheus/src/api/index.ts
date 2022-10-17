@@ -1,8 +1,8 @@
 import { RequestHandler, Router } from 'express';
 import * as swStats from 'swagger-stats';
-import { PrometheusOptions } from '../types';
+import { SwaggerStats } from '../types';
 
-export default function (rootDirectory, pluginOptions: PrometheusOptions): RequestHandler[] {
+export default function (rootDirectory, pluginOptions: SwaggerStats): RequestHandler[] {
 	const router = Router();
 
 	const { name = 'Medusa monitoring Dashboard', ...promOptions } = pluginOptions;
