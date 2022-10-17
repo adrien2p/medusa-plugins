@@ -14,6 +14,11 @@
 	<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 </p>
 
+## Description
+
+JavaScript Error and Performance Monitoring
+Resolve JavaScript errors with max efficiency, not max effort. Get actionable insights to resolve JavaScript performance issues with the ability to track, debug, and resolve JavaScript errors across platforms.
+
 ## Getting started
 
 First of all, you need to install the plugin as follow  
