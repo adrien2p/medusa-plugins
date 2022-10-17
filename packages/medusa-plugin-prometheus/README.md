@@ -38,6 +38,14 @@ Then, go to your `medusa-config.js` file and in the plugins collection property 
 },
 ```
 
+### Output Dashboard
+
+<p align="left">
+  <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medusa-plugin-prom-dashboard-1.png?raw=true" alt="Medusa-plugin-prometheus-dashboard-1 logo" width="300" height="auto" />
+<img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medusa-plugin-prom-dashboard-2.png?raw=true" alt="Medusa-plugin-prometheus-dashboard-2 logo" width="300" height="auto" style="margin-left: 1rem" />
+<img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medusa-plugin-prom-dashboard-3.png?raw=true" alt="Medusa-plugin-prometheus-dashboard-3 logo" width="300" height="auto" style="margin-left: 1rem" />
+</p>
+
 ## Configuration
 
 You can see above some configuration for the plugin. To be able to know all the options available

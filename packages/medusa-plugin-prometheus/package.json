@@ -21,7 +21,7 @@
   "author": "Adrien de Peretti <adrien.deperetti@gmail.com",
   "files": [
     "api",
-    "types",
+    "types"
   ],
   "scripts": {
     "build": "run-s clean build:tsc",

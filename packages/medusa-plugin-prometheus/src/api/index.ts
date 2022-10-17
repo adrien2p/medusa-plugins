@@ -6,10 +6,7 @@ export default function (rootDirectory, pluginOptions: SwaggerStats): RequestHan
 	const router = Router();
 
 	const { name = 'Medusa monitoring Dashboard', ...promOptions } = pluginOptions;
-	const options = {
-		...promOptions,
-		name: 'Medusa monitoring Dashboard',
-	};
+	const options = { name, ...promOptions }
 
 	let globalMiddlewares = [swStats.getMiddleware(options)];
 	if (options.swaggerSpec && typeof options.swaggerSpec === 'string') {
