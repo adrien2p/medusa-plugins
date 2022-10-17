@@ -16,8 +16,9 @@
 
 ## Description
 
-JavaScript Error and Performance Monitoring
-Resolve JavaScript errors with max efficiency, not max effort. Get actionable insights to resolve JavaScript performance issues with the ability to track, debug, and resolve JavaScript errors across platforms.
+swagger-stats traces REST API requests and responses in Node.js Microservices, and collects statistics per API Operation. swagger-stats detects API operations based on express routes. You may also provide Swagger (Open API) specification, and swagger-stats will match API requests with API Operations defined in swagger specification.
+
+The data can be served to **kibana through ElasticSearch** or can also be consumed by **Grafana**
 
 ## Getting started
 
@@ -26,10 +27,14 @@ First of all, you need to install the plugin as follow `yarn add @medusa-plugins
 Then, go to your `medusa-config.js` file and in the plugins collection property add the following at the beginning to be registered first
 ```javascript
 {
-  resolve: `medusa-plugin-prometheus`,
-  options: {
-    uriPath: "/monitoring"
-  },
+    resolve: `medusa-plugin-prometheus`,
+    options: {
+        uriPath: "/monitoring",
+        authentication: true,
+        onAuthenticate: (req, username, password) => {
+          return username === process.env.PROM_USER_NAME && password = process.env.PROM_USER_PASS 
+        },
+    },
 },
 ```
 
@@ -61,3 +66,7 @@ export type SwaggerStats = {
 };
 
 ```
+
+## Grafana
+
+Get started quickly with that guide [here](https://prometheus.io/docs/visualization/grafana/)
