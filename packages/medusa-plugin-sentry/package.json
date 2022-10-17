@@ -27,7 +27,8 @@
     "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
     "clean": "rimraf api handlers utils types coverage tsconfig.tsbuildinfo",
-    "test": "jest"
+    "test": "jest",
+    "test:ci": "yarn add @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
   },
   "peerDependencies": {
     "@medusajs/medusa": "^1.4.1",
@@ -56,6 +57,27 @@
     "express": "^4.18.1"
   },
   "jest": {
-    "preset": "ts-jest"
+    "preset": "ts-jest",
+	"moduleFileExtensions": [
+		"js",
+		"json",
+		"ts"
+	],
+	"testTimeout": 100000,
+	"rootDir": "src",
+	"testRegex": ".*\\.spec\\.ts$",
+	"transformIgnorePatterns": ["/node_modules/"],
+	"collectCoverageFrom": [
+		"**/*.(t|j)s",
+		"!**/__*__/*.(t|j)s"
+	],
+	"coverageReporters": [
+		"json-summary",
+		"text",
+		"lcov"
+	],
+	"coverageDirectory": "<rootDir>/../coverage",
+	"testEnvironment": "node",
+  	"setupFilesAfterEnv": ["<rootDir>/../setup-tests.js"]
   }
 }

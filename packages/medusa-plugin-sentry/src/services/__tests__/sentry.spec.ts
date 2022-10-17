@@ -6,7 +6,7 @@ import { SentryWebHookEvent } from '../../types';
 
 describe('sentry service', () => {
 	let axiosGetSpy;
-	let sentryService;
+	let sentryService: SentryService;
 
 	const eventBusServiceMock = {
 		withTransaction: function () {
@@ -32,7 +32,7 @@ describe('sentry service', () => {
 
 	beforeAll(() => {
 		axiosGetSpy = jest.spyOn(axios, 'get').mockImplementation(() => {
-			return Promise.resolve({ data: { data: [], meta: {} }, headers: { link: '' } });
+			return Promise.resolve({ data: { data: [], meta: {} }, headers: { link: 'results="true";cursor="0:100:0"' } });
 		});
 
 		sentryService = new SentryService(
@@ -53,7 +53,7 @@ describe('sentry service', () => {
 	});
 
 	it('should fetchSentryTransactions', async () => {
-		const res = await sentryService.fetchSentryTransactions({
+		const res = await sentryService.fetchTransactions({
 			organisation: 'org',
 			project: 'pro',
 			statsPeriod: '24h',
@@ -73,7 +73,7 @@ describe('sentry service', () => {
 		expect(res).toEqual({
 			data: [],
 			meta: {},
-			next_cursor: '',
+			next_cursor: '0:100:0',
 			prev_cursor: undefined,
 		});
 	});
@@ -100,7 +100,7 @@ describe('sentry service', () => {
 		expect(res).toEqual({
 			data: [],
 			meta: {},
-			next_cursor: '',
+			next_cursor: '0:100:0',
 			prev_cursor: undefined,
 		});
 	});

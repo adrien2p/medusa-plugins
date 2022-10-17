@@ -56,6 +56,14 @@ export default class SentryService extends TransactionBaseService {
 		perPage,
 		token,
 		cursor,
+	}: {
+		organisation: string;
+		project: string
+		token: string;
+		query?: string;
+		statsPeriod?: string;
+		perPage?: string | number;
+		cursor?: string;
 	}): Promise<SentryFetchResult> {
 		perPage = perPage ?? 100;
 
@@ -100,6 +108,15 @@ export default class SentryService extends TransactionBaseService {
 		perPage,
 		token,
 		cursor,
+	}: {
+		transaction: string;
+		organisation: string;
+		project: string
+		token: string;
+		query?: string;
+		statsPeriod?: string;
+		perPage?: string | number;
+		cursor?: string;
 	}): Promise<SentryFetchResult> {
 		perPage = perPage ?? 100;
 
@@ -235,7 +252,7 @@ export default class SentryService extends TransactionBaseService {
 			result = nextCursorMatch[1]?.split(',')[0];
 		}
 
-		return this.buildPrevCursor(result, perPage);
+		return result ? this.buildPrevCursor(result, perPage) : undefined;
 	}
 
 	protected static buildPrevCursor(nextCursor: string, perPage: number): string | undefined {
