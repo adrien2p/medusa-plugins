@@ -16,7 +16,6 @@ export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 
 	const {
 		integrations,
-		shouldHandleError = (code) => code >= 400,
 		requestHandlerOptions = {},
 		enableTracing = true,
 		enableRequestHandler = true,
@@ -40,7 +39,7 @@ export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 		router.use(Sentry.Handlers.tracingHandler());
 	}
 
-	attachSentryErrorHandler(shouldHandleError);
+	attachSentryErrorHandler();
 
 	if (webHookOptions) {
 		attachSentryWebHook(router, webHookOptions);
@@ -53,26 +52,17 @@ export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 
 /**
  * Attach the sentry error handler in the medusa core
- * @param shouldHandleError
  */
-function attachSentryErrorHandler(shouldHandleError) {
+function attachSentryErrorHandler() {
 	/* eslint-disable @typescript-eslint/no-var-requires */
 	const medusaErrorHandler = require('@medusajs/medusa/dist/api/middlewares/error-handler');
 	const originalMedusaErrorHandler = medusaErrorHandler.default;
 	medusaErrorHandler.default = () => {
 		return (err, req, res, next) => {
-			let statusCode;
-			const res_ = {
-				...res,
-				status: (status) => {
-					statusCode = status;
-					return res;
-				},
-			};
-			originalMedusaErrorHandler()(err, req, res_, next);
 			Sentry.Handlers.errorHandler({
-				shouldHandleError: () => shouldHandleError(statusCode),
+				shouldHandleError: () => true,
 			})(err, req, res, () => void 0);
+			originalMedusaErrorHandler()(err, req, res, next);
 		};
 	};
 }

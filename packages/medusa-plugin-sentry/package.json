@@ -26,7 +26,7 @@
   "scripts": {
     "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
-    "clean": "rimraf api handlers utils types coverage tsconfig.tsbuildinfo",
+    "clean": "rimraf api services utils types coverage tsconfig.tsbuildinfo",
     "test": "jest",
     "test:ci": "yarn add @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
   },

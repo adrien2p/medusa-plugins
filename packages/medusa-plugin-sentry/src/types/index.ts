@@ -18,7 +18,6 @@ export type SentryWebHookOptions = {
 export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
 	integrations: Integration[] | ((router: Router, sentry: typeof Sentry, tracing: typeof Tracing) => Integration[]);
 	apiToken?: string;
-	shouldHandleError: (code: number) => boolean;
 	requestHandlerOptions?: RequestHandlerOptions;
 	enableRequestHandler?: boolean;
 	enableTracing?: boolean;

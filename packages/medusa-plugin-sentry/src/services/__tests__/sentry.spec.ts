@@ -32,7 +32,10 @@ describe('sentry service', () => {
 
 	beforeAll(() => {
 		axiosGetSpy = jest.spyOn(axios, 'get').mockImplementation(() => {
-			return Promise.resolve({ data: { data: [], meta: {} }, headers: { link: 'results="true";cursor="0:100:0"' } });
+			return Promise.resolve({
+				data: { data: [], meta: {} },
+				headers: { link: 'results="true";cursor="0:100:0"' },
+			});
 		});
 
 		sentryService = new SentryService(

@@ -58,7 +58,7 @@ export default class SentryService extends TransactionBaseService {
 		cursor,
 	}: {
 		organisation: string;
-		project: string
+		project: string;
 		token: string;
 		query?: string;
 		statsPeriod?: string;
@@ -111,7 +111,7 @@ export default class SentryService extends TransactionBaseService {
 	}: {
 		transaction: string;
 		organisation: string;
-		project: string
+		project: string;
 		token: string;
 		query?: string;
 		statsPeriod?: string;

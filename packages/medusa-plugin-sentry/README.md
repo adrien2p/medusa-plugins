@@ -38,7 +38,6 @@ Then, go to your `medusa-config.js` file and in the plugins collection property 
       ];
     },
     tracesSampleRate: 1.0,
-    shouldHandleError: (code) => code >= 400,
     webHookOptions: {
       path: "/sentry/webhook",
       secret: "__YOUR_SECRET__",
@@ -74,7 +73,6 @@ export type SentryWebHookOptions = {
 
 export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
     integrations: Integration[] | ((router: Router, sentry: typeof Sentry, tracing: typeof Tracing) => Integration[]);
-    shouldHandleError: (code: number) => boolean;
     requestHandlerOptions?: RequestHandlerOptions;
     enableRequestHandler?: boolean;
     enableTracing?: boolean;
