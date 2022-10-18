@@ -1,14 +1,13 @@
-import dts from "rollup-plugin-dts";
-
+import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 
-import packageJson from "./package.json" assert { type: "json" }
+import packageJson from "./package.json"
 
 export default [
   {
-    input: "lib/index.ts",
+    input: "src/index.tsx",
     output: [
       {
         file: packageJson.main,
@@ -22,14 +21,12 @@ export default [
       }
     ],
     plugins: [
-      resolve(),
+      peerDepsExternal(),
+      resolve({
+        browser: true
+      }),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" })
     ]
   },
-//  {
-//    input: "dist/esm/types/index.d.ts",
-//    output: [{ file: "dist/index.d.ts", format: "esm" }],
-//    plugins: [dts()]
-//  }
 ];
