@@ -5,8 +5,7 @@ import { usePagination, useTable } from "react-table"
 import Table  from "../../components/temp/molecules/table"
 import InputField from "../../components/temp/molecules/input"
 import Tooltip from "../../components/temp/atoms/tooltip"
-import { useSentryTransactionsFilters } from "./hooks/use-sentry-transaction-events-filter"
-import { RouteComponentProps } from "@reach/router"
+import { useSentryTransactionEventsFilters } from "./hooks/use-sentry-transaction-events-filter"
 import { TablePagination } from "../../components/table-pagination"
 import { SentryTableRow } from "../../components/table-row"
 import { defaultFilterValues } from "../../types"
@@ -15,9 +14,10 @@ import { navigate } from "gatsby"
 import PublishIcon from "../../components/temp/fundamentals/icons/publish-icon"
 
 type Props = {
-  medusaClient: any;
+  medusaClient: any
   organisation: string;
   project: string;
+  location: Location
 }
 
 const useSentryTransactionEventsTableColumn = (transaction: string) => {
@@ -94,8 +94,8 @@ const useSentryTransactionEventsTableColumn = (transaction: string) => {
   return [columns] as const
 }
 
-const SentryTransactionEvents = (props: RouteComponentProps & Props) => {
-  const { medusaClient, organisation, project } = props
+const SentryTransactionEvents = (props: Props) => {
+  const { medusaClient, organisation, project, location } = props
 
   const {
     setStatsPeriod,
@@ -105,9 +105,9 @@ const SentryTransactionEvents = (props: RouteComponentProps & Props) => {
     filters,
     queryObject,
     representationObject,
-  } = useSentryTransactionsFilters(location.search)
+  } = useSentryTransactionEventsFilters(location.search)
 
-  const [transactions, setTransactions] = useState([])
+  const [events, setEvents] = useState([])
   const [nextCursor, setNextCursor] = useState()
   const [prevCursor, setPrevCursor] = useState()
   const [isLoading, setIsLoading] = useState(false)
@@ -118,7 +118,7 @@ const SentryTransactionEvents = (props: RouteComponentProps & Props) => {
       ...queryObject,
       cursor: filters.cursor
     }).then(({ data, next_cursor, prev_cursor }) => {
-      setTransactions(data)
+      setEvents(data)
       setNextCursor(next_cursor)
       setPrevCursor(prev_cursor)
     }).finally(() => {
@@ -136,7 +136,7 @@ const SentryTransactionEvents = (props: RouteComponentProps & Props) => {
 
   const updateUrlFromFilter = (obj = {}) => {
     const stringifield = qs.stringify(obj)
-    window.history.replaceState(`/a/sentry`, "", `${`?${stringifield}`}`)
+    window.history.replaceState(`/`, "", `${`?${stringifield}`}`)
   }
 
   const refreshWithFilters = () => {
@@ -176,7 +176,7 @@ const SentryTransactionEvents = (props: RouteComponentProps & Props) => {
   } = useTable(
     {
       columns,
-      data: transactions ?? [],
+      data: events ?? [],
       manualPagination: true,
       autoResetPage: false
     } as any,
@@ -245,16 +245,18 @@ const SentryTransactionEvents = (props: RouteComponentProps & Props) => {
               <Table.Body {...getTableBodyProps()}>
                 {
                   rows?.length > 0
-                  ? rows.map((row: any) => {
+                  && rows.map((row: any) => {
                       prepareRow(row)
                       return <SentryTableRow row={row} {...row.getRowProps()} getActions={() => getActions(row)} />
                     })
-                    : <p>data avaialable</p>
                 }
               </Table.Body>
             </>
           )}
         </Table>
+
+        {!isLoading && !rows.length && <p className="flex justify-center p-4">No data to show</p>}
+
         <TablePagination
           nextPage={handleNext}
           prevPage={handlePrev}

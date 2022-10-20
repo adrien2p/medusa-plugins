@@ -35,9 +35,9 @@ export const buildMedusaClient = ({
 			let path = '/admin/sentry-transactions';
 
 			query = {
+				statsPeriod: defaultFilterValues.statsPeriod,
 				...(query ?? {}),
 				transaction: undefined,
-				statsPeriod: defaultFilterValues.statsPeriod,
 				organisation,
 				project,
 			} as GetSentryTransactionsParams;
@@ -46,7 +46,7 @@ export const buildMedusaClient = ({
 				const queryString = qs.stringify(query);
 				path += `?${queryString}`;
 			}
-			return await this.client.request('GET', path, undefined);
+			return await this.client.request('GET', path, undefined, {}, {});
 		},
 		fetchSentryTransactionEvents: async function (query?: GetSentryTransactionEventsParams) {
 			let path = '/admin/sentry-transaction-events';
@@ -56,8 +56,8 @@ export const buildMedusaClient = ({
 			}
 
 			query = {
-				...(query ?? {}),
 				statsPeriod: defaultFilterValues.statsPeriod,
+				...(query ?? {}),
 				organisation,
 				project,
 			} as GetSentryTransactionEventsParams;
@@ -66,7 +66,7 @@ export const buildMedusaClient = ({
 				const queryString = qs.stringify(query);
 				path += `?${queryString}`;
 			}
-			return await this.client.request('GET', path, undefined);
+			return await this.client.request('GET', path, undefined, {}, {});
 		},
 	};
 };

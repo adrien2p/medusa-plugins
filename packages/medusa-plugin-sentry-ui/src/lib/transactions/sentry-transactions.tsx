@@ -17,6 +17,7 @@ type Props = {
   medusaClient: any;
   organisation: string;
   project: string;
+  location: Location
 }
 
 
@@ -107,7 +108,7 @@ const useSentryTransactionsTableColumn = () => {
 }
 
 const SentryTransactions = (props: Props) => {
-  const { medusaClient, organisation, project } = props
+  const { medusaClient, organisation, project, location } = props
 
   const {
     setStatsPeriod,
@@ -126,16 +127,14 @@ const SentryTransactions = (props: Props) => {
 
   const fetchTransactions = () => {
     setIsLoading(true)
-    medusaClient.fetchSentryTransactions({
-      ...queryObject,
-      cursor: filters.cursor
-    }).then(({ data, next_cursor, prev_cursor }) => {
-      setTransactions(data)
-      setNextCursor(next_cursor)
-      setPrevCursor(prev_cursor)
-    }).finally(() => {
-      setIsLoading(false)
-    })
+    medusaClient.fetchSentryTransactions(queryObject as any)
+      .then(({ data, next_cursor, prev_cursor }) => {
+        setTransactions(data)
+        setNextCursor(next_cursor)
+        setPrevCursor(prev_cursor)
+      }).finally(() => {
+        setIsLoading(false)
+      })
   }
 
 
@@ -149,7 +148,7 @@ const SentryTransactions = (props: Props) => {
 
   const updateUrlFromFilter = (obj = {}) => {
     const stringifield = qs.stringify(obj)
-    window.history.replaceState(`/a/sentry`, "", `${`?${stringifield}`}`)
+    window.history.replaceState(`/`, "", `${`?${stringifield}`}`)
   }
 
   const refreshWithFilters = () => {
@@ -260,16 +259,18 @@ const SentryTransactions = (props: Props) => {
               <Table.Body {...getTableBodyProps()}>
                 {
                   rows?.length > 0
-                    ? rows.map((row: any) => {
+                    && rows.map((row: any) => {
                         prepareRow(row)
-                        return <SentryTableRow row={row} {...row.getRowProps()} linkTo={`?transaction=${(row.original as any).transaction}`} getActions={() => getActions(row)} />
+                        return <SentryTableRow row={row} {...row.getRowProps()} linkTo={`?statsPeriod=24h&perPage=50&transaction=${(row.original as any).transaction}`} getActions={() => getActions(row)} />
                       })
-                    : <p>data avaialable</p>
                 }
               </Table.Body>
             </>
           )}
         </Table>
+
+        {!isLoading && !rows.length && <p className="flex justify-center p-4">No data to show</p>}
+
         <TablePagination
           nextPage={handleNext}
           prevPage={handlePrev}

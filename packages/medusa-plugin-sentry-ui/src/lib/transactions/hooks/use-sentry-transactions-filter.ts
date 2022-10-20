@@ -1,4 +1,4 @@
-import { useMemo, useReducer } from 'react';
+import { useEffect, useMemo, useReducer, useState } from 'react';
 import { parseQueryString } from '../../utils';
 import qs from 'qs';
 
@@ -11,21 +11,25 @@ type SentryTransactionFilters = {
 
 interface SentryTransactionsFiltersState {
 	statsPeriod: string;
-	perPage?: number | undefined;
-	query?: string | undefined;
-	cursor?: string | undefined;
+	perPage?: number;
+	query?: string;
+	cursor?: string;
+	transaction?: string;
 }
 
 type ProductFilterAction =
 	| { type: 'setStatsPeriod'; payload: string }
 	| { type: 'setPerPage'; payload: number | undefined }
 	| { type: 'setQuery'; payload: string | undefined }
-	| { type: 'setCursor'; payload: string | undefined };
+	| { type: 'setCursor'; payload: string | undefined }
 
 export const useSentryTransactionsFilters = (
 	existing?: string,
 	defaultFilters: SentryTransactionFilters | null = null
 ) => {
+	const [representationObject, setRepresentationObject] = useState({})
+	const [queryObject, setQueryObject] = useState({})
+
 	if (existing && existing[0] === '?') {
 		existing = existing.substring(1);
 	}
@@ -59,6 +63,7 @@ export const useSentryTransactionsFilters = (
 			toQuery[key] = value;
 		}
 
+		console.log("getQueryObject", toQuery)
 		return toQuery;
 	};
 
@@ -70,17 +75,14 @@ export const useSentryTransactionsFilters = (
 			toQuery[key] = value;
 		}
 
+		console.log("getRepresentationObject", toQuery)
 		return toQuery;
 	};
 
-	const getRepresentationString = () => {
-		const obj = getRepresentationObject();
-		return qs.stringify(obj, { skipNulls: true });
-	};
-
-	const queryObject = useMemo(() => getQueryObject(), [state]);
-	const representationObject = useMemo(() => getRepresentationObject(), [state]);
-	const representationString = useMemo(() => getRepresentationString(), [state]);
+	useEffect(() => {
+		setQueryObject(getQueryObject())
+		setRepresentationObject(getRepresentationObject())
+	}, [state]);
 
 	return {
 		...state,
@@ -88,7 +90,6 @@ export const useSentryTransactionsFilters = (
 			...state,
 		},
 		representationObject,
-		representationString,
 		queryObject,
 		setStatsPeriod,
 		setPerPage,

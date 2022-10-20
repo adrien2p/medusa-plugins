@@ -21,9 +21,10 @@ type ProductFilterAction =
 	| { type: 'setStatsPeriod'; payload: string }
 	| { type: 'setPerPage'; payload: number | undefined }
 	| { type: 'setQuery'; payload: string | undefined }
-	| { type: 'setCursor'; payload: string | undefined };
+	| { type: 'setCursor'; payload: string | undefined }
+	| { type: 'setTransaction'; payload: string | undefined };
 
-export const useSentryTransactionsFilters = (
+export const useSentryTransactionEventsFilters = (
 	existing?: string,
 	defaultFilters: SentryTransactionFilters | null = null
 ) => {
@@ -52,6 +53,10 @@ export const useSentryTransactionsFilters = (
 
 	const setCursor = (cursor?: string) => {
 		dispatch({ type: 'setCursor', payload: cursor });
+	};
+
+	const setTransaction = (transaction?: string) => {
+		dispatch({ type: 'setTransaction', payload: transaction });
 	};
 
 	const getQueryObject = () => {
@@ -95,6 +100,7 @@ export const useSentryTransactionsFilters = (
 		setPerPage,
 		setQuery,
 		setCursor,
+		setTransaction,
 	};
 };
 
@@ -125,6 +131,12 @@ const reducer = (
 			return {
 				...state,
 				cursor: action.payload,
+			};
+		}
+		case "setTransaction": {
+			return {
+				...state,
+				transaction: action.payload,
 			};
 		}
 		default: {
