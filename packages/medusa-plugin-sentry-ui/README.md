@@ -1,6 +1,6 @@
 # `medusa-plugin-sentry-ui`
 
-> TODO: description
+> A set of components for displaying `medusa-plugin-sentry` analytics.
 
 ## Usage
 
