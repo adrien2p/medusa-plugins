@@ -1,1 +1,1 @@
-export { default as Sentry } from './lib/transactions';
+export { default as Sentry } from './transactions';

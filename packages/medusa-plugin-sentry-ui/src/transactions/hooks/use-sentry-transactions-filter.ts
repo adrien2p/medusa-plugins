@@ -1,5 +1,5 @@
-import { useMemo, useReducer } from 'react';
-import { parseQueryString } from '../../../utils';
+import { useEffect, useMemo, useReducer, useState } from 'react';
+import { parseQueryString } from '../../utils';
 import qs from 'qs';
 
 type SentryTransactionFilters = {
@@ -21,13 +21,15 @@ type ProductFilterAction =
 	| { type: 'setStatsPeriod'; payload: string }
 	| { type: 'setPerPage'; payload: number | undefined }
 	| { type: 'setQuery'; payload: string | undefined }
-	| { type: 'setCursor'; payload: string | undefined }
-	| { type: 'setTransaction'; payload: string | undefined };
+	| { type: 'setCursor'; payload: string | undefined };
 
-export const useSentryTransactionEventsFilters = (
+export const useSentryTransactionsFilters = (
 	existing?: string,
 	defaultFilters: SentryTransactionFilters | null = null
 ) => {
+	const [representationObject, setRepresentationObject] = useState({});
+	const [queryObject, setQueryObject] = useState({});
+
 	if (existing && existing[0] === '?') {
 		existing = existing.substring(1);
 	}
@@ -55,16 +57,13 @@ export const useSentryTransactionEventsFilters = (
 		dispatch({ type: 'setCursor', payload: cursor });
 	};
 
-	const setTransaction = (transaction?: string) => {
-		dispatch({ type: 'setTransaction', payload: transaction });
-	};
-
 	const getQueryObject = () => {
 		const toQuery: any = { ...state };
 		for (const [key, value] of Object.entries(state)) {
 			toQuery[key] = value;
 		}
 
+		console.log('getQueryObject', toQuery);
 		return toQuery;
 	};
 
@@ -76,17 +75,14 @@ export const useSentryTransactionEventsFilters = (
 			toQuery[key] = value;
 		}
 
+		console.log('getRepresentationObject', toQuery);
 		return toQuery;
 	};
 
-	const getRepresentationString = () => {
-		const obj = getRepresentationObject();
-		return qs.stringify(obj, { skipNulls: true });
-	};
-
-	const queryObject = useMemo(() => getQueryObject(), [state]);
-	const representationObject = useMemo(() => getRepresentationObject(), [state]);
-	const representationString = useMemo(() => getRepresentationString(), [state]);
+	useEffect(() => {
+		setQueryObject(getQueryObject());
+		setRepresentationObject(getRepresentationObject());
+	}, [state]);
 
 	return {
 		...state,
@@ -94,13 +90,11 @@ export const useSentryTransactionEventsFilters = (
 			...state,
 		},
 		representationObject,
-		representationString,
 		queryObject,
 		setStatsPeriod,
 		setPerPage,
 		setQuery,
 		setCursor,
-		setTransaction,
 	};
 };
 
@@ -131,12 +125,6 @@ const reducer = (
 			return {
 				...state,
 				cursor: action.payload,
-			};
-		}
-		case "setTransaction": {
-			return {
-				...state,
-				transaction: action.payload,
 			};
 		}
 		default: {
