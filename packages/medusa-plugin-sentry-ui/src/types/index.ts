@@ -35,4 +35,5 @@ export type GetSentryTransactionsStatsParams = {
 export type AdminClient = Admin & {
 	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
 	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
+	fetchSentryTransactionsStats: (query?: GetSentryTransactionsStatsParams) => any;
 };
