@@ -1,5 +1,10 @@
 import qs from 'qs';
-import { defaultFilterValues, GetSentryTransactionEventsParams, GetSentryTransactionsParams } from '../types';
+import {
+	defaultFilterValues,
+	GetSentryTransactionEventsParams,
+	GetSentryTransactionsParams,
+	GetSentryTransactionsStatsParams,
+} from '../types';
 import Admin from '@medusajs/medusa-js/dist/resources/admin';
 import Medusa from '@medusajs/medusa-js';
 
@@ -27,6 +32,7 @@ export const buildMedusaClient = ({
 }): Admin & {
 	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
 	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
+	fetchSentryTransactionsStats: (query?: GetSentryTransactionsStatsParams) => any;
 } => {
 	const medusa = new Medusa({ baseUrl, maxRetries: 1 });
 	return {
@@ -58,6 +64,22 @@ export const buildMedusaClient = ({
 			query = {
 				statsPeriod: defaultFilterValues.statsPeriod,
 				...(query ?? {}),
+				organisation,
+				project,
+			} as GetSentryTransactionEventsParams;
+
+			if (query) {
+				const queryString = qs.stringify(query);
+				path += `?${queryString}`;
+			}
+			return await this.client.request('GET', path, undefined, {}, {});
+		},
+		fetchSentryTransactionsStats: async function (query?: GetSentryTransactionsStatsParams) {
+			let path = '/admin/sentry-transactions-stats';
+
+			query = {
+				statsPeriod: query.statsPeriod || defaultFilterValues.statsPeriod,
+				transaction: query.transaction,
 				organisation,
 				project,
 			} as GetSentryTransactionEventsParams;

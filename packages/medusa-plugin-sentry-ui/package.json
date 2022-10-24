@@ -83,6 +83,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "util": "^0.12.5"
+    "util": "^0.12.5",
+    "victory": "^36.6.8"
   }
 }

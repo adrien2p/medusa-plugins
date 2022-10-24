@@ -22,3 +22,10 @@ export type GetSentryTransactionEventsParams = {
 	query?: string;
 	cursor?: string;
 };
+
+export type GetSentryTransactionsStatsParams = {
+	organisation: string;
+	project: string;
+	statsPeriod: string;
+	transaction?: string;
+};
