@@ -8,12 +8,12 @@ import Tooltip from "../../components/temp/atoms/tooltip"
 import { useSentryTransactionEventsFilters } from "./hooks/use-sentry-transaction-events-filter"
 import { TablePagination } from "../../components/table-pagination"
 import { SentryTableRow } from "../../components/table-row"
-import { AdmincClient, defaultFilterValues } from "../../types"
+import { AdminClient, defaultFilterValues } from "../../types"
 import { ActionType } from "../../components/temp/molecules/actionables"
 import PublishIcon from "../../components/temp/fundamentals/icons/publish-icon"
 
 type Props = {
-  medusaClient: AdmincClient
+  medusaClient: AdminClient
   organisation: string;
   project: string;
   location: Location

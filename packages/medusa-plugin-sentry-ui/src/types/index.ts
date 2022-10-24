@@ -25,7 +25,7 @@ export type GetSentryTransactionEventsParams = {
 	cursor?: string;
 };
 
-export type AdmincClient = Admin & {
+export type AdminClient = Admin & {
 	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
 	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
 }

@@ -2,7 +2,7 @@ import { useSentryTransactionsFilters } from "./hooks/use-sentry-transactions-fi
 import React, { useEffect, useMemo, useState } from "react"
 import qs from "qs"
 import { isEmpty } from "lodash"
-import { AdmincClient, defaultFilterValues } from "../types"
+import { AdminClient, defaultFilterValues } from "../types"
 import { usePagination, useTable } from "react-table"
 import Table from "../components/temp/molecules/table"
 import InputField from "../components/temp/molecules/input"
@@ -13,7 +13,7 @@ import { ActionType } from "../components/temp/molecules/actionables"
 import PublishIcon from "../components/temp/fundamentals/icons/publish-icon"
 
 type Props = {
-  medusaClient: AdmincClient;
+  medusaClient: AdminClient;
   organisation: string;
   project: string;
   location: Location
