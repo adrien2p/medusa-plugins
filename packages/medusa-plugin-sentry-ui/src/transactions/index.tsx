@@ -18,6 +18,7 @@ type Props = {
   organisation: string;
   project: string;
   location: Location
+  onRowClick: (row) => string;
 }
 
 
@@ -107,8 +108,8 @@ const useSentryTransactionsTableColumn = () => {
   return [columns] as const
 }
 
-const Index = (props: Props) => {
-  const { medusaClient, organisation, project, location } = props
+const SentryTransactions = (props: Props) => {
+  const { medusaClient, organisation, project, location, onRowClick } = props
 
   const {
     setStatsPeriod,
@@ -198,9 +199,7 @@ const Index = (props: Props) => {
   const getActions = (row: { original: { transaction: string; } }): ActionType[] => [
     {
       label: "Open",
-      onClick: () => navigate(
-        `https://sentry.io/organizations/${organisation}/performance/summary/?project=${project}&query=transaction.duration%3A%3C15m&statsPeriod=24h&transaction=${row.original.transaction}&unselectedSeries=p100%28%29`,
-      ),
+      onClick: () => window.open(`https://sentry.io/organizations/${organisation}/performance/summary/?project=${project}&query=transaction.duration%3A%3C15m&statsPeriod=24h&transaction=${row.original.transaction}&unselectedSeries=p100%28%29`, "_blank"),
       icon: <PublishIcon size={20} />,
     },
   ]
@@ -261,7 +260,8 @@ const Index = (props: Props) => {
                   rows?.length > 0
                     && rows.map((row: any) => {
                         prepareRow(row)
-                        return <SentryTableRow row={row} {...row.getRowProps()} linkTo={`?statsPeriod=24h&perPage=50&transaction=${(row.original as any).transaction}`} getActions={() => getActions(row)} />
+                        const linkTo = onRowClick && onRowClick(row) || ""
+                        return <SentryTableRow row={row} {...row.getRowProps()} linkTo={linkTo} getActions={() => getActions(row)} />
                       })
                 }
               </Table.Body>
@@ -282,4 +282,4 @@ const Index = (props: Props) => {
   )
 }
 
-export default Index
+export default SentryTransactions

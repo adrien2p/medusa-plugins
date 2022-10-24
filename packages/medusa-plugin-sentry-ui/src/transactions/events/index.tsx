@@ -18,6 +18,7 @@ type Props = {
   organisation: string;
   project: string;
   location: Location
+  onRowClick?: (row) => string;
 }
 
 const useSentryTransactionEventsTableColumn = (transaction: string) => {
@@ -95,7 +96,7 @@ const useSentryTransactionEventsTableColumn = (transaction: string) => {
 }
 
 const SentryTransactionEvents = (props: Props) => {
-  const { medusaClient, organisation, project, location } = props
+  const { medusaClient, organisation, project, location, onRowClick } = props
 
   const {
     setStatsPeriod,
@@ -186,8 +187,9 @@ const SentryTransactionEvents = (props: Props) => {
   const getActions = (row: { original: { id: string; 'project.name': string } }): ActionType[] => [
     {
       label: "Open",
-      onClick: () => navigate(
-        `https://sentry.io/organizations/${organisation}/performance/${row.original["project.name"]}:${row.original.id}/?project=${project}&query=transaction.duration%3A%3C15m&statsPeriod=${filters.statsPeriod}h&transaction=${filters.transaction}&unselectedSeries=p100%28%29`
+      onClick: () => window.open(
+        `https://sentry.io/organizations/${organisation}/performance/${row.original["project.name"]}:${row.original.id}/?project=${project}&query=transaction.duration%3A%3C15m&statsPeriod=${filters.statsPeriod}h&transaction=${filters.transaction}&unselectedSeries=p100%28%29`,
+        "_blanks"
       ),
       icon: <PublishIcon size={20} />,
     },
@@ -247,7 +249,8 @@ const SentryTransactionEvents = (props: Props) => {
                   rows?.length > 0
                   && rows.map((row: any) => {
                       prepareRow(row)
-                      return <SentryTableRow row={row} {...row.getRowProps()} getActions={() => getActions(row)} />
+                      const linkTo = onRowClick && onRowClick(row) || ""
+                      return <SentryTableRow row={row} {...row.getRowProps()} linkTo={linkTo} getActions={() => getActions(row)} />
                     })
                 }
               </Table.Body>

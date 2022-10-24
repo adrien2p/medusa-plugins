@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { RouteComponentProps, WindowLocation } from "@reach/router"
 import SentryTransactionEvents from "./transactions/events"
-import Index from "./transactions/"
+import SentryTransactions from "./transactions/"
 import { buildMedusaClient } from "./utils"
 
 type Props = {
@@ -9,13 +9,15 @@ type Props = {
   organisation: string
   project: string
   location: WindowLocation
+  onTransactionRowClick?: (row) => string;
+  onTransactionEventRowClick?: (row) => string;
 }
 
 const EVENTS_VIEW_KEY = "sentry:transaction:events"
 const TRANSACTIONS_VIEW_KEY = "sentry:transactions"
 
 const Sentry = (props: RouteComponentProps & Props) => {
-  const { baseUrl, organisation, project, location } = props
+  const { baseUrl, organisation, project, location, onTransactionRowClick, onTransactionEventRowClick } = props
 
   const [view, setView] = useState(TRANSACTIONS_VIEW_KEY)
 
@@ -33,12 +35,15 @@ const Sentry = (props: RouteComponentProps & Props) => {
     project
   })
 
+  const transactionRowClickFn = onTransactionRowClick ?? ((row) => `?statsPeriod=24h&perPage=50&transaction=${(row.original as any).transaction}`);
+  const transactionEventRowClickFn = onTransactionEventRowClick ?? (() => ``);
+
   const CurrentView = () => {
     switch (view) {
       case EVENTS_VIEW_KEY:
-        return <SentryTransactionEvents medusaClient={medusaAdminClient} organisation={organisation} project={project} location={location} />
+        return <SentryTransactionEvents medusaClient={medusaAdminClient} organisation={organisation} project={project} location={location} onRowClick={transactionEventRowClickFn} />
       default:
-        return <Index medusaClient={medusaAdminClient} organisation={organisation} project={project} location={location} />
+        return <SentryTransactions medusaClient={medusaAdminClient} organisation={organisation} project={project} location={location} onRowClick={transactionRowClickFn} />
     }
   }
 
