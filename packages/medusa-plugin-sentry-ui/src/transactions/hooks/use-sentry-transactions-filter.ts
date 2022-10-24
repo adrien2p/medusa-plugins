@@ -14,7 +14,6 @@ interface SentryTransactionsFiltersState {
 	perPage?: number;
 	query?: string;
 	cursor?: string;
-	transaction?: string;
 }
 
 type ProductFilterAction =

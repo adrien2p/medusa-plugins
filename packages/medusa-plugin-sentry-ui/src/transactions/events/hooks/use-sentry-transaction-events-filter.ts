@@ -7,6 +7,7 @@ type SentryTransactionFilters = {
 	perPage?: number;
 	query?: string;
 	cursor?: string;
+	transaction?: string;
 };
 
 interface SentryTransactionsFiltersState {
