@@ -2,7 +2,7 @@ import { useSentryTransactionsFilters } from './hooks/use-sentry-transactions-fi
 import React, { useEffect, useMemo, useState } from 'react';
 import qs from 'qs';
 import { isEmpty } from 'lodash';
-import { defaultFilterValues } from '../types';
+import { AdminClient, defaultFilterValues } from '../types';
 import { usePagination, useTable } from 'react-table';
 import Table from '../components/temp/molecules/table';
 import InputField from '../components/temp/molecules/input';
@@ -11,10 +11,9 @@ import Tooltip from '../components/temp/atoms/tooltip';
 import { SentryTableRow } from '../components/table-row';
 import { ActionType } from '../components/temp/molecules/actionables';
 import PublishIcon from '../components/temp/fundamentals/icons/publish-icon';
-import TransactionStats from '../components/graphs';
 
 type Props = {
-	medusaClient: any;
+	medusaClient: AdminClient;
 	organisation: string;
 	project: string;
 	location: Location;
@@ -102,23 +101,20 @@ const SentryTransactions = (props: Props) => {
 	const [transactions, setTransactions] = useState([]);
 	const [nextCursor, setNextCursor] = useState();
 	const [prevCursor, setPrevCursor] = useState();
-	const [graphData, setGraphData] = useState();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const fetchTransactions = () => {
 		setIsLoading(true);
-		Promise.all([
-			medusaClient.fetchSentryTransactionsStats(queryObject).then((data) => {
-				setGraphData(data);
-			}),
-			medusaClient.fetchSentryTransactions(queryObject as any).then(({ data, next_cursor, prev_cursor }) => {
+		medusaClient
+			.fetchSentryTransactions(queryObject as any)
+			.then(({ data, next_cursor, prev_cursor }) => {
 				setTransactions(data);
 				setNextCursor(next_cursor);
 				setPrevCursor(prev_cursor);
-			}),
-		]).finally(() => {
-			setIsLoading(false);
-		});
+			})
+			.finally(() => {
+				setIsLoading(false);
+			});
 	};
 
 	useEffect(() => {
@@ -185,86 +181,82 @@ const SentryTransactions = (props: Props) => {
 	];
 
 	return (
-		<>
-			<TransactionStats graphData={graphData} />
-
-			<div className="p-8 rounded-rounded w-full h-full bg-white overflow-y-auto">
-				<>
-					<Table
-						filteringOptions={
-							<div className={'w-full'}>
-								<div className={'flex item-center space-x-4'}>
-									<InputField
-										label="Period"
-										placeholder="24h, 48h..."
-										value={filters.statsPeriod}
-										onChange={(el) => setStatsPeriod(el.target.value)}
-										onBlur={() => fetchTransactions()}
-									/>
-									<InputField
-										label="Limit"
-										placeholder="10, 20..."
-										value={filters.perPage}
-										onChange={(el) => setPerPage(el.target.value)}
-										onBlur={() => fetchTransactions()}
-									/>
-									<InputField
-										label={'Query'}
-										placeholder='!transaction:"GET /admin/sentry-transactions"'
-										value={filters.query}
-										onChange={(el) => setQuery(el.target.value)}
-										onBlur={() => fetchTransactions()}
-									/>
-								</div>
+		<div className="p-8 rounded-rounded w-full h-full bg-white overflow-y-auto">
+			<>
+				<Table
+					filteringOptions={
+						<div className={'w-full'}>
+							<div className={'flex item-center space-x-4'}>
+								<InputField
+									label="Period"
+									placeholder="24h, 48h..."
+									value={filters.statsPeriod}
+									onChange={(el) => setStatsPeriod(el.target.value)}
+									onBlur={() => fetchTransactions()}
+								/>
+								<InputField
+									label="Limit"
+									placeholder="10, 20..."
+									value={filters.perPage}
+									onChange={(el) => setPerPage(el.target.value)}
+									onBlur={() => fetchTransactions()}
+								/>
+								<InputField
+									label={'Query'}
+									placeholder='!transaction:"GET /admin/sentry-transactions"'
+									value={filters.query}
+									onChange={(el) => setQuery(el.target.value)}
+									onBlur={() => fetchTransactions()}
+								/>
 							</div>
-						}
-						isLoading={isLoading}
-						{...getTableProps()}
-					>
-						{
-							<>
-								<Table.Head>
-									{headerGroups?.map((headerGroup) => (
-										<Table.HeadRow {...headerGroup.getHeaderGroupProps()}>
-											{headerGroup.headers.map((col) => (
-												<Table.HeadCell className="min-w-[100px]" {...col.getHeaderProps()}>
-													{col.render('Header')}
-												</Table.HeadCell>
-											))}
-										</Table.HeadRow>
-									))}
-								</Table.Head>
+						</div>
+					}
+					isLoading={isLoading}
+					{...getTableProps()}
+				>
+					{
+						<>
+							<Table.Head>
+								{headerGroups?.map((headerGroup) => (
+									<Table.HeadRow {...headerGroup.getHeaderGroupProps()}>
+										{headerGroup.headers.map((col) => (
+											<Table.HeadCell className="min-w-[100px]" {...col.getHeaderProps()}>
+												{col.render('Header')}
+											</Table.HeadCell>
+										))}
+									</Table.HeadRow>
+								))}
+							</Table.Head>
 
-								<Table.Body {...getTableBodyProps()}>
-									{rows?.length > 0 &&
-										rows.map((row: any) => {
-											prepareRow(row);
-											const linkTo = (onRowClick && onRowClick(row)) || '';
-											return (
-												<SentryTableRow
-													row={row}
-													{...row.getRowProps()}
-													linkTo={linkTo}
-													getActions={() => getActions(row)}
-												/>
-											);
-										})}
-								</Table.Body>
-							</>
-						}
-					</Table>
+							<Table.Body {...getTableBodyProps()}>
+								{rows?.length > 0 &&
+									rows.map((row: any) => {
+										prepareRow(row);
+										const linkTo = (onRowClick && onRowClick(row)) || '';
+										return (
+											<SentryTableRow
+												row={row}
+												{...row.getRowProps()}
+												linkTo={linkTo}
+												getActions={() => getActions(row)}
+											/>
+										);
+									})}
+							</Table.Body>
+						</>
+					}
+				</Table>
 
-					{!isLoading && !rows.length && <p className="flex justify-center p-4">No data to show</p>}
+				{!isLoading && !rows.length && <p className="flex justify-center p-4">No data to show</p>}
 
-					<TablePagination
-						nextPage={handleNext}
-						prevPage={handlePrev}
-						hasNext={!!nextCursor}
-						hasPrev={!!prevCursor}
-					/>
-				</>
-			</div>
-		</>
+				<TablePagination
+					nextPage={handleNext}
+					prevPage={handlePrev}
+					hasNext={!!nextCursor}
+					hasPrev={!!prevCursor}
+				/>
+			</>
+		</div>
 	);
 };
 

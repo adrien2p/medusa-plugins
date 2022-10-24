@@ -1,3 +1,5 @@
+import Admin from '@medusajs/medusa-js/dist/resources/admin';
+
 export const defaultFilterValues = {
 	statsPeriod: '24h',
 	perPage: 50,
@@ -28,4 +30,9 @@ export type GetSentryTransactionsStatsParams = {
 	project: string;
 	statsPeriod: string;
 	transaction?: string;
+};
+
+export type AdminClient = Admin & {
+	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
+	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
 };

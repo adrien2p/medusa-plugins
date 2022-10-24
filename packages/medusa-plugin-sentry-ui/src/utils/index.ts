@@ -1,5 +1,6 @@
 import qs from 'qs';
 import {
+	AdminClient,
 	defaultFilterValues,
 	GetSentryTransactionEventsParams,
 	GetSentryTransactionsParams,
@@ -32,7 +33,6 @@ export const buildMedusaClient = ({
 }): Admin & {
 	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
 	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
-	fetchSentryTransactionsStats: (query?: GetSentryTransactionsStatsParams) => any;
 } => {
 	const medusa = new Medusa({ baseUrl, maxRetries: 1 });
 	return {
