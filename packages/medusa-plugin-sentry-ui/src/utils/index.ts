@@ -1,5 +1,10 @@
 import qs from 'qs';
-import { defaultFilterValues, GetSentryTransactionEventsParams, GetSentryTransactionsParams } from '../types';
+import {
+	AdmincClient,
+	defaultFilterValues,
+	GetSentryTransactionEventsParams,
+	GetSentryTransactionsParams
+} from '../types';
 import Admin from '@medusajs/medusa-js/dist/resources/admin';
 import Medusa from '@medusajs/medusa-js';
 
@@ -24,10 +29,7 @@ export const buildMedusaClient = ({
 	baseUrl,
 	organisation,
 	project,
-}): Admin & {
-	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
-	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
-} => {
+}): AdmincClient => {
 	const medusa = new Medusa({ baseUrl, maxRetries: 1 });
 	return {
 		...medusa.admin,

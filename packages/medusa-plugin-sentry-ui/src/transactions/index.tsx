@@ -2,7 +2,7 @@ import { useSentryTransactionsFilters } from "./hooks/use-sentry-transactions-fi
 import React, { useEffect, useMemo, useState } from "react"
 import qs from "qs"
 import { isEmpty } from "lodash"
-import { defaultFilterValues } from "../types"
+import { AdmincClient, defaultFilterValues } from "../types"
 import { usePagination, useTable } from "react-table"
 import Table from "../components/temp/molecules/table"
 import InputField from "../components/temp/molecules/input"
@@ -10,17 +10,15 @@ import { TablePagination } from "../components/table-pagination"
 import Tooltip from "../components/temp/atoms/tooltip"
 import { SentryTableRow } from "../components/table-row"
 import { ActionType } from "../components/temp/molecules/actionables"
-import { navigate } from "gatsby"
 import PublishIcon from "../components/temp/fundamentals/icons/publish-icon"
 
 type Props = {
-  medusaClient: any;
+  medusaClient: AdmincClient;
   organisation: string;
   project: string;
   location: Location
   onRowClick: (row) => string;
 }
-
 
 const useSentryTransactionsTableColumn = () => {
   const columns = useMemo(
