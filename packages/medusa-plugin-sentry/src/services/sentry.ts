@@ -18,6 +18,12 @@ type SentryFetchResult = {
 	next_cursor: string;
 };
 
+type SentryStatsFetchResult = {
+	[stat: string]: {
+		data: [number, [{ count: number }]][];
+	};
+};
+
 export default class SentryService extends TransactionBaseService {
 	static readonly RESOLVE_KEY = formatRegistrationName(`${process.cwd()}/services/sentry.js`);
 	protected readonly sentryApiBaseUrl = 'https://sentry.io/api/0/organizations';
@@ -65,7 +71,7 @@ export default class SentryService extends TransactionBaseService {
 		perPage?: string | number;
 		cursor?: string;
 	}): Promise<SentryFetchResult> {
-		perPage = perPage ?? 100;
+		perPage = Number(perPage ?? 100);
 
 		const queryParams = {
 			field: ['transaction', 'tpm()', 'p50()', 'p75()', 'p95()', 'failure_rate', 'apdex()'],
@@ -79,7 +85,7 @@ export default class SentryService extends TransactionBaseService {
 			cursor,
 		};
 
-		return await this.fetchSentry({
+		return await this.fetchSentryData({
 			organisation,
 			token,
 			perPage,
@@ -118,7 +124,7 @@ export default class SentryService extends TransactionBaseService {
 		perPage?: string | number;
 		cursor?: string;
 	}): Promise<SentryFetchResult> {
-		perPage = perPage ?? 100;
+		perPage = Number(perPage ?? 100);
 
 		const queryParams = {
 			field: ['id', 'transaction.duration', 'timestamp', 'spans.db', 'project'],
@@ -132,10 +138,48 @@ export default class SentryService extends TransactionBaseService {
 			cursor,
 		};
 
-		return await this.fetchSentry({
+		return await this.fetchSentryData({
 			organisation,
 			token,
 			perPage,
+			queryParams,
+		});
+	}
+
+	/**
+	 * Fetch paginated transaction events from an organisation project on sentry
+	 * @param transaction The transaction for which to fetch the stats if any trasaction is provided (e.g "GET /admin/users")
+	 * @param organisation The organisation on which to fetch the transactions
+	 * @param statsPeriod The period from when to fetch the transactions (default: 24h)
+	 * @param project The project in the organisation on which to fetch the transactions
+	 * @param token The token to use to send request to sentry
+	 * @return The result is composed of the data and the next cursor for the pagination purpose
+	 */
+	async fetchTransactionsStats({
+		transaction,
+		organisation,
+		project,
+		statsPeriod,
+		token,
+	}: {
+		transaction?: string;
+		organisation: string;
+		statsPeriod: string;
+		project: string;
+		token: string;
+	}): Promise<SentryStatsFetchResult> {
+		const queryParams = {
+			interval: '1h',
+			partial: 1,
+			project,
+			statsPeriod,
+			query: `transaction.duration event.type:transaction ${transaction ? `transaction:"${transaction}"` : ''}`,
+			yAxis: ['apdex()', 'tpm()', 'failure_rate()'],
+		};
+
+		return await this.fetchSentryStats({
+			organisation,
+			token,
 			queryParams,
 		});
 	}
@@ -195,8 +239,19 @@ export default class SentryService extends TransactionBaseService {
 		});
 	}
 
-	protected async fetchSentry({ organisation, token, queryParams, perPage }): Promise<SentryFetchResult> {
-		const url = this.sentryApiBaseUrl + `/${organisation}/events/`;
+	protected async fetchSentry({
+		organisation,
+		token,
+		queryParams,
+		customTargetPathSegment,
+	}: {
+		organisation: string;
+		token: string;
+		queryParams: Record<string, string | number | string[]>;
+		customTargetPathSegment?: string;
+	}): Promise<{ data: any; headers: any }> {
+		const url =
+			this.sentryApiBaseUrl + `/${organisation}/${customTargetPathSegment ? customTargetPathSegment : 'events/'}`;
 
 		const searchParams = new URLSearchParams();
 		Object.entries(queryParams).forEach(([key, value]) => {
@@ -209,14 +264,34 @@ export default class SentryService extends TransactionBaseService {
 			}
 		});
 
-		const {
-			data: { data, meta },
-			headers,
-		} = await axios.get(url, {
+		const { data, headers } = await axios.get(url, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
 			params: searchParams,
+		});
+
+		return { data, headers };
+	}
+
+	protected async fetchSentryData({
+		organisation,
+		token,
+		queryParams,
+		perPage,
+	}: {
+		organisation: string;
+		token: string;
+		queryParams: Record<string, string | number | string[]>;
+		perPage?: number;
+	}): Promise<SentryFetchResult> {
+		const {
+			data: { data, meta },
+			headers,
+		} = await this.fetchSentry({
+			organisation,
+			token,
+			queryParams,
 		});
 
 		const nextCursor = SentryService.buildNextCursor(headers['link']);
@@ -228,6 +303,25 @@ export default class SentryService extends TransactionBaseService {
 		}
 
 		return { data, meta, prev_cursor: prevCursor, next_cursor: nextCursor };
+	}
+
+	protected async fetchSentryStats({
+		organisation,
+		token,
+		queryParams,
+	}: {
+		organisation: string;
+		token: string;
+		queryParams: Record<string, string | number | string[]>;
+	}): Promise<SentryStatsFetchResult> {
+		const { data } = await this.fetchSentry({
+			organisation,
+			token,
+			queryParams,
+			customTargetPathSegment: 'events-stats/',
+		});
+
+		return data;
 	}
 
 	protected static buildNextCursor(link: string): string | undefined {
