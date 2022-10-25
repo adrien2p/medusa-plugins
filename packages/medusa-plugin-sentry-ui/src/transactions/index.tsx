@@ -185,7 +185,10 @@ const SentryTransactions = (props: Props) => {
 	return (
 		<>
 			<TransactionStats graphData={graphData} />
-			<div className="p-8 rounded-rounded w-full h-full bg-white overflow-y-auto">
+			<div
+				style={{ boxShadow: '0px 0px 1px rgba(0,0,0,.3)' }}
+				className="p-8 rounded-rounded w-full h-full bg-white overflow-y-auto"
+			>
 				<>
 					<Table
 						filteringOptions={
