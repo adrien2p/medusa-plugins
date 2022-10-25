@@ -185,14 +185,11 @@ const SentryTransactions = (props: Props) => {
 	return (
 		<>
 			<TransactionStats graphData={graphData} />
-			<div
-				style={{ boxShadow: '0px 0px 1px rgba(0,0,0,.3)' }}
-				className="p-8 rounded-rounded w-full h-full bg-white overflow-y-auto"
-			>
+			<div style={{ boxShadow: '0px 0px 1px rgba(0,0,0,.3)' }} className="p-8 rounded-rounded w-ful bg-white">
 				<>
 					<Table
 						filteringOptions={
-							<div className={'w-full'}>
+							<div className="w-full">
 								<div className={'flex item-center space-x-4'}>
 									<InputField
 										label="Period"

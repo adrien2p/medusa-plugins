@@ -79,16 +79,16 @@ function BarChart(props: BarChartProps) {
 							padding={{ top: 12, bottom: 0, right: 40, left: 16 }}
 							containerComponent={
 								<VictoryVoronoiContainer
-									labels={(d) => {
-										return 'something';
-									}}
+									labels={({ datum }) =>
+										`${new Date(datum.timestamp * 1000)} ${Math.round(datum.value * 100)}`
+									}
 								/>
 							}
 							domain={{ y: [0, 1] }}
 							animate={{ duration: 200 }}
 						>
 							<VictoryArea
-								labelComponent={<VictoryTooltip flyoutStyle={{ fill: 'white' }} />}
+								labelComponent={<VictoryTooltip />}
 								style={{
 									data: { fill: `url(#${props.gradient})`, stroke },
 								}}
