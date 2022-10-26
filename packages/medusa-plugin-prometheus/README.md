@@ -12,6 +12,7 @@
 	<a href="https://discord.gg/xpCwq3Kfn8"><img alt="Discord" src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugins/commits/main"><img alt="Activity" src="https://img.shields.io/github/commit-activity/m/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 	<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
+    <a href="https://github.com/adrien2p/medusa-plugins/actions/workflows/medusa-plugin-prometheus.yml/"><img alt="Tests pipeline" src="https://github.com/adrien2p/medusa-plugins/actions/workflows/medusa-plugin-prometheus.yml/badge.svg" height="20"/></a>
 </p>
 
 ## Description
