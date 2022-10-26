@@ -28,61 +28,61 @@ const useSentryTransactionsTableColumn = () => {
 				Header: 'Transaction',
 				accessor: 'transaction',
 				Cell: ({ row: { original } }) => {
-					return <div className="flex items-center inter-small-semibold">{original.transaction}</div>;
+					return <div title={original.transaction} style={{ width: 500 }} className="block truncate inter-small-semibold">{original.transaction}</div>;
 				},
 			},
 			{
-				Header: 'TPM',
+				Header: <Tooltip content="Throughput indicates the number of transactions over a given time range (Total), average transactions per minute (TPM),">
+					<div className="flex items-center">TPM</div>
+				</Tooltip>,
 				accessor: 'tpm',
 				Cell: ({ row: { original } }) => {
 					return (
-						<Tooltip content="Throughput indicates the number of transactions over a given time range (Total), average transactions per minute (TPM),">
-							<div className="flex items-center">{Number(original['tpm()']).toFixed(2)}</div>
-						</Tooltip>
+						<div className="flex items-center">{Number(original['tpm()']).toFixed(2)}</div>
 					);
 				},
 			},
 			{
-				Header: 'P50',
+				Header: <Tooltip content="The P50 Threshold indicates that 50% of transaction durations are greater than the threshold">
+					<div className="flex items-center">P50</div>
+				</Tooltip>,
 				accessor: 'p50',
 				Cell: ({ row: { original } }) => {
 					return (
-						<Tooltip content="The P50 Threshold indicates that 50% of transaction durations are greater than the threshold">
-							<div className="flex items-center">{Number(original['p50()']).toFixed(2)} ms</div>
-						</Tooltip>
+						<div className="flex items-center">{Number(original['p50()']).toFixed(2)} ms</div>
 					);
 				},
 			},
 			{
-				Header: 'P75',
+				Header: <Tooltip content="The P75 Threshold indicates that 25% of transaction durations are greater than the threshold">
+					<div className="flex items-center">P75</div>
+				</Tooltip>,
 				accessor: 'p75',
 				Cell: ({ row: { original } }) => {
 					return (
-						<Tooltip content="The P75 Threshold indicates that 25% of transaction durations are greater than the threshold">
-							<div className="flex items-center">{Number(original['p75()']).toFixed(2)} ms</div>
-						</Tooltip>
+						<div className="flex items-center">{Number(original['p75()']).toFixed(2)} ms</div>
 					);
 				},
 			},
 			{
-				Header: 'P95',
+				Header: <Tooltip content="The P95 Threshold indicates that 5% of transaction durations are greater than the threshold">
+					<div className="flex items-center">P95</div>
+				</Tooltip>,
 				accessor: 'p95',
 				Cell: ({ row: { original } }) => {
 					return (
-						<Tooltip content="The P95 Threshold indicates that 5% of transaction durations are greater than the threshold">
-							<div className="flex items-center">{Number(original['p95()']).toFixed(2)} ms</div>
-						</Tooltip>
+						<div className="flex items-center">{Number(original['p95()']).toFixed(2)} ms</div>
 					);
 				},
 			},
 			{
-				Header: 'APDEX',
+				Header: <Tooltip content="Apdex is an industry-standard metric used to track and measure user satisfaction based on your application response times. A higher Apdex score is better than a lower one; the score can go up to 1.0, representing 100% of users having a satisfactory experience. The Apdex score provides the ratio of satisfactory, tolerable, and frustrated requests in a specific transaction or endpoint. This metric provides a standard for you to compare transaction performance, understand which ones may require additional optimization or investigation, and set targets or goals for performance">
+					<div className="flex items-center">APDEX</div>
+				</Tooltip>,
 				accessor: 'apdex',
 				Cell: ({ row: { original } }) => {
 					return (
-						<Tooltip content="Apdex is an industry-standard metric used to track and measure user satisfaction based on your application response times. A higher Apdex score is better than a lower one; the score can go up to 1.0, representing 100% of users having a satisfactory experience. The Apdex score provides the ratio of satisfactory, tolerable, and frustrated requests in a specific transaction or endpoint. This metric provides a standard for you to compare transaction performance, understand which ones may require additional optimization or investigation, and set targets or goals for performance">
-							<div className="flex items-center">{Number(original['apdex()']).toFixed(2)}</div>
-						</Tooltip>
+						<div className="flex items-center">{Number(original['apdex()']).toFixed(2)}</div>
 					);
 				},
 			},

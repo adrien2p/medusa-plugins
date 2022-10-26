@@ -11,7 +11,7 @@ export const SentryTableRow = ({ row, ...rest }) => {
     >
       {row.cells.map((cell, index) => {
         return (
-          <Table.Cell {...cell.getCellProps()}>
+          <Table.Cell {...cell.getCellProps({ width: 500 })}>
             {cell.render("Cell", { index })}
           </Table.Cell>
         )
