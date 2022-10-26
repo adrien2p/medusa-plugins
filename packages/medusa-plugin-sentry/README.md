@@ -221,3 +221,16 @@ The output of that query looks like the following
     "next_cursor": "0:100:0"
 }
 ```
+
+### /admin/sentry-transactions-stats
+
+This end point allow you to retrieve all your transaction events for a given period, here are the allowed query parameters
+
+```markdown
+- transaction     - The transaction for which the events must be retrieved (e.g "GET /admin/users")
+- organisation    - The organisation to fetch the transactions from
+- project         - The project to fetch the transactions from
+- statsPeriod     - The period from when to fetch the transactions (default: 24h) 
+```
+
+The result will be an aggregation of the data for the APDEX/TPM/FAILURE_RATE
