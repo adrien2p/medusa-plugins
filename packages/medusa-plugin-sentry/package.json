@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-sentry",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Sentry plugin for medusajs",
   "keywords": [
     "analytics",
