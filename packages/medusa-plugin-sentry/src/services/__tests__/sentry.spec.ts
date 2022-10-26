@@ -22,7 +22,6 @@ describe('sentry service', () => {
 			return [new Sentry.Integrations.Http({ tracing: true }), new Tracing.Integrations.Express({ router })];
 		},
 		tracesSampleRate: 1.0,
-		shouldHandleError: (code) => code >= 400,
 		webHookOptions: {
 			path: '/sentry',
 			secret: 'fake_secret',

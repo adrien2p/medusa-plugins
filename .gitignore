@@ -1,6 +1,6 @@
 .idea
 /lib
-/dist
+*/**/dist
 node_modules
 .DS_store
 **/.DS_Store

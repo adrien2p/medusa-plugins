@@ -9,6 +9,7 @@ import { getConfigFile } from 'medusa-core-utils';
 import { SentryOptions, SentryWebHookOptions } from '../types';
 import sentryTransactionsHandler from './handlers/sentry-transaction';
 import sentryTransactionEventsHandler from './handlers/sentry-transaction-events';
+import sentryTransactionsStatsHandler from './handlers/sentry-transactions-stats';
 import sentryWebHookHandler from './handlers/sentry-web-hook';
 
 export default function (rootDirectory, pluginOptions: SentryOptions): Router {
@@ -101,6 +102,13 @@ function attachAdminEndPoints(router, rootDirectory, pluginOptions) {
 
 	router.use('/admin/sentry-transactions', cors(corsOptions));
 	router.get('/admin/sentry-transactions', authenticate(), wrapHandler(sentryTransactionsHandler(apiToken)));
+
+	router.use('/admin/sentry-transactions-stats', cors(corsOptions));
+	router.get(
+		'/admin/sentry-transactions-stats',
+		authenticate(),
+		wrapHandler(sentryTransactionsStatsHandler(apiToken))
+	);
 
 	router.use('/admin/sentry-transaction-events', cors(corsOptions));
 	router.get(
