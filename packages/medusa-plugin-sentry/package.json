@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-sentry",
-  "version": "1.1.4",
+  "version": "1.1.6",
   "description": "Sentry plugin for medusajs",
   "keywords": [
     "analytics",
@@ -58,26 +58,30 @@
   },
   "jest": {
     "preset": "ts-jest",
-	"moduleFileExtensions": [
-		"js",
-		"json",
-		"ts"
-	],
-	"testTimeout": 100000,
-	"rootDir": "src",
-	"testRegex": ".*\\.spec\\.ts$",
-	"transformIgnorePatterns": ["/node_modules/"],
-	"collectCoverageFrom": [
-		"**/*.(t|j)s",
-		"!**/__*__/*.(t|j)s"
-	],
-	"coverageReporters": [
-		"json-summary",
-		"text",
-		"lcov"
-	],
-	"coverageDirectory": "<rootDir>/../coverage",
-	"testEnvironment": "node",
-  	"setupFilesAfterEnv": ["<rootDir>/../setup-tests.js"]
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "testTimeout": 100000,
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "collectCoverageFrom": [
+      "**/*.(t|j)s",
+      "!**/__*__/*.(t|j)s"
+    ],
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ],
+    "coverageDirectory": "<rootDir>/../coverage",
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/../setup-tests.js"
+    ]
   }
 }
