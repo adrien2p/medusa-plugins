@@ -27,7 +27,7 @@
     "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
     "clean": "rimraf api handlers utils types coverage tsconfig.tsbuildinfo",
-    "test": "jest",
+    "test": "jest --forceExit",
     "test:ci": "yarn add @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
   },
   "peerDependencies": {

@@ -3,7 +3,7 @@ const request = require('supertest');
 import router from '../index';
 
 describe('Prometheus API', () => {
-	let app: Express;
+	let app;
 	let appRequest;
 
 	beforeAll(() => {
@@ -18,13 +18,13 @@ describe('Prometheus API', () => {
 	});
 
 	it('should display find the monitoring dashboard', async () => {
-		return appRequest
+		return await appRequest
 			.get('/monitoring')
 			.expect(302)
 	});
 
   it('should display find the monitoring data', async () => {
-		return appRequest
+		return await appRequest
 			.get('/monitoring/stats')
 			.expect(200)
 	});
