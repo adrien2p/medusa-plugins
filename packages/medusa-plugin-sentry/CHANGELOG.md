@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.5](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.4...medusa-plugin-sentry@1.1.5) (2022-10-26)
+
+
+### Bug Fixes
+
+* Error request always return 200 after being sent to sentry ([c37272a](https://github.com/adrien2p/medusa-plugins/commit/c37272ad1e365e35427aec0a9997eb6bb9bc725e))
+* max value of per page ([aa699fa](https://github.com/adrien2p/medusa-plugins/commit/aa699fae8e617d4f69ec4023705e19672ee4cb9b))
+
+
+
+
+
 ## [1.1.4](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.1.3...medusa-plugin-sentry@1.1.4) (2022-10-14)
 
 
