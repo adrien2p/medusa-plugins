@@ -1,4 +1,4 @@
-name: Tests pipeline
+name: medusa-plugin-prometheus
 on:
   push:
     branches:
