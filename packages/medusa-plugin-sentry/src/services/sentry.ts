@@ -65,11 +65,11 @@ export default class SentryService extends TransactionBaseService {
 		perPage?: string | number;
 		cursor?: string;
 	}): Promise<SentryFetchResult> {
-		perPage = perPage ?? 100;
+		perPage = Math.min(Number(perPage ?? 100), 100);
 
 		const queryParams = {
 			field: ['transaction', 'tpm()', 'p50()', 'p75()', 'p95()', 'failure_rate', 'apdex()'],
-			per_page: Number(perPage),
+			per_page: perPage,
 			project,
 			query: `event.type:transaction${query ? ' AND ' + query : ''}`,
 			statsPeriod,
@@ -118,11 +118,11 @@ export default class SentryService extends TransactionBaseService {
 		perPage?: string | number;
 		cursor?: string;
 	}): Promise<SentryFetchResult> {
-		perPage = perPage ?? 100;
+		perPage = Math.min(Number(perPage ?? 100), 100);
 
 		const queryParams = {
 			field: ['id', 'transaction.duration', 'timestamp', 'spans.db', 'project'],
-			per_page: Number(perPage),
+			per_page: perPage,
 			project,
 			query: `event.type:transaction AND transaction:"${transaction}"${query ? ' AND ' + query : ''}`,
 			statsPeriod,
