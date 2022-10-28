@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { parseQueryString } from '../utils';
-import { defaultFilterValues } from "../types";
+import { defaultFilterValues } from '../types';
 
 type SentryTransactionFilters = {
 	statsPeriod: string;

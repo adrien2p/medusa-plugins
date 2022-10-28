@@ -1,5 +1,5 @@
-import express, { Express } from 'express';
-const request = require('supertest');
+import express  from 'express';
+import request from 'supertest';
 import router from '../index';
 
 describe('Prometheus API', () => {
@@ -18,14 +18,10 @@ describe('Prometheus API', () => {
 	});
 
 	it('should display find the monitoring dashboard', async () => {
-		return await appRequest
-			.get('/monitoring')
-			.expect(302)
+		return await appRequest.get('/monitoring').expect(302);
 	});
 
-  it('should display find the monitoring data', async () => {
-		return await appRequest
-			.get('/monitoring/stats')
-			.expect(200)
+	it('should display find the monitoring data', async () => {
+		return await appRequest.get('/monitoring/stats').expect(200);
 	});
 });

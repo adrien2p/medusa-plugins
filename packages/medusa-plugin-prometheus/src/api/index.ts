@@ -8,7 +8,7 @@ export default function (rootDirectory, pluginOptions: SwaggerStats): RequestHan
 	const { name = 'Medusa monitoring Dashboard', ...promOptions } = pluginOptions;
 	const options = { name, ...promOptions };
 
-	let globalMiddlewares = [swStats.getMiddleware(options)];
+	const globalMiddlewares = [swStats.getMiddleware(options)];
 	if (options.swaggerSpec && typeof options.swaggerSpec === 'string') {
 		const SwaggerParser = require('swagger-parser');
 		const parser = new SwaggerParser();
