@@ -3,18 +3,22 @@
   "version": "0.2.1",
   "description": "UI components for medusa-sentry-plugin",
   "keywords": [
-    "react",
-    "medusa",
+    "analytics",
     "sentry",
-    "ui",
-    "library"
+    "medusa",
+    "medusajs",
+    "e-commerce",
+    "error-management",
+    "react",
+    "medusa-plugins",
+    "medusa-plugin"
   ],
+  "license": "MIT",
   "contributors": [
     "fPolic <frane@medusajs.com>",
     "Adrien de Peretti <adrien.deperetti@gmail.com>"
   ],
   "homepage": "https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry-ui#readme",
-  "license": "ISC",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/types.d.ts",

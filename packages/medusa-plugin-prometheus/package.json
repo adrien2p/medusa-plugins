@@ -11,7 +11,9 @@
     "medusajs",
     "e-commerce",
     "performance",
-    "metrics"
+    "metrics",
+    "medusa-plugins",
+    "medusa-plugin"
   ],
   "license": "MIT",
   "repository": {

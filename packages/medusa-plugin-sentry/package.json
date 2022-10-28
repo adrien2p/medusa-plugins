@@ -8,7 +8,9 @@
     "medusa",
     "medusajs",
     "e-commerce",
-    "error-management"
+    "error-management",
+    "medusa-plugins",
+    "medusa-plugin"
   ],
   "license": "MIT",
   "repository": {
