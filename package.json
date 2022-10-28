@@ -18,8 +18,7 @@
     "watch": "./node_modules/.bin/lerna run watch",
     "test": "./node_modules/.bin/lerna run test",
     "test:local": "./node_modules/.bin/lerna run test:local",
-    "lint": "./node_modules/.bin/eslint 'packages/**' --fix",
-    "format": "./node_modules/.bin/prettier 'packages/**/*.ts' --write"
+    "lint": "./node_modules/.bin/eslint 'packages/**' --fix"
   },
   "repository": {
     "type": "git",
