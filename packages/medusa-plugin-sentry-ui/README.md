@@ -32,7 +32,7 @@ Resolve JavaScript errors with max efficiency, not max effort. Get actionable in
 > Your server need to have installed `medusa-plugin-sentry` before being able to use that library
 > as the data are comsumed from that plugin.
 
-First of all, you need to install the plugin as follow `yarn add medusa-plugnin-sentrui`
+First of all, you need to install the plugin as follow `yarn add medusa-plugnin-sentry-ui`
 
 For the simple uasge you can open the file `src/pages/a.js` and add the following component above the `Routes` component
 ```javascript
