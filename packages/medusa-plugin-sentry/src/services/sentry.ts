@@ -166,7 +166,7 @@ export default class SentryService extends TransactionBaseService {
 			partial: 1,
 			project,
 			statsPeriod,
-			query: `transaction.duration event.type:transaction ${transaction ? `transaction:"${transaction}"` : ''}`,
+			query: `event.type:transaction ${transaction ? `transaction:"${transaction}"` : ''}`,
 			yAxis: ['apdex()', 'tpm()', 'failure_rate()'],
 		};
 
