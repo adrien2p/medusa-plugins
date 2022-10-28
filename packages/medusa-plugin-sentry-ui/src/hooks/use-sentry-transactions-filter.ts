@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { parseQueryString } from '../utils';
+import { defaultFilterValues } from "../types";
 
 type SentryTransactionFilters = {
 	statsPeriod: string;
@@ -119,6 +120,7 @@ const reducer = (
 			return {
 				...state,
 				query: action.payload,
+				cursor: defaultFilterValues.cursor,
 			};
 		}
 		case 'setCursor': {
