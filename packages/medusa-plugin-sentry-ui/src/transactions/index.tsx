@@ -1,9 +1,21 @@
-import { useSentryTransactionsFilters } from './hooks/use-sentry-transactions-filter';
+import { useSentryTransactionsFilters } from '../hooks/use-sentry-transactions-filter';
 import React, { useEffect, useMemo, useState } from 'react';
 import qs from 'qs';
 import { isEmpty } from 'lodash';
-import { AdminClient, defaultFilterValues } from '../types';
-import { usePagination, useTable } from 'react-table';
+import {
+	AdminClient,
+	APDEX_HELP_TEXT,
+	defaultFilterValues,
+	GetSentryTransactionsParams,
+	GetSentryTransactionsStatsParams,
+	P50_HELP_TEXT,
+	P75_HELP_TEXT,
+	P95_HELP_TEXT,
+	SentryFetchResult,
+	SentryStatsFetchResult,
+	TPM_HELP_TEXT,
+} from '../types';
+import { Row, usePagination, useTable } from 'react-table';
 import Table from '../components/temp/molecules/table';
 import InputField from '../components/temp/molecules/input';
 import { TablePagination } from '../components/table-pagination';
@@ -12,6 +24,7 @@ import { SentryTableRow } from '../components/table-row';
 import { ActionType } from '../components/temp/molecules/actionables';
 import PublishIcon from '../components/temp/fundamentals/icons/publish-icon';
 import TransactionStats from '../components/graphs';
+import HelpCircleIcon from '../components/temp/fundamentals/icons/help-circle';
 
 type Props = {
 	medusaClient: AdminClient;
@@ -27,63 +40,86 @@ const useSentryTransactionsTableColumn = () => {
 			{
 				Header: 'Transaction',
 				accessor: 'transaction',
-				Cell: ({ row: { original } }) => {
-					return <div title={original.transaction} style={{ width: 500 }} className="block truncate inter-small-semibold">{original.transaction}</div>;
+				Cell: ({ row: { original } }: { row: Row<SentryFetchResult['data'][number]> }) => {
+					return (
+						<div
+							title={original.transaction}
+							style={{ width: 500 }}
+							className="block truncate inter-small-semibold"
+						>
+							{original.transaction}
+						</div>
+					);
 				},
 			},
 			{
-				Header: <Tooltip content="Throughput indicates the number of transactions over a given time range (Total), average transactions per minute (TPM),">
-					<div className="flex items-center">TPM</div>
-				</Tooltip>,
+				Header: (
+					<div className="flex items-center">
+						<span>TPM</span>
+						<Tooltip content={TPM_HELP_TEXT}>
+							<HelpCircleIcon width={15} className={'ml-1'} />
+						</Tooltip>
+					</div>
+				),
 				accessor: 'tpm',
-				Cell: ({ row: { original } }) => {
-					return (
-						<div className="flex items-center">{Number(original['tpm()']).toFixed(2)}</div>
-					);
+				Cell: ({ row: { original } }: { row: Row<SentryFetchResult['data'][number]> }) => {
+					return <div className="flex items-center">{Number(original['tpm()']).toFixed(2)}</div>;
 				},
 			},
 			{
-				Header: <Tooltip content="The P50 Threshold indicates that 50% of transaction durations are greater than the threshold">
-					<div className="flex items-center">P50</div>
-				</Tooltip>,
+				Header: (
+					<div className="flex items-center">
+						<span>P50</span>
+						<Tooltip content={P50_HELP_TEXT}>
+							<HelpCircleIcon width={15} className={'ml-1'} />
+						</Tooltip>
+					</div>
+				),
 				accessor: 'p50',
-				Cell: ({ row: { original } }) => {
-					return (
-						<div className="flex items-center">{Number(original['p50()']).toFixed(2)} ms</div>
-					);
+				Cell: ({ row: { original } }: { row: Row<SentryFetchResult['data'][number]> }) => {
+					return <div className="flex items-center">{Number(original['p50()']).toFixed(2)} ms</div>;
 				},
 			},
 			{
-				Header: <Tooltip content="The P75 Threshold indicates that 25% of transaction durations are greater than the threshold">
-					<div className="flex items-center">P75</div>
-				</Tooltip>,
+				Header: (
+					<div className="flex items-center">
+						<span>P75</span>
+						<Tooltip content={P75_HELP_TEXT}>
+							<HelpCircleIcon width={15} className={'ml-1'} />
+						</Tooltip>
+					</div>
+				),
 				accessor: 'p75',
-				Cell: ({ row: { original } }) => {
-					return (
-						<div className="flex items-center">{Number(original['p75()']).toFixed(2)} ms</div>
-					);
+				Cell: ({ row: { original } }: { row: Row<SentryFetchResult['data'][number]> }) => {
+					return <div className="flex items-center">{Number(original['p75()']).toFixed(2)} ms</div>;
 				},
 			},
 			{
-				Header: <Tooltip content="The P95 Threshold indicates that 5% of transaction durations are greater than the threshold">
-					<div className="flex items-center">P95</div>
-				</Tooltip>,
+				Header: (
+					<div className="flex items-center">
+						<span>P95</span>
+						<Tooltip content={P95_HELP_TEXT}>
+							<HelpCircleIcon width={15} className={'ml-1'} />
+						</Tooltip>
+					</div>
+				),
 				accessor: 'p95',
-				Cell: ({ row: { original } }) => {
-					return (
-						<div className="flex items-center">{Number(original['p95()']).toFixed(2)} ms</div>
-					);
+				Cell: ({ row: { original } }: { row: Row<SentryFetchResult['data'][number]> }) => {
+					return <div className="flex items-center">{Number(original['p95()']).toFixed(2)} ms</div>;
 				},
 			},
 			{
-				Header: <Tooltip content="Apdex is an industry-standard metric used to track and measure user satisfaction based on your application response times. A higher Apdex score is better than a lower one; the score can go up to 1.0, representing 100% of users having a satisfactory experience. The Apdex score provides the ratio of satisfactory, tolerable, and frustrated requests in a specific transaction or endpoint. This metric provides a standard for you to compare transaction performance, understand which ones may require additional optimization or investigation, and set targets or goals for performance">
-					<div className="flex items-center">APDEX</div>
-				</Tooltip>,
+				Header: (
+					<div className="flex items-center">
+						<span>APDEX</span>
+						<Tooltip content={APDEX_HELP_TEXT}>
+							<HelpCircleIcon width={15} className={'ml-1'} />
+						</Tooltip>
+					</div>
+				),
 				accessor: 'apdex',
-				Cell: ({ row: { original } }) => {
-					return (
-						<div className="flex items-center">{Number(original['apdex()']).toFixed(2)}</div>
-					);
+				Cell: ({ row: { original } }: { row: Row<SentryFetchResult['data'][number]> }) => {
+					return <div className="flex items-center">{Number(original['apdex()']).toFixed(2)}</div>;
 				},
 			},
 		],
@@ -97,23 +133,30 @@ const SentryTransactions = (props: Props) => {
 	const { medusaClient, organisation, project, location, onRowClick } = props;
 
 	const { setStatsPeriod, setPerPage, setQuery, setCursor, filters, queryObject, representationObject } =
-		useSentryTransactionsFilters(location.search);
+		useSentryTransactionsFilters(location.search, defaultFilterValues);
 
 	const [transactions, setTransactions] = useState([]);
-	const [nextCursor, setNextCursor] = useState();
-	const [prevCursor, setPrevCursor] = useState();
-	const [graphData, setGrpaphData] = useState();
+	const [nextCursor, setNextCursor] = useState<string>();
+	const [prevCursor, setPrevCursor] = useState<string>();
+	const [localFilters, setLocalFilters] = useState(filters);
+	const [graphData, setGraphData] = useState<SentryStatsFetchResult>();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const fetchTransactions = () => {
+		if (!Object.keys(queryObject).length) return;
+
 		setIsLoading(true);
 		Promise.all([
-			medusaClient.fetchSentryTransactionsStats(queryObject as any).then((data) => setGrpaphData(data)),
-			medusaClient.fetchSentryTransactions(queryObject as any).then(({ data, next_cursor, prev_cursor }) => {
-				setTransactions(data);
-				setNextCursor(next_cursor);
-				setPrevCursor(prev_cursor);
-			}),
+			medusaClient
+				.fetchSentryTransactionsStats(queryObject as GetSentryTransactionsStatsParams)
+				.then((data) => setGraphData(data)),
+			medusaClient
+				.fetchSentryTransactions(queryObject as GetSentryTransactionsParams)
+				.then(({ data, next_cursor, prev_cursor }) => {
+					setTransactions(data);
+					setNextCursor(next_cursor);
+					setPrevCursor(prev_cursor);
+				}),
 		]).finally(() => {
 			setIsLoading(false);
 		});
@@ -125,6 +168,7 @@ const SentryTransactions = (props: Props) => {
 
 	useEffect(() => {
 		refreshWithFilters();
+		fetchTransactions();
 	}, [representationObject]);
 
 	const updateUrlFromFilter = (obj = {}) => {
@@ -147,12 +191,16 @@ const SentryTransactions = (props: Props) => {
 	};
 
 	const handleNext = async () => {
+		if (isLoading) return;
+
 		if (nextCursor) {
 			setCursor(nextCursor);
 		}
 	};
 
 	const handlePrev = async () => {
+		if (isLoading) return;
+
 		if (prevCursor) {
 			setCursor(prevCursor);
 		}
@@ -164,13 +212,11 @@ const SentryTransactions = (props: Props) => {
 		{
 			columns,
 			data: transactions ?? [],
-			manualPagination: true,
-			autoResetPage: false,
-		} as any,
+		},
 		usePagination
 	);
 
-	const getActions = (row: { original: { transaction: string } }): ActionType[] => [
+	const getActions = (row: Row<SentryFetchResult['data'][number]>): ActionType[] => [
 		{
 			label: 'Open',
 			onClick: () =>
@@ -185,6 +231,7 @@ const SentryTransactions = (props: Props) => {
 	return (
 		<>
 			<TransactionStats graphData={graphData} />
+
 			<div style={{ boxShadow: '0px 0px 1px rgba(0,0,0,.3)' }} className="p-8 rounded-rounded w-ful bg-white">
 				<>
 					<Table
@@ -194,23 +241,36 @@ const SentryTransactions = (props: Props) => {
 									<InputField
 										label="Period"
 										placeholder="24h, 48h..."
-										value={filters.statsPeriod}
-										onChange={(el) => setStatsPeriod(el.target.value)}
-										onBlur={() => fetchTransactions()}
+										value={localFilters.statsPeriod}
+										onChange={(el) =>
+											setLocalFilters({ ...localFilters, statsPeriod: el.target.value })
+										}
+										onBlur={() => {
+											setStatsPeriod(localFilters.statsPeriod);
+											fetchTransactions();
+										}}
 									/>
 									<InputField
 										label="Limit"
 										placeholder="10, 20..."
-										value={filters.perPage}
-										onChange={(el) => setPerPage(el.target.value)}
-										onBlur={() => fetchTransactions()}
+										value={localFilters.perPage}
+										onChange={(el) =>
+											setLocalFilters({ ...localFilters, perPage: el.target.value })
+										}
+										onBlur={() => {
+											setPerPage(localFilters.perPage);
+											fetchTransactions();
+										}}
 									/>
 									<InputField
 										label={'Query'}
 										placeholder='!transaction:"GET /admin/sentry-transactions"'
-										value={filters.query}
-										onChange={(el) => setQuery(el.target.value)}
-										onBlur={() => fetchTransactions()}
+										value={localFilters.query}
+										onChange={(el) => setLocalFilters({ ...localFilters, query: el.target.value })}
+										onBlur={() => {
+											setQuery(localFilters.query);
+											fetchTransactions();
+										}}
 									/>
 								</div>
 							</div>
@@ -234,7 +294,7 @@ const SentryTransactions = (props: Props) => {
 
 								<Table.Body {...getTableBodyProps()}>
 									{rows?.length > 0 &&
-										rows.map((row: any) => {
+										rows.map((row: Row<SentryFetchResult['data'][number]>) => {
 											prepareRow(row);
 											const linkTo = (onRowClick && onRowClick(row)) || '';
 											return (

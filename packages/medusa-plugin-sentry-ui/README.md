@@ -14,6 +14,10 @@
 	<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
 </p>
 
+<p align="center">
+  <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medusa-plugin-sentry-ui.gif?raw=true" alt="Medusa-plugins logo" width="500" height="auto" />
+</p>
+
 ## Description
 
 Thie spackage provides a set of component to have a sentry dashboard right into your admin
@@ -22,17 +26,13 @@ and be able to get an overview of what is happening without having to leave your
 JavaScript Error and Performance Monitoring
 Resolve JavaScript errors with max efficiency, not max effort. Get actionable insights to resolve JavaScript performance issues with the ability to track, debug, and resolve JavaScript errors across platforms.
 
-## Demo
-
-Need to feel that section
-
 ## Getting started
 
 > ### Requirements
 > Your server need to have installed `medusa-plugin-sentry` before being able to use that library
 > as the data are comsumed from that plugin.
 
-First of all, you need to install the plugin as follow `yarn add medusa-plugnin-sentrui`
+First of all, you need to install the plugin as follow `yarn add medusa-plugnin-sentry-ui`
 
 For the simple uasge you can open the file `src/pages/a.js` and add the following component above the `Routes` component
 ```javascript

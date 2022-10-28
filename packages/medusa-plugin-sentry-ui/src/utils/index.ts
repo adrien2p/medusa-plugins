@@ -6,7 +6,6 @@ import {
 	GetSentryTransactionsParams,
 	GetSentryTransactionsStatsParams,
 } from '../types';
-import Admin from '@medusajs/medusa-js/dist/resources/admin';
 import Medusa from '@medusajs/medusa-js';
 
 export const parseQueryString = <T = unknown, S = unknown>(queryString?: string, filters: T | null = {} as T): S => {
@@ -26,15 +25,7 @@ export const parseQueryString = <T = unknown, S = unknown>(queryString?: string,
 	return defaultVal;
 };
 
-export const buildMedusaClient = ({
-	baseUrl,
-	organisation,
-	project,
-}): Admin & {
-	fetchSentryTransactions: (query?: GetSentryTransactionsParams) => any;
-	fetchSentryTransactionEvents: (query?: GetSentryTransactionEventsParams) => any;
-	fetchSentryTransactionsStats: (query?: GetSentryTransactionsStatsParams) => any;
-} => {
+export const buildMedusaClient = ({ baseUrl, organisation, project }): AdminClient => {
 	const medusa = new Medusa({ baseUrl, maxRetries: 1 });
 	return {
 		...medusa.admin,
