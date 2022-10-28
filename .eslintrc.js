@@ -19,9 +19,11 @@ module.exports = {
       '**/.prettier*',
       '**/.version*',
       '**/*.md',
+      '**/*.json',
       '**/*.js',
       '**/*.js.map',
-      '**/*.d.ts'
+      '**/*.d.ts',
+      '**/*.d.ts.map',
   ],
   overrides: [
     {
@@ -29,7 +31,7 @@ module.exports = {
       "rules": {
         "prefer-rest-params": "off"
       }
-    }
+    },
   ],
   rules: {
     "prettier/prettier": "error",

@@ -3,25 +3,18 @@ import axios from 'axios';
 import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { EntityManager } from 'typeorm';
 
-import { SentryOptions, SentryWebHookData, SentryWebHookEvent } from '../types';
+import {
+	SentryFetchResult,
+	SentryOptions,
+	SentryStatsFetchResult,
+	SentryWebHookData,
+	SentryWebHookEvent,
+} from '../types';
 import { isFunction } from '../utils';
 
 type InjectedDeps = {
 	manager: EntityManager;
 	eventBusService: EventBusService;
-};
-
-type SentryFetchResult = {
-	data: Record<string, string>[];
-	meta: unknown;
-	prev_cursor: string;
-	next_cursor: string;
-};
-
-type SentryStatsFetchResult = {
-	[stat: string]: {
-		data: [number, [{ count: number }]][];
-	};
 };
 
 export default class SentryService extends TransactionBaseService {
@@ -239,7 +232,7 @@ export default class SentryService extends TransactionBaseService {
 		});
 	}
 
-	protected async fetchSentry({
+	protected async fetchSentry<Tdata = unknown>({
 		organisation,
 		token,
 		queryParams,
@@ -249,7 +242,7 @@ export default class SentryService extends TransactionBaseService {
 		token: string;
 		queryParams: Record<string, string | number | string[]>;
 		customTargetPathSegment?: string;
-	}): Promise<{ data: any; headers: any }> {
+	}): Promise<Tdata> {
 		const url =
 			this.sentryApiBaseUrl + `/${organisation}/${customTargetPathSegment ? customTargetPathSegment : 'events/'}`;
 
@@ -271,7 +264,7 @@ export default class SentryService extends TransactionBaseService {
 			params: searchParams,
 		});
 
-		return { data, headers };
+		return { data, headers } as Tdata;
 	}
 
 	protected async fetchSentryData({
@@ -288,7 +281,7 @@ export default class SentryService extends TransactionBaseService {
 		const {
 			data: { data, meta },
 			headers,
-		} = await this.fetchSentry({
+		} = await this.fetchSentry<{ data: { data: SentryFetchResult['data']; meta: unknown }; headers: unknown }>({
 			organisation,
 			token,
 			queryParams,
@@ -314,7 +307,7 @@ export default class SentryService extends TransactionBaseService {
 		token: string;
 		queryParams: Record<string, string | number | string[]>;
 	}): Promise<SentryStatsFetchResult> {
-		const { data } = await this.fetchSentry({
+		const { data } = await this.fetchSentry<{ data: SentryStatsFetchResult }>({
 			organisation,
 			token,
 			queryParams,

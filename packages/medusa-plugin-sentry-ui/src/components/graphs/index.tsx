@@ -1,6 +1,9 @@
 import React from 'react';
-import { VictoryArea, VictoryAxis, VictoryChart, VictoryTooltip, VictoryVoronoiContainer } from "victory";
-import styled from "styled-components";
+import { VictoryArea, VictoryAxis, VictoryChart, VictoryTooltip, VictoryVoronoiContainer } from 'victory';
+import styled from 'styled-components';
+import HelpCircleIcon from '../temp/fundamentals/icons/help-circle';
+import Tooltip from '../temp/atoms/tooltip';
+import { APDEX_HELP_TEXT, FAILURE_RATE_HELP_TEXT, TPM_HELP_TEXT } from '../../types';
 
 type BarChartProps = {
 	data: [number, [{ count: number }]][];
@@ -10,14 +13,14 @@ type BarChartProps = {
 };
 
 const GraphContainer = styled.div`
-.VictoryContainer > svg {
-	width: 100%;
-	height: 100%;
- 	overflow: visible;
-}
+	.VictoryContainer > svg {
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+	}
 `;
 
-function BarChart(props: BarChartProps & { yMin: string; yMax: string; }) {
+function BarChart(props: BarChartProps & { yMin: string; yMax: string; tooltipContent: string }) {
 	const data = props.data?.map((d) => ({ timestamp: d[0], value: d[1][0].count }));
 
 	const stroke = { yellowGradient: '#FFC42A', purpuleGradient: '#7C3AED', blueGradient: '#4155ED' }[props.gradient];
@@ -31,7 +34,12 @@ function BarChart(props: BarChartProps & { yMin: string; yMax: string; }) {
 				borderRadius: 8,
 			}}
 		>
-			<h3 style={{ fontWeight: 'bold', margin: '12px 16px 0 16px' }}>{props.title}</h3>
+			<h3 style={{ fontWeight: 'bold', margin: '12px 16px 0 16px', display: 'flex' }}>
+				<span>{props.title}</span>
+				<Tooltip content={props.tooltipContent}>
+					<HelpCircleIcon width={15} className={'ml-1'} />
+				</Tooltip>
+			</h3>
 			<div
 				style={{ fontSize: 12, margin: ' 0 16px', color: 'rgba(107, 114, 128)' }}
 				className="text-gray font-small mx-16"
@@ -90,14 +98,16 @@ function BarChart(props: BarChartProps & { yMin: string; yMax: string; }) {
 								containerComponent={
 									<VictoryVoronoiContainer
 										labels={({ datum }) =>
-											`${new Date(datum.timestamp * 1000).toLocaleString()} \n Value: ${Math.round(datum.value * 100)}`
+											`${new Date(
+												datum.timestamp * 1000
+											).toLocaleString()} \n Value: ${Math.round(datum.value * 100)}`
 										}
 									/>
 								}
-								animate={{ duration: 200 }}
+								animate={{ duration: 500 }}
 							>
 								<VictoryArea
-									labelComponent={<VictoryTooltip flyoutStyle={{fill: "white"}} />}
+									labelComponent={<VictoryTooltip flyoutStyle={{ fill: 'white' }} />}
 									style={{
 										data: { fill: `url(#${props.gradient})`, stroke },
 									}}
@@ -124,32 +134,35 @@ function BarChart(props: BarChartProps & { yMin: string; yMax: string; }) {
 }
 
 function TransactionStats({ graphData }) {
-	const tpmYMax = Math.max(0, ...(graphData?.['tpm()']?.data.map(d => d?.[1]?.[0]?.count ?? 0) ?? []))
+	const tpmYMax = Math.max(0, ...(graphData?.['tpm()']?.data.map((d) => d?.[1]?.[0]?.count ?? 0) ?? []));
 
 	return (
 		<div className="flex justify-between">
 			<BarChart
 				gradient="purpleGradient"
 				title="Apdex"
+				tooltipContent={APDEX_HELP_TEXT}
 				subtitle="Apdex percentage"
 				data={graphData?.['apdex()'].data}
-				yMin={"0"}
-				yMax={"100"}
+				yMin={'0'}
+				yMax={'100'}
 			/>
 			<BarChart
 				gradient="yellowGradient"
 				title="Failure rate"
+				tooltipContent={FAILURE_RATE_HELP_TEXT}
 				subtitle="Failure rate percentage"
 				data={graphData?.['failure_rate()'].data}
-				yMin={"0"}
-				yMax={"100"}
+				yMin={'0'}
+				yMax={'100'}
 			/>
 			<BarChart
 				gradient="blueGradient"
 				title="TPM"
+				tooltipContent={TPM_HELP_TEXT}
 				subtitle="Transactions per minute"
 				data={graphData?.['tpm()'].data}
-				yMin={"0"}
+				yMin={'0'}
 				yMax={tpmYMax.toFixed(1)}
 			/>
 		</div>

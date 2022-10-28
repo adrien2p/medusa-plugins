@@ -1,24 +1,25 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
-import { parseQueryString } from '../../utils';
-import qs from 'qs';
+import { parseQueryString } from '../utils';
 
 type SentryTransactionFilters = {
 	statsPeriod: string;
-	perPage?: number;
+	perPage?: number | string;
 	query?: string;
 	cursor?: string;
+	transaction?: string;
 };
 
 interface SentryTransactionsFiltersState {
 	statsPeriod: string;
-	perPage?: number;
+	perPage?: number | string;
 	query?: string;
 	cursor?: string;
+	transaction?: string;
 }
 
 type ProductFilterAction =
 	| { type: 'setStatsPeriod'; payload: string }
-	| { type: 'setPerPage'; payload: number | undefined }
+	| { type: 'setPerPage'; payload: number | string | undefined }
 	| { type: 'setQuery'; payload: string | undefined }
 	| { type: 'setCursor'; payload: string | undefined };
 
@@ -26,8 +27,10 @@ export const useSentryTransactionsFilters = (
 	existing?: string,
 	defaultFilters: SentryTransactionFilters | null = null
 ) => {
-	const [representationObject, setRepresentationObject] = useState({});
-	const [queryObject, setQueryObject] = useState({});
+	const [representationObject, setRepresentationObject] = useState<SentryTransactionFilters>(
+		{} as SentryTransactionFilters
+	);
+	const [queryObject, setQueryObject] = useState<SentryTransactionFilters>({} as SentryTransactionFilters);
 
 	if (existing && existing[0] === '?') {
 		existing = existing.substring(1);
@@ -57,24 +60,22 @@ export const useSentryTransactionsFilters = (
 	};
 
 	const getQueryObject = () => {
-		const toQuery: any = { ...state };
-		for (const [key, value] of Object.entries(state)) {
-			toQuery[key] = value;
+		const toQuery = { ...state };
+		for (const key of Object.keys(state)) {
+			toQuery[key] = state[key];
 		}
 
-		console.log('getQueryObject', toQuery);
 		return toQuery;
 	};
 
 	const getRepresentationObject = (fromObject?: SentryTransactionsFiltersState) => {
 		const objToUse = fromObject ?? state;
 
-		const toQuery: any = {};
-		for (const [key, value] of Object.entries(objToUse)) {
-			toQuery[key] = value;
+		const toQuery: SentryTransactionsFiltersState = {} as SentryTransactionsFiltersState;
+		for (const key of Object.keys(objToUse)) {
+			toQuery[key] = state[key];
 		}
 
-		console.log('getRepresentationObject', toQuery);
 		return toQuery;
 	};
 

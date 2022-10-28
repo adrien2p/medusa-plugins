@@ -37,7 +37,7 @@ const Sentry = (props: RouteComponentProps & Props) => {
 
 	const transactionRowClickFn =
 		onTransactionRowClick ??
-		((row) => `?statsPeriod=24h&perPage=50&transaction=${(row.original as any).transaction}`);
+		((row: { original: { transaction: string } }) => `?transaction=${row.original.transaction}`);
 	const transactionEventRowClickFn = onTransactionEventRowClick ?? (() => ``);
 
 	const CurrentView = () => {

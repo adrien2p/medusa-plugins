@@ -38,3 +38,16 @@ export type SentryWebHookData = {
 	data: unknown;
 	installation: unknown;
 };
+
+export type SentryFetchResult = {
+	data: Record<string, string>[];
+	meta: unknown;
+	prev_cursor: string;
+	next_cursor: string;
+};
+
+export type SentryStatsFetchResult = {
+	[stat: string]: {
+		data: [number, [{ count: number }]][];
+	};
+};
