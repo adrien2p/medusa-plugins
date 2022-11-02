@@ -21,6 +21,7 @@ export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 		enableTracing = true,
 		enableRequestHandler = true,
 		webHookOptions,
+		apiToken,
 		...options
 	} = pluginOptions;
 
@@ -46,7 +47,9 @@ export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 		attachSentryWebHook(router, webHookOptions);
 	}
 
-	attachAdminEndPoints(router, rootDirectory, pluginOptions);
+	if (apiToken) {
+		attachAdminEndPoints(router, rootDirectory, pluginOptions);
+	}
 
 	return router;
 }
