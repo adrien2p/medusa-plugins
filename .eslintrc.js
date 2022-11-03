@@ -43,6 +43,8 @@ module.exports = {
         },
         "extendDefaults": true
       }
-    ]
+    ],
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/ban-ts-comment": "off"
   },
 };
