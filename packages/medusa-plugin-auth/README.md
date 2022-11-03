@@ -1,15 +1,38 @@
+<p align="center" style="margin-top: 4rem">
+  <img src="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/medusa-plugin-auth-logo.png?raw=true" alt="Medusa-plugins logo" width="200" height="auto" />
+</p>
+
+
 <h1 align="center">medusa-plugin-auth</h1>
+
+<p align="center">
+	<a href="https://www.npmjs.com/package/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-auth.svg" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugins/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/adrien2p/medusa-plugins.svg" height="20"/></a>
+	<a href="https://github.com/adrien2p/awesome-medusajs"><img alt="Awesome medusajs" src="https://awesome.re/badge.svg" height="20"/></a>
+	<a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20The%20new%20medusa%auth%20plugin&url=https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth"><img alt="Twitter" src="https://badgen.net/badge/icon/twitter?icon=twitter&label=Share%20it%20on" height="20"/></a>
+	<a href="https://discord.gg/xpCwq3Kfn8"><img alt="Discord" src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugins/commits/main"><img alt="Activity" src="https://img.shields.io/github/commit-activity/m/adrien2p/medusa-plugins?style=flat" height="20"/></a>
+	<a href="https://github.com/adrien2p/medusa-plugins/issues"><img alt="Issues" src="https://img.shields.io/github/issues/adrien2p/medusa-plugins?style=flat" height="20"/></a>
+</p>
 
 ## Description
 
-JavaScript Error and Performance Monitoring
-Resolve JavaScript errors with max efficiency, not max effort. Get actionable insights to resolve JavaScript performance issues with the ability to track, debug, and resolve JavaScript errors across platforms.
+Social authentication for the admin and store client.
 
 ## Getting started
 
 First of all, you need to install the plugin as follow `yarn add medusa-plugin-auth`
 
-# Google
+## Strategies
+
+- [Google](#google)
+- [Facebook](#facebook)
+- [Twitter](#twitter)
+- [Linkedin](#linkedin)
+- [Github](#github)
+- [Microsoft](#microsoft)
+
+### Google
 
 You need to set up your Google OAuth 2 credentials and content screen in your developer console. You can follow the steps that are here https://support.google.com/cloud/answer/6158849?hl=en
 
@@ -52,3 +75,23 @@ Now you can add your Google sign in button in your client with something along t
     <p class="text-base font-medium ml-4 text-gray-700">Continue with Google</p>
 </button>
 ```
+
+### Facebook
+
+Coming soon
+
+### Twitter
+
+Coming soon
+
+### Linkedin
+
+Coming soon
+
+### Github
+
+Coming soon
+
+### Microsoft
+
+Coming soon
