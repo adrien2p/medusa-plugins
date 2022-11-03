@@ -48,7 +48,7 @@ Then, in your medusa config plugins collection you can add the following configu
             clientSecret: "__YOUR_CLIENT_SECRET__",
             // Enable google OAuth 2 for the admin domain
             admin: {
-                authCallback:`${process.env.BACKEND_URL}/admin/auth/google/cb`, 
+                callbackUrl:`${process.env.BACKEND_URL}/admin/auth/google/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 authPath: "/admin/auth/google/cb",
@@ -58,7 +58,7 @@ Then, in your medusa config plugins collection you can add the following configu
             },
             // Enable google OAuth 2 for the store domain
             store: {
-                authCallback:`${process.env.BACKEND_URL}/store/auth/google/cb`, 
+                callbackUrl:`${process.env.BACKEND_URL}/store/auth/google/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
                 authPath: "/store/auth/google/cb",

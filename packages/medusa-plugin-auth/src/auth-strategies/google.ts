@@ -12,8 +12,8 @@ import { EntityManager } from 'typeorm';
 
 import { AuthOptions } from '../types';
 
-const GOOGLE_ADMIN_STRATEGY = 'google.admin';
-const GOOGLE_STORE_STRATEGY = 'google.store';
+const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin';
+const GOOGLE_STORE_STRATEGY_NAME = 'google.store';
 
 export function loadGoogleAdminStrategy(
 	container: MedusaContainer,
@@ -32,7 +32,7 @@ export function loadGoogleAdminStrategy(
 	});
 
 	passport.use(
-		GOOGLE_ADMIN_STRATEGY,
+		GOOGLE_ADMIN_STRATEGY_NAME,
 		new GoogleStrategy(
 			{
 				clientID: google.clientID,
@@ -59,7 +59,7 @@ export function loadGoogleAdminStrategy(
 						return done(err, null);
 					} else {
 						req.session.jwt = jwt.sign({ userId: user.id }, configModule.projectConfig.jwt_secret, {
-							expiresIn: google.admin.expiresIn ?? "24h",
+							expiresIn: google.admin.expiresIn ?? '24h',
 						});
 						return done(null, { id: user.id });
 					}
@@ -102,15 +102,18 @@ export function getGoogleAdminAuthRouter(google: AuthOptions['google'], configMo
 	router.get(google.admin.authPath, cors(adminCorsOptions));
 	router.get(
 		google.admin.authPath,
-		passport.authenticate(GOOGLE_ADMIN_STRATEGY, {
-			scope: ['email', 'profile'],
+		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
+			scope: [
+				'https://www.googleapis.com/auth/userinfo.email',
+				'https://www.googleapis.com/auth/userinfo.profile',
+			],
 		})
 	);
 
 	router.get(google.admin.authCallbackPath, cors(adminCorsOptions));
 	router.get(
 		google.admin.authCallbackPath,
-		passport.authenticate(GOOGLE_ADMIN_STRATEGY, {
+		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
 			failureRedirect: google.admin.failureRedirect,
 			successRedirect: google.admin.successRedirect,
 		})
@@ -139,7 +142,7 @@ export function loadGoogleStoreStrategy(
 	});
 
 	passport.use(
-		GOOGLE_STORE_STRATEGY,
+		GOOGLE_STORE_STRATEGY_NAME,
 		new GoogleStrategy(
 			{
 				clientID: google.clientID,
@@ -192,7 +195,7 @@ export function loadGoogleStoreStrategy(
 						})
 						.then((user) => {
 							req.session.jwt = jwt.sign({ userId: user.id }, configModule.projectConfig.jwt_secret, {
-								expiresIn: google.admin.expiresIn ?? "30d",
+								expiresIn: google.admin.expiresIn ?? '30d',
 							});
 							return done(null, { id: user.id });
 						})
@@ -216,15 +219,18 @@ export function getGoogleStoreAuthRouter(google: AuthOptions['google'], configMo
 	router.get(google.store.authPath, cors(adminCorsOptions));
 	router.get(
 		google.store.authPath,
-		passport.authenticate(GOOGLE_ADMIN_STRATEGY, {
-			scope: ['email', 'profile'],
+		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
+			scope: [
+				'https://www.googleapis.com/auth/userinfo.email',
+				'https://www.googleapis.com/auth/userinfo.profile',
+			],
 		})
 	);
 
 	router.get(google.store.authCallbackPath, cors(adminCorsOptions));
 	router.get(
 		google.store.authCallbackPath,
-		passport.authenticate(GOOGLE_ADMIN_STRATEGY, {
+		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
 			failureRedirect: google.store.failureRedirect,
 			successRedirect: google.store.successRedirect,
 		})
