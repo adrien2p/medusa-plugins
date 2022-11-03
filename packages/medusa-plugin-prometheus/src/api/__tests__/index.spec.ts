@@ -1,4 +1,4 @@
-import express  from 'express';
+import express from 'express';
 import request from 'supertest';
 import router from '../index';
 

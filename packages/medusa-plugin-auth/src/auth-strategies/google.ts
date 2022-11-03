@@ -10,7 +10,7 @@ import { MedusaError } from 'medusa-core-utils';
 import { generateEntityId } from '@medusajs/medusa/dist/utils';
 import { EntityManager } from 'typeorm';
 
-import { AuthOptions } from '../types';
+import { AUTH_TOKEN_COOKIE_NAME, AuthOptions } from '../types';
 
 const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin';
 const GOOGLE_STORE_STRATEGY_NAME = 'google.store';
@@ -23,13 +23,6 @@ export function loadGoogleAdminStrategy(
 	const userService: UserService = container.resolve(formatRegistrationName(`${process.cwd()}/services/user.js`));
 
 	const METADATA_KEY = 'useGoogleStrategy';
-
-	passport.serializeUser(function (user, done) {
-		done(null, user);
-	});
-	passport.deserializeUser(function (user, done) {
-		done(null, user);
-	});
 
 	passport.use(
 		GOOGLE_ADMIN_STRATEGY_NAME,
@@ -58,9 +51,6 @@ export function loadGoogleAdminStrategy(
 						);
 						return done(err, null);
 					} else {
-						req.session.jwt = jwt.sign({ userId: user.id }, configModule.projectConfig.jwt_secret, {
-							expiresIn: google.admin.expiresIn ?? '24h',
-						});
 						return done(null, { id: user.id });
 					}
 				}
@@ -78,9 +68,6 @@ export function loadGoogleAdminStrategy(
 						generateEntityId('temp_pass_')
 					)
 					.then((user) => {
-						req.session.jwt = jwt.sign({ userId: user.id }, configModule.projectConfig.jwt_secret, {
-							expiresIn: '24h',
-						});
 						return done(null, { id: user.id });
 					})
 					.catch((err) => {
@@ -107,6 +94,7 @@ export function getGoogleAdminAuthRouter(google: AuthOptions['google'], configMo
 				'https://www.googleapis.com/auth/userinfo.email',
 				'https://www.googleapis.com/auth/userinfo.profile',
 			],
+			session: false,
 		})
 	);
 
@@ -115,8 +103,14 @@ export function getGoogleAdminAuthRouter(google: AuthOptions['google'], configMo
 		google.admin.authCallbackPath,
 		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
 			failureRedirect: google.admin.failureRedirect,
-			successRedirect: google.admin.successRedirect,
-		})
+			session: false,
+		}),
+		(req, res) => {
+			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
+				expiresIn: google.admin.expiresIn ?? '24h',
+			});
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token).redirect(google.admin.successRedirect);
+		}
 	);
 
 	return router;
@@ -164,6 +158,7 @@ export function loadGoogleStoreStrategy(
 						.withTransaction(transactionManager)
 						.retrieveByEmail(email)
 						.catch(() => void 0);
+
 					if (customer) {
 						if (!customer.metadata[METADATA_KEY]) {
 							const err = new MedusaError(
@@ -172,13 +167,6 @@ export function loadGoogleStoreStrategy(
 							);
 							return done(err, null);
 						} else {
-							req.session.jwt = jwt.sign(
-								{ customer_id: customer.id },
-								configModule.projectConfig.jwt_secret,
-								{
-									expiresIn: '24h',
-								}
-							);
 							return done(null, { customer_id: customer.id });
 						}
 					}
@@ -193,11 +181,8 @@ export function loadGoogleStoreStrategy(
 							first_name: profile?.name.givenName ?? '',
 							last_name: profile?.name.familyName ?? '',
 						})
-						.then((user) => {
-							req.session.jwt = jwt.sign({ userId: user.id }, configModule.projectConfig.jwt_secret, {
-								expiresIn: google.admin.expiresIn ?? '30d',
-							});
-							return done(null, { id: user.id });
+						.then((customer) => {
+							return done(null, { id: customer.id });
 						})
 						.catch((err) => {
 							return done(err, null);
@@ -232,8 +217,13 @@ export function getGoogleStoreAuthRouter(google: AuthOptions['google'], configMo
 		google.store.authCallbackPath,
 		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
 			failureRedirect: google.store.failureRedirect,
-			successRedirect: google.store.successRedirect,
-		})
+		}),
+		(req, res) => {
+			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
+				expiresIn: google.store.expiresIn ?? '30d',
+			});
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token).redirect(google.admin.successRedirect);
+		}
 	);
 
 	return router;

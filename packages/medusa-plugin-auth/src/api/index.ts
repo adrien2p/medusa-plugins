@@ -4,9 +4,12 @@ import loadConfig from '@medusajs/medusa/dist/loaders/config';
 
 import { AuthOptions } from '../types';
 import { getGoogleAdminAuthRouter, getGoogleStoreAuthRouter } from '../auth-strategies/google';
+import { loadJwtOverrideStrategy } from "../auth-strategies/jwt-override";
 
 export default function (rootDirectory, pluginOptions: AuthOptions): Router[] {
 	const configModule = loadConfig(rootDirectory) as ConfigModule;
+
+	loadJwtOverrideStrategy(configModule)
 
 	return loadRouters(configModule, pluginOptions);
 }
