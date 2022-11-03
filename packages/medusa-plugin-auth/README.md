@@ -53,6 +53,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 authPath: "/admin/auth/google/cb",
                 authCallbackPath: "/admin/auth/google/cb", 
+              
+                expiresIn: "24h"
             },
             // Enable google OAuth 2 for the store domain
             store: {
@@ -60,7 +62,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
                 authPath: "/store/auth/google/cb",
-                authCallbackPath: "/store/auth/google/cb", 
+                authCallbackPath: "/store/auth/google/cb",
+                
+                expiresIn: "30d"
             }
         }
     }
