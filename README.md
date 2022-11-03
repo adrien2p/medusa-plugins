@@ -1,5 +1,5 @@
-<p align="center">
-  <img src="https://github.com/adrien2p/medusa-plugins/blob/assets/assets/medua-plugins-logo.png?raw=true" alt="Medusa-plugins logo" width="500" height="auto" />
+<p align="center" style="margin-top: 4rem">
+  <img src="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/medusa-plugins-logo.png" alt="Medusa-plugins logo" width="200" height="auto" />
 </p>
 <h1 align="center">medusa-plugins</h1>
 
