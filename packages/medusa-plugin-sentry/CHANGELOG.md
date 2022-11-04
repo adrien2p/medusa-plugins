@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.2.2...medusa-plugin-sentry@1.2.3) (2022-11-04)
+
+
+### Bug Fixes
+
+* check that api token have been provided before attaching the admin routes ([cb392b2](https://github.com/adrien2p/medusa-plugins/commit/cb392b2d7490cd35eeeac1843867e4e0ac510f88))
+
+
+
+
+
 ## [1.2.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.2.1...medusa-plugin-sentry@1.2.2) (2022-10-28)
 
 
