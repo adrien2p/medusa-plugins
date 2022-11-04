@@ -25,16 +25,16 @@
   "author": "Adrien de Peretti <adrien.deperetti@gmail.com",
   "files": [
     "api",
-    "handlers",
     "utils",
     "types",
     "services",
-    "loaders"
+    "loaders",
+    "auth-strategies"
   ],
   "scripts": {
     "build": "run-s clean build:tsc",
     "build:tsc": "tsc -b",
-    "clean": "rimraf api services utils types coverage tsconfig.tsbuildinfo",
+    "clean": "rimraf api services utils types loaders auth-strategies coverage tsconfig.tsbuildinfo",
     "test": "jest",
     "test:ci": "yarn add @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
   },
