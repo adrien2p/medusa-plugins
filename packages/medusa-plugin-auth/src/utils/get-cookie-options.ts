@@ -12,6 +12,5 @@ export function getCookieOptions(): CookieOptions {
 	return {
 		sameSite,
 		secure,
-		maxAge: 10 * 60 * 60 * 1000,
 	};
 }
