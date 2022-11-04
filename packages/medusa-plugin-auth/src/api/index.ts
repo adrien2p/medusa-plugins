@@ -41,8 +41,8 @@ function getLogoutRouter(configModule: ConfigModule): Router {
 
 	const logoutHandler = async (req, res) => {
 		if (req.session) {
-			req.session.destroy()
 			req.session.jwt = {}
+			req.session.destroy()
 		}
 
 		res.clearCookie(AUTH_TOKEN_COOKIE_NAME);
