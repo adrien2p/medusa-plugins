@@ -25,13 +25,6 @@ export function loadGoogleStoreStrategy(
 		formatRegistrationName(`${process.cwd()}/services/customer.js`)
 	);
 
-	passport.serializeUser(function (user, done) {
-		done(null, user);
-	});
-	passport.deserializeUser(function (user, done) {
-		done(null, user);
-	});
-
 	passport.use(
 		GOOGLE_STORE_STRATEGY_NAME,
 		new GoogleStrategy(
@@ -93,12 +86,12 @@ export function loadGoogleStoreStrategy(
 export function getGoogleStoreAuthRouter(google: AuthOptions['google'], configModule: ConfigModule): Router {
 	const router = Router();
 
-	const adminCorsOptions = {
+	const storeCorsOptions = {
 		origin: configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
 
-	router.get(google.store.authPath, cors(adminCorsOptions));
+	router.get(google.store.authPath, cors(storeCorsOptions));
 	router.get(
 		google.store.authPath,
 		passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
@@ -106,14 +99,16 @@ export function getGoogleStoreAuthRouter(google: AuthOptions['google'], configMo
 				'https://www.googleapis.com/auth/userinfo.email',
 				'https://www.googleapis.com/auth/userinfo.profile',
 			],
+			session: false,
 		})
 	);
 
-	router.get(google.store.authCallbackPath, cors(adminCorsOptions));
+	router.get(google.store.authCallbackPath, cors(storeCorsOptions));
 	router.get(
 		google.store.authCallbackPath,
 		passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
 			failureRedirect: google.store.failureRedirect,
+			session: false,
 		}),
 		(req, res) => {
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
