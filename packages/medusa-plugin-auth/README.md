@@ -64,7 +64,7 @@ Then, in your medusa config plugins collection you can add the following configu
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/google/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
-                authPath: "/store/auth/google/cb",
+                authPath: "/store/auth/google",
                 authCallbackPath: "/store/auth/google/cb",
                 
                 expiresIn: "30d"
