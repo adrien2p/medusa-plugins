@@ -7,7 +7,7 @@
   "command": {
     "publish": {
       "conventionalCommits": true,
-      "yes": true,
+      "yes": false,
       "ignoreChanges": [
         "**/*.spec.ts"
       ],
