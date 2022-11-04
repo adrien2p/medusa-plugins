@@ -12,6 +12,7 @@
     ]
   },
   "scripts": {
+    "build": "./node_modules/.bin/lerna run build",
     "bootstrap": "./node_modules/.bin/lerna bootstrap",
     "clean": "./node_modules/.bin/lerna run --parallel clean",
     "release": "./node_modules/.bin/lerna publish",
