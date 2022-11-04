@@ -12,7 +12,7 @@ import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
 import { ENTITY_METADATA_KEY } from './index';
 
-const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin';
+const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin.medusa-auth-plugin';
 
 export function loadGoogleAdminStrategy(
 	container: MedusaContainer,

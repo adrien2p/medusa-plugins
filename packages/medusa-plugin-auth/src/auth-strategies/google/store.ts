@@ -13,7 +13,7 @@ import { AUTH_TOKEN_COOKIE_NAME, AuthOptions } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
 import { ENTITY_METADATA_KEY } from './index';
 
-const GOOGLE_STORE_STRATEGY_NAME = 'google.store';
+const GOOGLE_STORE_STRATEGY_NAME = 'google.store.medusa-auth-plugin';
 
 export function loadGoogleStoreStrategy(
 	container: MedusaContainer,
