@@ -6,7 +6,7 @@ import loadConfig from '@medusajs/medusa/dist/loaders/config';
 import { AUTH_TOKEN_COOKIE_NAME, AuthOptions } from '../types';
 import { loadJwtOverrideStrategy } from '../auth-strategies/jwt-override';
 import { getGoogleAdminAuthRouter, getGoogleStoreAuthRouter } from '../auth-strategies/google';
-import cors from "cors";
+import cors from 'cors';
 
 export default function (rootDirectory, pluginOptions: AuthOptions): Router[] {
 	const configModule = loadConfig(rootDirectory) as ConfigModule;
@@ -32,39 +32,38 @@ function loadRouters(configModule: ConfigModule, options: AuthOptions): Router[]
 		}
 	}
 
-
 	return [...routers, getLogoutRouter(configModule)];
 }
 
 function getLogoutRouter(configModule: ConfigModule): Router {
-	const router = Router()
+	const router = Router();
 
 	const logoutHandler = async (req, res) => {
 		if (req.session) {
-			req.session.jwt = {}
-			req.session.destroy()
+			req.session.jwt = {};
+			req.session.destroy();
 		}
 
 		res.clearCookie(AUTH_TOKEN_COOKIE_NAME);
 
-		res.status(200).json({})
-	}
+		res.status(200).json({});
+	};
 
 	const adminCorsOptions = {
 		origin: configModule.projectConfig.admin_cors.split(','),
 		credentials: true,
 	};
 
-	router.use("/admin/auth", cors(adminCorsOptions))
-	router.delete("/admin/auth", wrapHandler(logoutHandler))
+	router.use('/admin/auth', cors(adminCorsOptions));
+	router.delete('/admin/auth', wrapHandler(logoutHandler));
 
 	const storeCorsOptions = {
 		origin: configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
 
-	router.use("/store/auth", cors(storeCorsOptions))
-	router.delete("/store/auth", wrapHandler(logoutHandler))
+	router.use('/store/auth', cors(storeCorsOptions));
+	router.delete('/store/auth', wrapHandler(logoutHandler));
 
 	return router;
 }

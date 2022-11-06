@@ -20,10 +20,8 @@ export function loadGoogleStoreStrategy(
 	configModule: ConfigModule,
 	google: AuthOptions['google']
 ): void {
-	const manager: EntityManager = container.resolve('manager');
-	const customerService: CustomerService = container.resolve(
-		formatRegistrationName(`${process.cwd()}/services/customer.js`)
-	);
+	const verifyCallbackFn: AuthOptions['google']['store']['verifyCallback'] =
+		google.admin.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
 		GOOGLE_STORE_STRATEGY_NAME,
@@ -39,45 +37,13 @@ export function loadGoogleStoreStrategy(
 				accessToken: string,
 				refreshToken: string,
 				profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-				done
+				done: (err: null | unknown, data: null | { id: string }) => void
 			) {
-				await manager.transaction(async (transactionManager) => {
-					const email = profile.emails[0].value;
+				const done_ = (err: null | unknown, data: null | { id: string }) => {
+					done(err, data);
+				};
 
-					const customer = await customerService
-						.withTransaction(transactionManager)
-						.retrieveByEmail(email)
-						.catch(() => void 0);
-
-					if (customer) {
-						if (!customer.metadata[ENTITY_METADATA_KEY]) {
-							const err = new MedusaError(
-								MedusaError.Types.INVALID_DATA,
-								`Customer with email ${email} already exists`
-							);
-							return done(err, null);
-						} else {
-							return done(null, { customer_id: customer.id });
-						}
-					}
-
-					await customerService
-						.withTransaction(transactionManager)
-						.create({
-							email,
-							metadata: {
-								[ENTITY_METADATA_KEY]: true,
-							},
-							first_name: profile?.name.givenName ?? '',
-							last_name: profile?.name.familyName ?? '',
-						})
-						.then((customer) => {
-							return done(null, { id: customer.id });
-						})
-						.catch((err) => {
-							return done(err, null);
-						});
-				});
+				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
 			}
 		)
 	);
@@ -119,4 +85,65 @@ export function getGoogleStoreAuthRouter(google: AuthOptions['google'], configMo
 	);
 
 	return router;
+}
+
+/**
+ * Default callback to execute when the strategy is called.
+ * @param container
+ * @param req
+ * @param accessToken
+ * @param refreshToken
+ * @param profile
+ * @param done
+ */
+export async function verifyStoreCallback(
+	container: MedusaContainer,
+	req: Request,
+	accessToken: string,
+	refreshToken: string,
+	profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
+	done: (err: null | unknown, data: null | { id: string }) => void
+): Promise<void> {
+	const manager: EntityManager = container.resolve('manager');
+	const customerService: CustomerService = container.resolve(
+		formatRegistrationName(`${process.cwd()}/services/customer.js`)
+	);
+
+	await manager.transaction(async (transactionManager) => {
+		const email = profile.emails[0].value;
+
+		const customer = await customerService
+			.withTransaction(transactionManager)
+			.retrieveByEmail(email)
+			.catch(() => void 0);
+
+		if (customer) {
+			if (!customer.metadata || !customer.metadata[ENTITY_METADATA_KEY]) {
+				const err = new MedusaError(
+					MedusaError.Types.INVALID_DATA,
+					`Customer with email ${email} already exists`
+				);
+				return done(err, null);
+			} else {
+				return done(null, { id: customer.id });
+			}
+		}
+
+		await customerService
+			.withTransaction(transactionManager)
+			.create({
+				email,
+				metadata: {
+					[ENTITY_METADATA_KEY]: true,
+				},
+				first_name: profile?.name.givenName ?? '',
+				last_name: profile?.name.familyName ?? '',
+			})
+			.then((customer) => {
+				return done(null, { id: customer.id });
+			})
+			.catch((err) => {
+				return done(err, null);
+			});
+	});
 }

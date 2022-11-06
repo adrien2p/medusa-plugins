@@ -55,7 +55,7 @@ Then, in your medusa config plugins collection you can add the following configu
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 authPath: "/admin/auth/google",
-                authCallbackPath: "/admin/auth/google/cb", 
+                authCallbackPath: "/admin/auth/google/cb",
               
                 expiresIn: "24h"
             },
@@ -74,6 +74,59 @@ Then, in your medusa config plugins collection you can add the following configu
 }
 ```
 
+Here is the full configuration types
+
+```typescript
+
+export type AuthOptions = {
+    google?: {
+        clientID: string;
+        clientSecret: string;
+        admin?: {
+            callbackUrl: string;
+            successRedirect: string;
+            failureRedirect: string;
+            authPath: string;
+            authCallbackPath: string;
+            /**
+             * The default verify callback function will be used if this configuration is not specified
+             */
+            verifyCallback?: (
+                container: MedusaContainer,
+                req: Request,
+                accessToken: string,
+                refreshToken: string,
+                profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
+                done: (err: null | unknown, data: null | { id: string }) => void
+            ) => Promise<void>;
+    
+            expiresIn?: string;
+        };
+        store?: {
+            callbackUrl: string;
+            successRedirect: string;
+            failureRedirect: string;
+            authPath: string;
+            authCallbackPath: string;
+            /**
+             * The default verify callback function will be used if this configuration is not specified
+             */
+            verifyCallback?: (
+                container: MedusaContainer,
+                req: Request,
+                accessToken: string,
+                refreshToken: string,
+                profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
+                done: (err: null | unknown, data: null | { id: string }) => void
+            ) => Promise<void>;
+    
+            expiresIn?: string;
+        };
+    };
+};
+
+```
+
 Now you can add your Google sign in button in your client with something along the lime of the code bellow
 
 ```html
@@ -82,6 +135,8 @@ Now you can add your Google sign in button in your client with something along t
     <p class="text-base font-medium ml-4 text-gray-700">Continue with Google</p>
 </a>
 ```
+
+
 
 ### Facebook
 
