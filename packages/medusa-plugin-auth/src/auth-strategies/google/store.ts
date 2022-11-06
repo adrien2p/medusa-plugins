@@ -15,6 +15,12 @@ import { ENTITY_METADATA_KEY } from './index';
 
 const GOOGLE_STORE_STRATEGY_NAME = 'google.store.medusa-auth-plugin';
 
+/**
+ * Load the google strategy and attach the given verifyCallback or use the default implementation
+ * @param container
+ * @param configModule
+ * @param google
+ */
 export function loadGoogleStoreStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
@@ -49,6 +55,11 @@ export function loadGoogleStoreStrategy(
 	);
 }
 
+/**
+ * Return the router that hold the google store authentication routes
+ * @param google
+ * @param configModule
+ */
 export function getGoogleStoreAuthRouter(google: AuthOptions['google'], configModule: ConfigModule): Router {
 	const router = Router();
 

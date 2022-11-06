@@ -136,8 +136,6 @@ Now you can add your Google sign in button in your client with something along t
 </a>
 ```
 
-
-
 ### Facebook
 
 Coming soon
