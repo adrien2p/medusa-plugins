@@ -1,4 +1,4 @@
-name: medusa-plugin-sentry
+name: medusa-plugin-auth
 on:
   push:
     branches:
