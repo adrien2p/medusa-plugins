@@ -39,6 +39,9 @@ You need to set up your Google OAuth 2 credentials and content screen in your de
 > **Tip**: Do not forget to set the `Authorised JavaScript origins` and `Authorised redirect URIs` with your localhost:port domain in your 
 > **credentials OAuth2 Client ID** in your developer console when you work locally.
 
+> By default, the admin only allow to authenticate while the store create a new user of it does not exists yet.
+> This behaviour can be changed and customise by specifying a custom verifyCallback in the configuration.
+
 Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements
 
 ```ts
@@ -79,6 +82,7 @@ Here is the full configuration types
 ```typescript
 
 export type AuthOptions = {
+    // ...
     google?: {
         clientID: string;
         clientSecret: string;
