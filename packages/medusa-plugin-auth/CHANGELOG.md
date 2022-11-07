@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.0.3...medusa-plugin-auth@0.1.0) (2022-11-07)
+
+
+### Features
+
+* Allow to pass a custom verify callback for google strategy ([#18](https://github.com/adrien2p/medusa-plugins/issues/18)) ([7b0f824](https://github.com/adrien2p/medusa-plugins/commit/7b0f8244578decdc82dba16bd728f6610f1fc606))
+
+
+
+
+
 ## [0.0.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.0.2...medusa-plugin-auth@0.0.3) (2022-11-04)
 
 
