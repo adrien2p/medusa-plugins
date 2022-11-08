@@ -3,7 +3,7 @@ import { Router } from 'express';
 import cors from 'cors';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import jwt from 'jsonwebtoken';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { CustomerService } from '@medusajs/medusa';
 import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
@@ -11,31 +11,32 @@ import { EntityManager } from 'typeorm';
 
 import { AUTH_TOKEN_COOKIE_NAME } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { ENTITY_METADATA_KEY, GoogleAuthOptions } from './index';
+import { ENTITY_METADATA_KEY } from './index';
+import { FacebookAuthOptions } from './types';
 
-const GOOGLE_STORE_STRATEGY_NAME = 'google.store.medusa-auth-plugin';
+const FACEBOOK_STORE_STRATEGY_NAME = 'facebook.store.medusa-auth-plugin';
 
 /**
- * Load the google strategy and attach the given verifyCallback or use the default implementation
+ * Load the facebook strategy and attach the given verifyCallback or use the default implementation
  * @param container
  * @param configModule
- * @param google
+ * @param facebook
  */
-export function loadGoogleStoreStrategy(
+export function loadFacebookStoreStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
-	google: GoogleAuthOptions
+	facebook: FacebookAuthOptions
 ): void {
-	const verifyCallbackFn: GoogleAuthOptions['store']['verifyCallback'] =
-		google.admin.verifyCallback ?? verifyStoreCallback;
+	const verifyCallbackFn: FacebookAuthOptions['store']['verifyCallback'] =
+		facebook.admin.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
-		GOOGLE_STORE_STRATEGY_NAME,
-		new GoogleStrategy(
+		FACEBOOK_STORE_STRATEGY_NAME,
+		new FacebookStrategy(
 			{
-				clientID: google.clientID,
-				clientSecret: google.clientSecret,
-				callbackURL: google.store.callbackUrl,
+				clientID: facebook.clientID,
+				clientSecret: facebook.clientSecret,
+				callbackURL: facebook.store.callbackUrl,
 				passReqToCallback: true,
 			},
 			async function (
@@ -56,11 +57,11 @@ export function loadGoogleStoreStrategy(
 }
 
 /**
- * Return the router that hold the google store authentication routes
- * @param google
+ * Return the router that hold the facebook store authentication routes
+ * @param facebook
  * @param configModule
  */
-export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
+export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
 	const router = Router();
 
 	const storeCorsOptions = {
@@ -68,30 +69,27 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 		credentials: true,
 	};
 
-	router.get(google.store.authPath, cors(storeCorsOptions));
+	router.get(facebook.store.authPath, cors(storeCorsOptions));
 	router.get(
-		google.store.authPath,
-		passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
-			scope: [
-				'https://www.googleapis.com/auth/userinfo.email',
-				'https://www.googleapis.com/auth/userinfo.profile',
-			],
+		facebook.store.authPath,
+		passport.authenticate(FACEBOOK_STORE_STRATEGY_NAME, {
+			scope: ['email'],
 			session: false,
 		})
 	);
 
-	router.get(google.store.authCallbackPath, cors(storeCorsOptions));
+	router.get(facebook.store.authCallbackPath, cors(storeCorsOptions));
 	router.get(
-		google.store.authCallbackPath,
-		passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
-			failureRedirect: google.store.failureRedirect,
+		facebook.store.authCallbackPath,
+		passport.authenticate(FACEBOOK_STORE_STRATEGY_NAME, {
+			failureRedirect: facebook.store.failureRedirect,
 			session: false,
 		}),
 		(req, res) => {
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-				expiresIn: google.store.expiresIn ?? '30d',
+				expiresIn: facebook.store.expiresIn ?? '30d',
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
 		}
 	);
 
