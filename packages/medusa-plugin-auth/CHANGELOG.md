@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.1.0...medusa-plugin-auth@0.2.0) (2022-11-08)
+
+
+### Features
+
+* supposrt facebook authentication strategy ([f206645](https://github.com/adrien2p/medusa-plugins/commit/f206645011d82ec73268c89485dfeb07d6ec55bb))
+
+
+
+
+
 # [0.1.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.0.3...medusa-plugin-auth@0.1.0) (2022-11-07)
 
 
