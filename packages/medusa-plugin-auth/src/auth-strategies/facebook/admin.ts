@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
 import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AUTH_TOKEN_COOKIE_NAME } from '../../types';
@@ -9,32 +9,33 @@ import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { GoogleAuthOptions } from './types';
+import { FacebookAuthOptions } from './types';
 
-const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin.medusa-auth-plugin';
+const FACEBOOK_ADMIN_STRATEGY_NAME = 'facebook.admin.medusa-auth-plugin';
 
 /**
- * Load the google strategy and attach the given verifyCallback or use the default implementation
+ * Load the facebook strategy and attach the given verifyCallback or use the default implementation
  * @param container
  * @param configModule
- * @param google
+ * @param facebook
  */
-export function loadGoogleAdminStrategy(
+export function loadFacebookAdminStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
-	google: GoogleAuthOptions
+	facebook: FacebookAuthOptions
 ): void {
-	const verifyCallbackFn: GoogleAuthOptions['admin']['verifyCallback'] =
-		google.admin.verifyCallback ?? verifyAdminCallback;
+	const verifyCallbackFn: FacebookAuthOptions['admin']['verifyCallback'] =
+		facebook.admin.verifyCallback ?? verifyAdminCallback;
 
 	passport.use(
-		GOOGLE_ADMIN_STRATEGY_NAME,
-		new GoogleStrategy(
+		FACEBOOK_ADMIN_STRATEGY_NAME,
+		new FacebookStrategy(
 			{
-				clientID: google.clientID,
-				clientSecret: google.clientSecret,
-				callbackURL: google.admin.callbackUrl,
+				clientID: facebook.clientID,
+				clientSecret: facebook.clientSecret,
+				callbackURL: facebook.admin.callbackUrl,
 				passReqToCallback: true,
+				profileFields: ['id', 'displayName', 'email', 'gender', 'name'],
 			},
 			async (
 				req: Request & { session: { jwt: string } },
@@ -54,11 +55,11 @@ export function loadGoogleAdminStrategy(
 }
 
 /**
- * Return the router that hold the google admin authentication routes
- * @param google
+ * Return the router that hold the facebook admin authentication routes
+ * @param facebook
  * @param configModule
  */
-export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
+export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
 	const router = Router();
 
 	const adminCorsOptions = {
@@ -66,28 +67,25 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 		credentials: true,
 	};
 
-	router.get(google.admin.authPath, cors(adminCorsOptions));
+	router.get(facebook.admin.authPath, cors(adminCorsOptions));
 	router.get(
-		google.admin.authPath,
-		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
-			scope: [
-				'https://www.googleapis.com/auth/userinfo.email',
-				'https://www.googleapis.com/auth/userinfo.profile',
-			],
+		facebook.admin.authPath,
+		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
+			scope: ['email'],
 			session: false,
 		})
 	);
 
 	const callbackHandler = (req, res) => {
 		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-			expiresIn: google.admin.expiresIn ?? '24h',
+			expiresIn: facebook.admin.expiresIn ?? '24h',
 		});
-		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.admin.successRedirect);
+		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
 	};
 
-	router.get(google.admin.authCallbackPath, cors(adminCorsOptions));
+	router.get(facebook.admin.authCallbackPath, cors(adminCorsOptions));
 	router.get(
-		google.admin.authCallbackPath,
+		facebook.admin.authCallbackPath,
 		(req, res, next) => {
 			if (req.user) {
 				callbackHandler(req, res);
@@ -95,8 +93,8 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 
 			next();
 		},
-		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
-			failureRedirect: google.admin.failureRedirect,
+		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
+			failureRedirect: facebook.admin.failureRedirect,
 			session: false,
 		}),
 		callbackHandler

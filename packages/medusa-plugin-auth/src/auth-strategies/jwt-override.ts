@@ -19,23 +19,20 @@ export function loadJwtOverrideStrategy(configModule: ConfigModule): void {
 	);
 
 	const middlewares = require('@medusajs/medusa/dist/api/middlewares/index');
-	middlewares.default = {
-		...middlewares.default,
-		authenticate: () => {
-			return (req, res, next) => {
-				passport.authenticate(['jwt.medusa-plugin-auth', 'bearer'], { session: false })(req, res, next);
-			};
-		},
-		authenticateCustomer: () => {
-			return (req, res, next) => {
-				passport.authenticate(['jwt.medusa-plugin-auth', 'bearer'], { session: false }, (err, user) => {
-					if (err) {
-						return next(err);
-					}
-					req.user = user;
-					return next();
-				})(req, res, next);
-			};
-		},
+	middlewares.default.authenticate = () => {
+		return (req, res, next) => {
+			passport.authenticate(['jwt.medusa-plugin-auth', 'bearer'], { session: false })(req, res, next);
+		};
+	};
+	middlewares.default.authenticateCustomer = () => {
+		return (req, res, next) => {
+			passport.authenticate(['jwt.medusa-plugin-auth', 'bearer'], { session: false }, (err, user) => {
+				if (err) {
+					return next(err);
+				}
+				req.user = user;
+				return next();
+			})(req, res, next);
+		};
 	};
 }

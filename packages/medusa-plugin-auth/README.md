@@ -39,10 +39,10 @@ You need to set up your Google OAuth 2 credentials and content screen in your de
 > **Tip**: Do not forget to set the `Authorised JavaScript origins` and `Authorised redirect URIs` with your localhost:port domain in your 
 > **credentials OAuth2 Client ID** in your developer console when you work locally.
 
-> By default, the admin only allow to authenticate while the store create a new user of it does not exists yet.
+> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
 > This behaviour can be changed and customise by specifying a custom verifyCallback in the configuration.
 
-Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements
+Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/google/types.ts))
 
 ```ts
 {
@@ -77,61 +77,7 @@ Then, in your medusa config plugins collection you can add the following configu
 }
 ```
 
-Here is the full configuration types
-
-```typescript
-
-export type AuthOptions = {
-    // ...
-    google?: {
-        clientID: string;
-        clientSecret: string;
-        admin?: {
-            callbackUrl: string;
-            successRedirect: string;
-            failureRedirect: string;
-            authPath: string;
-            authCallbackPath: string;
-            /**
-             * The default verify callback function will be used if this configuration is not specified
-             */
-            verifyCallback?: (
-                container: MedusaContainer,
-                req: Request,
-                accessToken: string,
-                refreshToken: string,
-                profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-                done: (err: null | unknown, data: null | { id: string }) => void
-            ) => Promise<void>;
-    
-            expiresIn?: string;
-        };
-        store?: {
-            callbackUrl: string;
-            successRedirect: string;
-            failureRedirect: string;
-            authPath: string;
-            authCallbackPath: string;
-            /**
-             * The default verify callback function will be used if this configuration is not specified
-             */
-            verifyCallback?: (
-                container: MedusaContainer,
-                req: Request,
-                accessToken: string,
-                refreshToken: string,
-                profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-                done: (err: null | unknown, data: null | { id: string }) => void
-            ) => Promise<void>;
-    
-            expiresIn?: string;
-        };
-    };
-};
-
-```
-
-Now you can add your Google sign in button in your client with something along the lime of the code bellow
+Now you can add your Google sign in button in your client with something along the line of the code bellow
 
 ```html
 <a href=`${medusa_url}/${google_authPath}` aria-label="Continue with google" role="button" class="focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10">
@@ -142,7 +88,68 @@ Now you can add your Google sign in button in your client with something along t
 
 ### Facebook
 
-Coming soon
+You need to set up your Facebook OAuth 2 in your developer console. You can follow the steps that are here https://help.vtex.com/tutorial/adding-a-client-id-and-a-client-secret-to-log-in-with-facebook--3R7rzXWG1GswWOIkYyy8SO
+
+> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
+> This behaviour can be changed and customise by specifying a custom verifyCallback in the configuration.
+
+Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/facebook/types.ts))
+
+```ts
+{
+    resolve: "medusa-plugin-auth",
+    options: {
+        // Enable facebook OAuth 2
+        facebook: {
+            clientID: "__YOUR_CLIENT_ID__",
+            clientSecret: "__YOUR_CLIENT_SECRET__",
+            // Enable facebook OAuth 2 for the admin domain
+            admin: {
+                callbackUrl:`${process.env.BACKEND_URL}/admin/auth/facebook/cb`, 
+                failureRedirect: `${process.env.ADMIN_URL}/login`,
+                successRedirect: `${process.env.ADMIN_URL}/`,
+                authPath: "/admin/auth/facebook",
+                authCallbackPath: "/admin/auth/facebook/cb",
+              
+                expiresIn: "24h"
+            },
+            // Enable facebook OAuth 2 for the store domain
+            store: {
+                callbackUrl:`${process.env.BACKEND_URL}/store/auth/facebook/cb`, 
+                failureRedirect: `${process.env.STORE_URL}/login`,
+                successRedirect: `${process.env.STORE_URL}/`,
+                authPath: "/store/auth/facebook",
+                authCallbackPath: "/store/auth/facebook/cb",
+                
+                expiresIn: "30d"
+            }
+        }
+    }
+}
+```
+
+Now you can add your Facebook sign in button in your client with something along the line of the code bellow
+
+```html
+<a
+  href={"http://localhost:9000/admin/auth/facebook"}
+  className="flex items-center justify-center w-full px-4 py-2 mt-2 space-x-3 text-sm text-center bg-blue-500 text-white transition-colors duration-200 transform border rounded-lg dark:text-gray-300 dark:border-gray-300 hover:bg-gray-600 dark:hover:bg-gray-700"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    fill="currentColor"
+    className="bi bi-facebook"
+    viewBox="0 0 16 16"
+  >
+    <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+  </svg>
+  <span className="text-sm text-white dark:text-gray-200">
+    Sign in with facebook
+  </span>
+</a>
+```
 
 ### Twitter
 
