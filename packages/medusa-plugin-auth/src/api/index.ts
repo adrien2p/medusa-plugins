@@ -8,6 +8,7 @@ import { AUTH_TOKEN_COOKIE_NAME, AuthOptions } from '../types';
 import { loadJwtOverrideStrategy } from '../auth-strategies/jwt-override';
 import { getGoogleRoutes } from '../auth-strategies/google';
 import { getFacebookRoutes } from '../auth-strategies/facebook';
+import { getTwitterRoutes } from '../auth-strategies/twitter';
 
 export default function (rootDirectory, pluginOptions: AuthOptions): Router[] {
 	const configModule = loadConfig(rootDirectory) as ConfigModule;
@@ -22,8 +23,10 @@ function loadRouters(configModule: ConfigModule, options: AuthOptions): Router[]
 
 	routers.push(...getGoogleRoutes(configModule, options));
 	routers.push(...getFacebookRoutes(configModule, options));
+	routers.push(...getTwitterRoutes(configModule, options));
+	routers.push(getLogoutRouter(configModule));
 
-	return [...routers, getLogoutRouter(configModule)];
+	return routers;
 }
 
 function getLogoutRouter(configModule: ConfigModule): Router {

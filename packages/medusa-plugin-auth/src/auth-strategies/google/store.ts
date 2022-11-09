@@ -9,9 +9,9 @@ import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registrat
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import { AUTH_TOKEN_COOKIE_NAME } from '../../types';
+import { AUTH_TOKEN_COOKIE_NAME, CUSTOMER_METADATA_KEY, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { ENTITY_METADATA_KEY, GoogleAuthOptions } from './index';
+import { GoogleAuthOptions } from './index';
 
 const GOOGLE_STORE_STRATEGY_NAME = 'google.store.medusa-auth-plugin';
 
@@ -89,7 +89,7 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 		}),
 		(req, res) => {
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-				expiresIn: google.store.expiresIn ?? '30d',
+				expiresIn: google.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
 			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.admin.successRedirect);
 		}
@@ -129,7 +129,7 @@ export async function verifyStoreCallback(
 			.catch(() => void 0);
 
 		if (customer) {
-			if (!customer.metadata || !customer.metadata[ENTITY_METADATA_KEY]) {
+			if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
 				const err = new MedusaError(
 					MedusaError.Types.INVALID_DATA,
 					`Customer with email ${email} already exists`
@@ -145,7 +145,7 @@ export async function verifyStoreCallback(
 			.create({
 				email,
 				metadata: {
-					[ENTITY_METADATA_KEY]: true,
+					[CUSTOMER_METADATA_KEY]: true,
 				},
 				first_name: profile?.name.givenName ?? '',
 				last_name: profile?.name.familyName ?? '',

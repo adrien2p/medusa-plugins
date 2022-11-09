@@ -8,6 +8,7 @@ export const ENTITY_METADATA_KEY = 'useFacebookStrategy';
 
 export * from './admin';
 export * from './store';
+export * from './types';
 
 export function getFacebookRoutes(configModule: ConfigModule, options: AuthOptions): Router[] {
 	const routers = [];

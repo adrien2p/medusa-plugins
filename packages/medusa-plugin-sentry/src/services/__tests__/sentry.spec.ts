@@ -58,7 +58,7 @@ describe('sentry service', () => {
 		const res = await sentryService.fetchTransactions({
 			organisation: 'org',
 			project: 'pro',
-			statsPeriod: '24h',
+			statsPeriod: TWENTY_FOUR_HOURS_IN_MS,
 			perPage: 100,
 			token: config.apiToken,
 			cursor: '',
@@ -85,7 +85,7 @@ describe('sentry service', () => {
 			transaction: 'fake_trans',
 			organisation: 'org',
 			project: 'pro',
-			statsPeriod: '24h',
+			statsPeriod: TWENTY_FOUR_HOURS_IN_MS,
 			perPage: 100,
 			token: config.apiToken,
 			cursor: '',

@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as TwitterStrategy } from 'passport-twitter';
 import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
@@ -9,33 +9,34 @@ import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { FacebookAuthOptions } from './types';
+import { TwitterAuthOptions } from './types';
 
-const FACEBOOK_ADMIN_STRATEGY_NAME = 'facebook.admin.medusa-auth-plugin';
+const TWITTER_ADMIN_STRATEGY_NAME = 'twitter.admin.medusa-auth-plugin';
 
 /**
- * Load the facebook strategy and attach the given verifyCallback or use the default implementation
+ * Load the twitter strategy and attach the given verifyCallback or use the default implementation
  * @param container
  * @param configModule
- * @param facebook
+ * @param twitter
  */
-export function loadFacebookAdminStrategy(
+export function loadTwitterAdminStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
-	facebook: FacebookAuthOptions
+	twitter: TwitterAuthOptions
 ): void {
-	const verifyCallbackFn: FacebookAuthOptions['admin']['verifyCallback'] =
-		facebook.admin.verifyCallback ?? verifyAdminCallback;
+	const verifyCallbackFn: TwitterAuthOptions['admin']['verifyCallback'] =
+		twitter.admin.verifyCallback ?? verifyAdminCallback;
 
 	passport.use(
-		FACEBOOK_ADMIN_STRATEGY_NAME,
-		new FacebookStrategy(
+		TWITTER_ADMIN_STRATEGY_NAME,
+		new TwitterStrategy(
 			{
-				clientID: facebook.clientID,
-				clientSecret: facebook.clientSecret,
-				callbackURL: facebook.admin.callbackUrl,
+				clientID: twitter.clientID,
+				clientSecret: twitter.clientSecret,
+				callbackURL: twitter.admin.callbackUrl,
 				passReqToCallback: true,
-				profileFields: ['id', 'displayName', 'email', 'gender', 'name'],
+				clientType: 'private',
+				scope: ['tweet.read', 'offline.access'],
 			},
 			async (
 				req: Request & { session: { jwt: string } },
@@ -55,11 +56,11 @@ export function loadFacebookAdminStrategy(
 }
 
 /**
- * Return the router that hold the facebook admin authentication routes
- * @param facebook
+ * Return the router that hold the twitter admin authentication routes
+ * @param twitter
  * @param configModule
  */
-export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
+export function getTwitterAdminAuthRouter(twitter: TwitterAuthOptions, configModule: ConfigModule): Router {
 	const router = Router();
 
 	const adminCorsOptions = {
@@ -67,25 +68,24 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		credentials: true,
 	};
 
-	router.get(facebook.admin.authPath, cors(adminCorsOptions));
+	router.get(twitter.admin.authPath, cors(adminCorsOptions));
 	router.get(
-		facebook.admin.authPath,
-		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
-			scope: ['email'],
+		twitter.admin.authPath,
+		passport.authenticate(TWITTER_ADMIN_STRATEGY_NAME, {
 			session: false,
 		})
 	);
 
 	const callbackHandler = (req, res) => {
 		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-			expiresIn: facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
+			expiresIn: twitter.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 		});
-		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
+		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
 	};
 
-	router.get(facebook.admin.authCallbackPath, cors(adminCorsOptions));
+	router.get(twitter.admin.authCallbackPath, cors(adminCorsOptions));
 	router.get(
-		facebook.admin.authCallbackPath,
+		twitter.admin.authCallbackPath,
 		(req, res, next) => {
 			if (req.user) {
 				callbackHandler(req, res);
@@ -93,8 +93,8 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 
 			next();
 		},
-		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
-			failureRedirect: facebook.admin.failureRedirect,
+		passport.authenticate(TWITTER_ADMIN_STRATEGY_NAME, {
+			failureRedirect: twitter.admin.failureRedirect,
 			session: false,
 		}),
 		callbackHandler

@@ -3,40 +3,42 @@ import { Router } from 'express';
 import cors from 'cors';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import jwt from 'jsonwebtoken';
-import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as TwitterStrategy } from 'passport-twitter';
 import { CustomerService } from '@medusajs/medusa';
 import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import { AUTH_TOKEN_COOKIE_NAME, CUSTOMER_METADATA_KEY, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import { AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS, CUSTOMER_METADATA_KEY } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { FacebookAuthOptions } from './types';
+import { TwitterAuthOptions } from './index';
 
-const FACEBOOK_STORE_STRATEGY_NAME = 'facebook.store.medusa-auth-plugin';
+const TWITTER_STORE_STRATEGY_NAME = 'twitter.store.medusa-auth-plugin';
 
 /**
- * Load the facebook strategy and attach the given verifyCallback or use the default implementation
+ * Load the twitter strategy and attach the given verifyCallback or use the default implementation
  * @param container
  * @param configModule
- * @param facebook
+ * @param twitter
  */
-export function loadFacebookStoreStrategy(
+export function loadTwitterStoreStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
-	facebook: FacebookAuthOptions
+	twitter: TwitterAuthOptions
 ): void {
-	const verifyCallbackFn: FacebookAuthOptions['store']['verifyCallback'] =
-		facebook.admin.verifyCallback ?? verifyStoreCallback;
+	const verifyCallbackFn: TwitterAuthOptions['store']['verifyCallback'] =
+		twitter.admin.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
-		FACEBOOK_STORE_STRATEGY_NAME,
-		new FacebookStrategy(
+		TWITTER_STORE_STRATEGY_NAME,
+		new TwitterStrategy(
 			{
-				clientID: facebook.clientID,
-				clientSecret: facebook.clientSecret,
-				callbackURL: facebook.store.callbackUrl,
+				clientID: twitter.clientID,
+				clientSecret: twitter.clientSecret,
+				callbackURL: twitter.admin.callbackUrl,
 				passReqToCallback: true,
+				clientType: 'private',
+				scope: ['tweet.read', 'offline.access'],
 			},
 			async function (
 				req: Request & { session: { jwt: string } },
@@ -56,11 +58,11 @@ export function loadFacebookStoreStrategy(
 }
 
 /**
- * Return the router that hold the facebook store authentication routes
- * @param facebook
+ * Return the router that hold the twitter store authentication routes
+ * @param twitter
  * @param configModule
  */
-export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
+export function getTwitterStoreAuthRouter(twitter: TwitterAuthOptions, configModule: ConfigModule): Router {
 	const router = Router();
 
 	const storeCorsOptions = {
@@ -68,27 +70,30 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 		credentials: true,
 	};
 
-	router.get(facebook.store.authPath, cors(storeCorsOptions));
+	router.get(twitter.store.authPath, cors(storeCorsOptions));
 	router.get(
-		facebook.store.authPath,
-		passport.authenticate(FACEBOOK_STORE_STRATEGY_NAME, {
-			scope: ['email'],
+		twitter.store.authPath,
+		passport.authenticate(TWITTER_STORE_STRATEGY_NAME, {
+			scope: [
+				'https://www.twitterapis.com/auth/userinfo.email',
+				'https://www.twitterapis.com/auth/userinfo.profile',
+			],
 			session: false,
 		})
 	);
 
-	router.get(facebook.store.authCallbackPath, cors(storeCorsOptions));
+	router.get(twitter.store.authCallbackPath, cors(storeCorsOptions));
 	router.get(
-		facebook.store.authCallbackPath,
-		passport.authenticate(FACEBOOK_STORE_STRATEGY_NAME, {
-			failureRedirect: facebook.store.failureRedirect,
+		twitter.store.authCallbackPath,
+		passport.authenticate(TWITTER_STORE_STRATEGY_NAME, {
+			failureRedirect: twitter.store.failureRedirect,
 			session: false,
 		}),
 		(req, res) => {
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-				expiresIn: facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
+				expiresIn: twitter.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
 		}
 	);
 

@@ -34,13 +34,8 @@ First of all, you need to install the plugin as follow `yarn add medusa-plugin-a
 
 ### Google
 
-You need to set up your Google OAuth 2 credentials and content screen in your developer console. You can follow the steps that are here https://support.google.com/cloud/answer/6158849?hl=en
-
-> **Tip**: Do not forget to set the `Authorised JavaScript origins` and `Authorised redirect URIs` with your localhost:port domain in your 
-> **credentials OAuth2 Client ID** in your developer console when you work locally.
-
 > By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
-> This behaviour can be changed and customise by specifying a custom verifyCallback in the configuration.
+> This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
 
 Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/google/types.ts))
 
@@ -60,7 +55,7 @@ Then, in your medusa config plugins collection you can add the following configu
                 authPath: "/admin/auth/google",
                 authCallbackPath: "/admin/auth/google/cb",
               
-                expiresIn: "24h"
+                expiresIn: 24 * 60 * 60 * 1000
             },
             // Enable google OAuth 2 for the store domain
             store: {
@@ -70,7 +65,7 @@ Then, in your medusa config plugins collection you can add the following configu
                 authPath: "/store/auth/google",
                 authCallbackPath: "/store/auth/google/cb",
                 
-                expiresIn: "30d"
+                expiresIn: 24 * 60 * 60 * 1000
             }
         }
     }
@@ -80,18 +75,34 @@ Then, in your medusa config plugins collection you can add the following configu
 Now you can add your Google sign in button in your client with something along the line of the code bellow
 
 ```html
-<a href=`${medusa_url}/${google_authPath}` aria-label="Continue with google" role="button" class="focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-700 py-3.5 px-4 border rounded-lg border-gray-700 flex items-center w-full mt-10">
-    <img src="https://tuk-cdn.s3.amazonaws.com/can-uploader/sign_in-svg2.svg" alt="google">
-    <p class="text-base font-medium ml-4 text-gray-700">Continue with Google</p>
+<a
+  type="button"
+  href=`${medusa_url}/${google_authPath}`
+  className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2"
+>
+  <svg
+    className="mr-2 -ml-1 w-4 h-4"
+    aria-hidden="true"
+    focusable="false"
+    data-prefix="fab"
+    data-icon="google"
+    role="img"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 488 512"
+  >
+    <path
+      fill="currentColor"
+      d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"
+    ></path>
+  </svg>
+  Sign in with Google
 </a>
 ```
 
 ### Facebook
 
-You need to set up your Facebook OAuth 2 in your developer console. You can follow the steps that are here https://help.vtex.com/tutorial/adding-a-client-id-and-a-client-secret-to-log-in-with-facebook--3R7rzXWG1GswWOIkYyy8SO
-
 > By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
-> This behaviour can be changed and customise by specifying a custom verifyCallback in the configuration.
+> This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
 
 Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/facebook/types.ts))
 
@@ -111,7 +122,7 @@ Then, in your medusa config plugins collection you can add the following configu
                 authPath: "/admin/auth/facebook",
                 authCallbackPath: "/admin/auth/facebook/cb",
               
-                expiresIn: "24h"
+                expiresIn: 24 * 60 * 60 * 1000
             },
             // Enable facebook OAuth 2 for the store domain
             store: {
@@ -121,7 +132,7 @@ Then, in your medusa config plugins collection you can add the following configu
                 authPath: "/store/auth/facebook",
                 authCallbackPath: "/store/auth/facebook/cb",
                 
-                expiresIn: "30d"
+                expiresIn: 24 * 60 * 60 * 1000
             }
         }
     }
@@ -132,28 +143,99 @@ Now you can add your Facebook sign in button in your client with something along
 
 ```html
 <a
-  href={"http://localhost:9000/admin/auth/facebook"}
-  className="flex items-center justify-center w-full px-4 py-2 mt-2 space-x-3 text-sm text-center bg-blue-500 text-white transition-colors duration-200 transform border rounded-lg dark:text-gray-300 dark:border-gray-300 hover:bg-gray-600 dark:hover:bg-gray-700"
+  type="button"
+  href=`${medusa_url}/${facebook_authPath}`
+  className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2"
 >
   <svg
+    className="mr-2 -ml-1 w-4 h-4"
+    aria-hidden="true"
+    focusable="false"
+    data-prefix="fab"
+    data-icon="facebook-f"
+    role="img"
     xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    fill="currentColor"
-    className="bi bi-facebook"
-    viewBox="0 0 16 16"
+    viewBox="0 0 320 512"
   >
-    <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z" />
+    <path
+      fill="currentColor"
+      d="M279.1 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.4 0 225.4 0c-73.22 0-121.1 44.38-121.1 124.7v70.62H22.89V288h81.39v224h100.2V288z"
+    ></path>
   </svg>
-  <span className="text-sm text-white dark:text-gray-200">
-    Sign in with facebook
-  </span>
+  Sign in with Facebook
 </a>
 ```
 
 ### Twitter
 
-Coming soon
+> Thw Twitter strategy can't be used for the moment and require to wait for twitter to implement the necessary
+> scopes to retrieve a user email in order to complete the authentication flow.
+> In any case, you still can use this strategy and provide a custom `verifyCallback` if you know what you are doing.
+
+> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
+> This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
+
+Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/twitter/types.ts))
+
+```ts
+{
+    resolve: "medusa-plugin-auth",
+    options: {
+        // Enable twitter OAuth
+        twitter: {
+            clientID: "__YOUR_CLIENT_ID__",
+            clientSecret: "__YOUR_CLIENT_SECRET__",
+            // Enable twitter OAuth for the admin domain
+            admin: {
+                callbackUrl:`${process.env.BACKEND_URL}/admin/auth/twitter/cb`, 
+                failureRedirect: `${process.env.ADMIN_URL}/login`,
+                successRedirect: `${process.env.ADMIN_URL}/`,
+                authPath: "/admin/auth/twitter",
+                authCallbackPath: "/admin/auth/twitter/cb",
+              
+                expiresIn: 24 * 60 * 60 * 1000
+            },
+            // Enable twitter OAuth for the store domain
+            store: {
+                callbackUrl:`${process.env.BACKEND_URL}/store/auth/twitter/cb`, 
+                failureRedirect: `${process.env.STORE_URL}/login`,
+                successRedirect: `${process.env.STORE_URL}/`,
+                authPath: "/store/auth/twitter",
+                authCallbackPath: "/store/auth/twitter/cb",
+                
+                expiresIn: 24 * 60 * 60 * 1000
+            }
+        }
+    }
+}
+```
+
+Now you can add your Twitter sign in button in your client with something along the line of the code bellow
+
+```html
+<a
+  type="button"
+  href=`${medusa_url}/${twitter_authPath}`
+  className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2"
+>
+    <svg
+        className="mr-2 -ml-1 w-4 h-4"
+        aria-hidden="true"
+        focusable="false"
+        data-prefix="fab"
+        data-icon="twitter"
+        role="img"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+    >
+        <path
+          fill="currentColor"
+          d="M459.4 151.7c.325 4.548 .325 9.097 .325 13.65 0 138.7-105.6 298.6-298.6 298.6-59.45 0-114.7-17.22-161.1-47.11 8.447 .974 16.57 1.299 25.34 1.299 49.06 0 94.21-16.57 130.3-44.83-46.13-.975-84.79-31.19-98.11-72.77 6.498 .974 12.99 1.624 19.82 1.624 9.421 0 18.84-1.3 27.61-3.573-48.08-9.747-84.14-51.98-84.14-102.1v-1.299c13.97 7.797 30.21 12.67 47.43 13.32-28.26-18.84-46.78-51.01-46.78-87.39 0-19.49 5.197-37.36 14.29-52.95 51.65 63.67 129.3 105.3 216.4 109.8-1.624-7.797-2.599-15.92-2.599-24.04 0-57.83 46.78-104.9 104.9-104.9 30.21 0 57.5 12.67 76.67 33.14 23.72-4.548 46.46-13.32 66.6-25.34-7.798 24.37-24.37 44.83-46.13 57.83 21.12-2.273 41.58-8.122 60.43-16.24-14.29 20.79-32.16 39.31-52.63 54.25z"
+        ></path>
+    </svg>
+    Sign in with Twitter
+</a>
+```
 
 ### Linkedin
 
