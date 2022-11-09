@@ -63,9 +63,7 @@
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
     "passport-facebook": "^3.0.0",
-    "passport-google-oauth2": "^0.2.0",
-    "passport-twitter": "^1.0.4",
-    "passport-twitter-oauth2": "^2.1.1"
+    "passport-google-oauth2": "^0.2.0"
   },
   "jest": {
     "preset": "ts-jest",
