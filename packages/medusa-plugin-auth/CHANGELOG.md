@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.1.0...medusa-plugin-auth@0.3.0) (2022-11-09)
+
+
+### Features
+
+* add Linkedin Oauth 2 support ([acc036b](https://github.com/adrien2p/medusa-plugins/commit/acc036b842d93b2bb6a2bf9dd6cd8d39fc7502ad))
+* Add twitter OAuth 2 pre-support ([1395689](https://github.com/adrien2p/medusa-plugins/commit/1395689197f1b5b7258e961b52c46c3a16bf1de8))
+* supposrt facebook authentication strategy ([#19](https://github.com/adrien2p/medusa-plugins/issues/19)) ([1dc7582](https://github.com/adrien2p/medusa-plugins/commit/1dc75826bcae6072d00078d503956166f3713634))
+
+
+
+
+
 # [0.2.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.1.0...medusa-plugin-auth@0.2.0) (2022-11-08)
 
 
