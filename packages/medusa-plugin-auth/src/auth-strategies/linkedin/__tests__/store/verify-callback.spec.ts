@@ -1,6 +1,6 @@
 import { verifyStoreCallback } from '../../store';
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { ENTITY_METADATA_KEY } from '../../index';
+import { CUSTOMER_METADATA_KEY } from "../../../../types";
 
 describe('Linkedin store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -43,7 +43,7 @@ describe('Linkedin store strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[ENTITY_METADATA_KEY]: true,
+										[CUSTOMER_METADATA_KEY]: true,
 									},
 								};
 							}

@@ -4,8 +4,6 @@ import { getLinkedinAdminAuthRouter, loadLinkedinAdminStrategy } from './admin';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { getLinkedinStoreAuthRouter, loadLinkedinStoreStrategy } from './store';
 
-export const ENTITY_METADATA_KEY = 'useLinkedinStrategy';
-
 export * from './types';
 export * from './admin';
 export * from './store';

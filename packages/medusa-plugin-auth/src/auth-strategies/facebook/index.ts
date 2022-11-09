@@ -4,8 +4,6 @@ import { Router } from 'express';
 import { getFacebookAdminAuthRouter, loadFacebookAdminStrategy } from './admin';
 import { getFacebookStoreAuthRouter, loadFacebookStoreStrategy } from './store';
 
-export const ENTITY_METADATA_KEY = 'useFacebookStrategy';
-
 export * from './admin';
 export * from './store';
 export * from './types';

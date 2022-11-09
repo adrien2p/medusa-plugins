@@ -4,8 +4,6 @@ import { getGoogleAdminAuthRouter, loadGoogleAdminStrategy } from './admin';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { getGoogleStoreAuthRouter, loadGoogleStoreStrategy } from './store';
 
-export const ENTITY_METADATA_KEY = 'useGoogleStrategy';
-
 export * from './types';
 export * from './admin';
 export * from './store';
