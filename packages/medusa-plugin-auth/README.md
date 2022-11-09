@@ -68,6 +68,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
+        // ...
+        // ... Other authentication provider options
+        // ...
     }
 }
 ```
@@ -117,6 +120,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
+        // ...
+        // ... Other authentication provider options
+        // ...
     }
 }
 ```
@@ -170,6 +176,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
+        // ...
+        // ... Other authentication provider options
+        // ...
     }
 }
 ```
@@ -219,6 +228,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
+        // ...
+        // ... Other authentication provider options
+        // ...
     }
 }
 ```
