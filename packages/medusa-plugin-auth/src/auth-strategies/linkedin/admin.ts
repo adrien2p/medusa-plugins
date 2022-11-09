@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { Strategy as TwitterStrategy } from '@superfaceai/passport-twitter-oauth2';
+import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
@@ -9,34 +9,33 @@ import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { TwitterAuthOptions } from './types';
+import { LinkedinAuthOptions } from './types';
 
-const TWITTER_ADMIN_STRATEGY_NAME = 'twitter.admin.medusa-auth-plugin';
+const LINKEDIN_ADMIN_STRATEGY_NAME = 'linkedin.admin.medusa-auth-plugin';
 
 /**
- * Load the twitter strategy and attach the given verifyCallback or use the default implementation
+ * Load the linkedin strategy and attach the given verifyCallback or use the default implementation
  * @param container
  * @param configModule
- * @param twitter
+ * @param linkedin
  */
-export function loadTwitterAdminStrategy(
+export function loadLinkedinAdminStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
-	twitter: TwitterAuthOptions
+	linkedin: LinkedinAuthOptions
 ): void {
-	const verifyCallbackFn: TwitterAuthOptions['admin']['verifyCallback'] =
-		twitter.admin.verifyCallback ?? verifyAdminCallback;
+	const verifyCallbackFn: LinkedinAuthOptions['admin']['verifyCallback'] =
+		linkedin.admin.verifyCallback ?? verifyAdminCallback;
 
 	passport.use(
-		TWITTER_ADMIN_STRATEGY_NAME,
-		new TwitterStrategy(
+		LINKEDIN_ADMIN_STRATEGY_NAME,
+		new LinkedinStrategy(
 			{
-				clientID: twitter.clientID,
-				clientSecret: twitter.clientSecret,
-				callbackURL: twitter.admin.callbackUrl,
+				clientID: linkedin.clientID,
+				clientSecret: linkedin.clientSecret,
+				callbackURL: linkedin.admin.callbackUrl,
 				passReqToCallback: true,
-				clientType: 'private',
-				scope: ['tweet.read', 'offline.access'],
+				scope: ['r_emailaddress'],
 				state: true,
 			},
 			async (
@@ -57,11 +56,11 @@ export function loadTwitterAdminStrategy(
 }
 
 /**
- * Return the router that hold the twitter admin authentication routes
- * @param twitter
+ * Return the router that hold the linkedin admin authentication routes
+ * @param linkedin
  * @param configModule
  */
-export function getTwitterAdminAuthRouter(twitter: TwitterAuthOptions, configModule: ConfigModule): Router {
+export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, configModule: ConfigModule): Router {
 	const router = Router();
 
 	const adminCorsOptions = {
@@ -69,24 +68,28 @@ export function getTwitterAdminAuthRouter(twitter: TwitterAuthOptions, configMod
 		credentials: true,
 	};
 
-	router.get(twitter.admin.authPath, cors(adminCorsOptions));
+	router.get(linkedin.admin.authPath, cors(adminCorsOptions));
 	router.get(
-		twitter.admin.authPath,
-		passport.authenticate(TWITTER_ADMIN_STRATEGY_NAME, {
+		linkedin.admin.authPath,
+		passport.authenticate(LINKEDIN_ADMIN_STRATEGY_NAME, {
+			scope: [
+				'https://www.linkedinapis.com/auth/userinfo.email',
+				'https://www.linkedinapis.com/auth/userinfo.profile',
+			],
 			session: false,
 		})
 	);
 
 	const callbackHandler = (req, res) => {
 		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-			expiresIn: twitter.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
+			expiresIn: linkedin.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 		});
-		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
+		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.admin.successRedirect);
 	};
 
-	router.get(twitter.admin.authCallbackPath, cors(adminCorsOptions));
+	router.get(linkedin.admin.authCallbackPath, cors(adminCorsOptions));
 	router.get(
-		twitter.admin.authCallbackPath,
+		linkedin.admin.authCallbackPath,
 		(req, res, next) => {
 			if (req.user) {
 				callbackHandler(req, res);
@@ -94,8 +97,8 @@ export function getTwitterAdminAuthRouter(twitter: TwitterAuthOptions, configMod
 
 			next();
 		},
-		passport.authenticate(TWITTER_ADMIN_STRATEGY_NAME, {
-			failureRedirect: twitter.admin.failureRedirect,
+		passport.authenticate(LINKEDIN_ADMIN_STRATEGY_NAME, {
+			failureRedirect: linkedin.admin.failureRedirect,
 			session: false,
 		}),
 		callbackHandler

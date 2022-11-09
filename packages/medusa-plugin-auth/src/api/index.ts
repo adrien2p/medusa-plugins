@@ -9,6 +9,7 @@ import { loadJwtOverrideStrategy } from '../auth-strategies/jwt-override';
 import { getGoogleRoutes } from '../auth-strategies/google';
 import { getFacebookRoutes } from '../auth-strategies/facebook';
 import { getTwitterRoutes } from '../auth-strategies/twitter';
+import { getLinkedinRoutes } from "../auth-strategies/linkedin";
 
 export default function (rootDirectory, pluginOptions: AuthOptions): Router[] {
 	const configModule = loadConfig(rootDirectory) as ConfigModule;
@@ -24,6 +25,7 @@ function loadRouters(configModule: ConfigModule, options: AuthOptions): Router[]
 	routers.push(...getGoogleRoutes(configModule, options));
 	routers.push(...getFacebookRoutes(configModule, options));
 	routers.push(...getTwitterRoutes(configModule, options));
+	routers.push(...getLinkedinRoutes(configModule, options));
 	routers.push(getLogoutRouter(configModule));
 
 	return routers;

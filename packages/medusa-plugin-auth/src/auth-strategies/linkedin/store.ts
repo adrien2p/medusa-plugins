@@ -3,42 +3,41 @@ import { Router } from 'express';
 import cors from 'cors';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import jwt from 'jsonwebtoken';
-import { Strategy as TwitterStrategy } from '@superfaceai/passport-twitter-oauth2';
+import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { CustomerService } from '@medusajs/medusa';
 import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import { AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS, CUSTOMER_METADATA_KEY } from '../../types';
+import { AUTH_TOKEN_COOKIE_NAME, CUSTOMER_METADATA_KEY, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { TwitterAuthOptions } from './index';
+import { LinkedinAuthOptions } from './index';
 
-const TWITTER_STORE_STRATEGY_NAME = 'twitter.store.medusa-auth-plugin';
+const LINKEDIN_STORE_STRATEGY_NAME = 'linkedin.store.medusa-auth-plugin';
 
 /**
- * Load the twitter strategy and attach the given verifyCallback or use the default implementation
+ * Load the linkedin strategy and attach the given verifyCallback or use the default implementation
  * @param container
  * @param configModule
- * @param twitter
+ * @param linkedin
  */
-export function loadTwitterStoreStrategy(
+export function loadLinkedinStoreStrategy(
 	container: MedusaContainer,
 	configModule: ConfigModule,
-	twitter: TwitterAuthOptions
+	linkedin: LinkedinAuthOptions
 ): void {
-	const verifyCallbackFn: TwitterAuthOptions['store']['verifyCallback'] =
-		twitter.admin.verifyCallback ?? verifyStoreCallback;
+	const verifyCallbackFn: LinkedinAuthOptions['store']['verifyCallback'] =
+		linkedin.admin.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
-		TWITTER_STORE_STRATEGY_NAME,
-		new TwitterStrategy(
+		LINKEDIN_STORE_STRATEGY_NAME,
+		new LinkedinStrategy(
 			{
-				clientID: twitter.clientID,
-				clientSecret: twitter.clientSecret,
-				callbackURL: twitter.admin.callbackUrl,
+				clientID: linkedin.clientID,
+				clientSecret: linkedin.clientSecret,
+				callbackURL: linkedin.store.callbackUrl,
 				passReqToCallback: true,
-				clientType: 'private',
-				scope: ['tweet.read', 'offline.access'],
+				scope: ['r_emailaddress'],
 				state: true,
 			},
 			async function (
@@ -59,11 +58,11 @@ export function loadTwitterStoreStrategy(
 }
 
 /**
- * Return the router that hold the twitter store authentication routes
- * @param twitter
+ * Return the router that hold the linkedin store authentication routes
+ * @param linkedin
  * @param configModule
  */
-export function getTwitterStoreAuthRouter(twitter: TwitterAuthOptions, configModule: ConfigModule): Router {
+export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, configModule: ConfigModule): Router {
 	const router = Router();
 
 	const storeCorsOptions = {
@@ -71,30 +70,30 @@ export function getTwitterStoreAuthRouter(twitter: TwitterAuthOptions, configMod
 		credentials: true,
 	};
 
-	router.get(twitter.store.authPath, cors(storeCorsOptions));
+	router.get(linkedin.store.authPath, cors(storeCorsOptions));
 	router.get(
-		twitter.store.authPath,
-		passport.authenticate(TWITTER_STORE_STRATEGY_NAME, {
+		linkedin.store.authPath,
+		passport.authenticate(LINKEDIN_STORE_STRATEGY_NAME, {
 			scope: [
-				'https://www.twitterapis.com/auth/userinfo.email',
-				'https://www.twitterapis.com/auth/userinfo.profile',
+				'https://www.linkedinapis.com/auth/userinfo.email',
+				'https://www.linkedinapis.com/auth/userinfo.profile',
 			],
 			session: false,
 		})
 	);
 
-	router.get(twitter.store.authCallbackPath, cors(storeCorsOptions));
+	router.get(linkedin.store.authCallbackPath, cors(storeCorsOptions));
 	router.get(
-		twitter.store.authCallbackPath,
-		passport.authenticate(TWITTER_STORE_STRATEGY_NAME, {
-			failureRedirect: twitter.store.failureRedirect,
+		linkedin.store.authCallbackPath,
+		passport.authenticate(LINKEDIN_STORE_STRATEGY_NAME, {
+			failureRedirect: linkedin.store.failureRedirect,
 			session: false,
 		}),
 		(req, res) => {
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-				expiresIn: twitter.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
+				expiresIn: linkedin.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.admin.successRedirect);
 		}
 	);
 
