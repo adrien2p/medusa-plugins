@@ -37,6 +37,7 @@
   ],
   "scripts": {
     "build": "run-s clean build:tsc",
+    "build:tsc:watch": "tsc --build ./tsconfig.json --watch",
     "build:tsc": "tsc -b",
     "clean": "rimraf api services utils types loaders auth-strategies coverage tsconfig.tsbuildinfo",
     "test": "jest",
