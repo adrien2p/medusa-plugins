@@ -27,7 +27,7 @@ export function loadFacebookStoreStrategy(
 	facebook: FacebookAuthOptions
 ): void {
 	const verifyCallbackFn: FacebookAuthOptions['store']['verifyCallback'] =
-		facebook.admin.verifyCallback ?? verifyStoreCallback;
+		facebook.store.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
 		FACEBOOK_STORE_STRATEGY_NAME,
@@ -88,7 +88,7 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.store.successRedirect);
 		}
 	);
 

@@ -27,7 +27,7 @@ export function loadGoogleStoreStrategy(
 	google: GoogleAuthOptions
 ): void {
 	const verifyCallbackFn: GoogleAuthOptions['store']['verifyCallback'] =
-		google.admin.verifyCallback ?? verifyStoreCallback;
+		google.store.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
 		GOOGLE_STORE_STRATEGY_NAME,
@@ -91,7 +91,7 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: google.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.store.successRedirect);
 		}
 	);
 

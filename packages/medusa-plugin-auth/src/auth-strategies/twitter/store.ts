@@ -27,7 +27,7 @@ export function loadTwitterStoreStrategy(
 	twitter: TwitterAuthOptions
 ): void {
 	const verifyCallbackFn: TwitterAuthOptions['store']['verifyCallback'] =
-		twitter.admin.verifyCallback ?? verifyStoreCallback;
+		twitter.store.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
 		TWITTER_STORE_STRATEGY_NAME,
@@ -35,7 +35,7 @@ export function loadTwitterStoreStrategy(
 			{
 				clientID: twitter.clientID,
 				clientSecret: twitter.clientSecret,
-				callbackURL: twitter.admin.callbackUrl,
+				callbackURL: twitter.store.callbackUrl,
 				passReqToCallback: true,
 				clientType: 'private',
 				scope: ['tweet.read', 'offline.access'],
@@ -94,7 +94,7 @@ export function getTwitterStoreAuthRouter(twitter: TwitterAuthOptions, configMod
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: twitter.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.store.successRedirect);
 		}
 	);
 
