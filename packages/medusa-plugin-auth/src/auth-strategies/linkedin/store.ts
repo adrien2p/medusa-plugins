@@ -27,7 +27,7 @@ export function loadLinkedinStoreStrategy(
 	linkedin: LinkedinAuthOptions
 ): void {
 	const verifyCallbackFn: LinkedinAuthOptions['store']['verifyCallback'] =
-		linkedin.admin.verifyCallback ?? verifyStoreCallback;
+		linkedin.store.verifyCallback ?? verifyStoreCallback;
 
 	passport.use(
 		LINKEDIN_STORE_STRATEGY_NAME,
@@ -93,7 +93,7 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 			const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: linkedin.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.admin.successRedirect);
+			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.store.successRedirect);
 		}
 	);
 
