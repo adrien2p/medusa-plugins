@@ -46,7 +46,7 @@ export function loadFacebookStoreStrategy(
 				done: (err: null | unknown, data: null | { customer_id: string }) => void
 			) {
 				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					done(err, { customer_id: data.id });
+					done(err, { customer_id: data?.id });
 				};
 
 				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
@@ -85,7 +85,7 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 			session: false,
 		}),
 		(req, res) => {
-			const token = jwt.sign({ userId: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
+			const token = jwt.sign({ customer_id: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
 			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.store.successRedirect);
