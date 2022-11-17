@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.3.1...medusa-plugin-auth@0.3.2) (2022-11-17)
+
+
+### Bug Fixes
+
+* fix store auth property name in the cookie ([d1a4e9d](https://github.com/adrien2p/medusa-plugins/commit/d1a4e9de6f407bae0c0cea701223c0793ee67d74))
+
+
+
+
+
 ## [0.3.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.3.0...medusa-plugin-auth@0.3.1) (2022-11-16)
 
 
