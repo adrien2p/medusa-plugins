@@ -37,6 +37,7 @@ export function loadFacebookStoreStrategy(
 				clientSecret: facebook.clientSecret,
 				callbackURL: facebook.store.callbackUrl,
 				passReqToCallback: true,
+				profileFields: ['id', 'displayName', 'email', 'name'],
 			},
 			async function (
 				req: Request & { session: { jwt: string } },
