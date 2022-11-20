@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.3.0...medusa-plugin-auth@1.0.1) (2022-11-20)
+
+
+### Bug Fixes
+
+* auth store strategies ([#24](https://github.com/adrien2p/medusa-plugins/issues/24)) ([60a03e6](https://github.com/adrien2p/medusa-plugins/commit/60a03e6625b29bb0ce4b298b6f7e2af798741da0))
+* missing update of jwt strategy ([ec8aecf](https://github.com/adrien2p/medusa-plugins/commit/ec8aecfe63024236674049563518f4b4365680d2))
+
+
+
+
+
 # [0.3.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.1.0...medusa-plugin-auth@0.3.0) (2022-11-09)
 
 
