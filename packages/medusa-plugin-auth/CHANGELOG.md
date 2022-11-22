@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.0.1...medusa-plugin-auth@1.0.2) (2022-11-22)
+
+
+### Bug Fixes
+
+* authentication strategy cookies and split cookies per domain ([80363de](https://github.com/adrien2p/medusa-plugins/commit/80363de8a9d91a5a96495513a9fd3bf1f22dc8a4))
+* update logout handler accordingly to the previous changes ([4f01f31](https://github.com/adrien2p/medusa-plugins/commit/4f01f31f04da12b6169816175d2ab221fc6fb53f))
+
+
+
+
+
 ## [1.0.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@0.3.0...medusa-plugin-auth@1.0.1) (2022-11-20)
 
 
