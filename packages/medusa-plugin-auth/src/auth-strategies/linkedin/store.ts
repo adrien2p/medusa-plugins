@@ -9,7 +9,11 @@ import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registrat
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import { AUTH_TOKEN_COOKIE_NAME, CUSTOMER_METADATA_KEY, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import {
+	CUSTOMER_METADATA_KEY,
+	STORE_AUTH_TOKEN_COOKIE_NAME,
+	TWENTY_FOUR_HOURS_IN_MS
+} from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
 import { LinkedinAuthOptions } from './index';
 
@@ -90,10 +94,10 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 			session: false,
 		}),
 		(req, res) => {
-			const token = jwt.sign({ userId: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
+			const token = jwt.sign({ customer_id: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: linkedin.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.store.successRedirect);
+			res.cookie(STORE_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.store.successRedirect);
 		}
 	);
 

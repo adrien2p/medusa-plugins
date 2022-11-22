@@ -2,7 +2,10 @@ import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import {
+	ADMIN_AUTH_TOKEN_COOKIE_NAME,
+	TWENTY_FOUR_HOURS_IN_MS
+} from '../../types';
 import { UserService } from '@medusajs/medusa';
 import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
@@ -80,7 +83,7 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
 			expiresIn: facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 		});
-		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
+		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
 	};
 
 	router.get(facebook.admin.authCallbackPath, cors(adminCorsOptions));

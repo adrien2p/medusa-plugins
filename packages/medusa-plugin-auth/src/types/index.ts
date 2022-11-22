@@ -3,7 +3,8 @@ import { FacebookAuthOptions } from '../auth-strategies/facebook';
 import { TwitterAuthOptions } from '../auth-strategies/twitter';
 import { LinkedinAuthOptions } from '../auth-strategies/linkedin';
 
-export const AUTH_TOKEN_COOKIE_NAME = 'auth_token';
+export const STORE_AUTH_TOKEN_COOKIE_NAME = 'store_auth_token';
+export const ADMIN_AUTH_TOKEN_COOKIE_NAME = 'admin_auth_token';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 

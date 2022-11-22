@@ -2,7 +2,7 @@ import passport from 'passport';
 import { Strategy as TwitterStrategy } from '@superfaceai/passport-twitter-oauth2';
 import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
 import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
@@ -81,7 +81,7 @@ export function getTwitterAdminAuthRouter(twitter: TwitterAuthOptions, configMod
 		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
 			expiresIn: twitter.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 		});
-		res.cookie(AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
+		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(twitter.admin.successRedirect);
 	};
 
 	router.get(twitter.admin.authCallbackPath, cors(adminCorsOptions));
