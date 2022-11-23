@@ -41,7 +41,7 @@
     "build:tsc": "tsc -b",
     "clean": "rimraf api services utils types loaders auth-strategies coverage tsconfig.tsbuildinfo",
     "test": "jest",
-    "test:ci": "yarn add @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
+    "test:ci": "yarn add -D @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
   },
   "peerDependencies": {
     "@medusajs/medusa": "^1.6.4",
