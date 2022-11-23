@@ -46,7 +46,10 @@ export function loadLinkedinAdminStrategy(
 				done: (err: null | unknown, data: null | { id: string }) => void
 			) => {
 				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					done(err, data);
+					if (err) {
+						return done(err, null);
+					}
+					done(null, data);
 				};
 
 				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
@@ -125,7 +128,15 @@ export async function verifyAdminCallback(
 	done: (err: null | unknown, data: null | { id: string }) => void
 ): Promise<void> {
 	const userService: UserService = container.resolve(formatRegistrationName(`${process.cwd()}/services/user.js`));
-	const email = profile.emails[0].value;
+	const email = profile.emails?.[0]?.value;
+
+	if (!email) {
+		const err = new MedusaError(
+			MedusaError.Types.NOT_ALLOWED,
+			`Your Linkedin account does not contains any email and cannot be used`
+		);
+		return done(err, null);
+	}
 
 	const user = await userService.retrieveByEmail(email).catch(() => void 0);
 	if (!user) {

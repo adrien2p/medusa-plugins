@@ -9,11 +9,7 @@ import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registrat
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import {
-	CUSTOMER_METADATA_KEY,
-	STORE_AUTH_TOKEN_COOKIE_NAME,
-	TWENTY_FOUR_HOURS_IN_MS
-} from '../../types';
+import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
 import { FacebookAuthOptions } from './types';
 
@@ -51,7 +47,10 @@ export function loadFacebookStoreStrategy(
 				done: (err: null | unknown, data: null | { customer_id: string }) => void
 			) {
 				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					done(err, { customer_id: data.id });
+					if (err) {
+						return done(err, null);
+					}
+					done(null, { customer_id: data.id });
 				};
 
 				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
@@ -93,7 +92,9 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 			const token = jwt.sign({ customer_id: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
 				expiresIn: facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 			});
-			res.cookie(STORE_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.store.successRedirect);
+			res.cookie(STORE_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(
+				facebook.store.successRedirect
+			);
 		}
 	);
 
@@ -123,7 +124,15 @@ export async function verifyStoreCallback(
 	);
 
 	await manager.transaction(async (transactionManager) => {
-		const email = profile.emails[0].value;
+		const email = profile.emails?.[0]?.value;
+
+		if (!email) {
+			const err = new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Your facebook account does not contains any email and cannot be used`
+			);
+			return done(err, null);
+		}
 
 		const customer = await customerService
 			.withTransaction(transactionManager)
