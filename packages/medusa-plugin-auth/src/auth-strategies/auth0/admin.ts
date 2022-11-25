@@ -125,7 +125,15 @@ const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin'
 	done: (err: null | unknown, data: null | { id: string }) => void
 ): Promise<void> {
 	const userService: UserService = container.resolve(formatRegistrationName(`${process.cwd()}/services/user.js`));
-  const email = profile.emails[0].value;
+  const email = profile.emails?.[0]?.value;
+
+  if (!email) {
+		const err = new MedusaError(
+			MedusaError.Types.NOT_ALLOWED,
+			`Your Auth0 account does not contain any email and cannot be used`
+		);
+		return done(err, null);
+	}
 
 	const user = await userService.retrieveByEmail(email).catch(() => void 0);
   if (!user) {
