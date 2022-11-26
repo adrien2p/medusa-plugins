@@ -1,5 +1,6 @@
-import { verifyAdminCallback } from '../../admin';
-import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import { FacebookAdminStrategy } from '../../admin';
+import { AuthOptions } from '../../../../types';
 
 describe('Facebook admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -9,6 +10,7 @@ describe('Facebook admin strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
+	let facebookAdminStrategy: FacebookAdminStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -34,6 +36,12 @@ describe('Facebook admin strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
+
+		facebookAdminStrategy = new FacebookAdminStrategy(
+			container,
+			{} as ConfigModule,
+			{ clientID: 'fake', clientSecret: 'fake', admin: {} } as AuthOptions['facebook']
+		);
 	});
 
 	afterEach(() => {
@@ -45,15 +53,12 @@ describe('Facebook admin strategy verify callback', function () {
 			emails: [{ value: existsEmail }],
 		};
 
-		const done = (err, data) => {
-			expect(data).toEqual(
-				expect.objectContaining({
-					id: 'test',
-				})
-			);
-		};
-
-		await verifyAdminCallback(container, req, accessToken, refreshToken, profile, done);
+		const data = await facebookAdminStrategy.validate(req, accessToken, refreshToken, profile);
+		expect(data).toEqual(
+			expect.objectContaining({
+				id: 'test',
+			})
+		);
 	});
 
 	it('should fail if the user does not exists', async () => {
@@ -61,10 +66,7 @@ describe('Facebook admin strategy verify callback', function () {
 			emails: [{ value: 'fake' }],
 		};
 
-		const done = (err) => {
-			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
-		};
-
-		await verifyAdminCallback(container, req, accessToken, refreshToken, profile, done);
+		const err = await facebookAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
 	});
 });

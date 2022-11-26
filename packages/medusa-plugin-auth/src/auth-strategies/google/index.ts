@@ -1,37 +1,34 @@
-import { AuthOptions } from '../../types';
+import { AuthOptions, StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getGoogleAdminAuthRouter, loadGoogleAdminStrategy } from './admin';
+import { getGoogleAdminAuthRouter, GoogleAdminStrategy } from './admin';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { getGoogleStoreAuthRouter, loadGoogleStoreStrategy } from './store';
+import { getGoogleStoreAuthRouter, GoogleStoreStrategy } from './store';
 
 export * from './types';
 export * from './admin';
 export * from './store';
 
-export function getGoogleRoutes(configModule: ConfigModule, options: AuthOptions): Router[] {
-	const routers = [];
+export default {
+	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
+		if (options.google?.admin) {
+			new GoogleAdminStrategy(container, configModule, options.google);
+		}
 
-	if (options.google?.admin) {
-		routers.push(getGoogleAdminAuthRouter(options.google, configModule));
-	}
+		if (options.google?.store) {
+			new GoogleStoreStrategy(container, configModule, options.google);
+		}
+	},
+	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+		const routers = [];
 
-	if (options.google?.store) {
-		routers.push(getGoogleStoreAuthRouter(options.google, configModule));
-	}
+		if (options.google?.admin) {
+			routers.push(getGoogleAdminAuthRouter(options.google, configModule));
+		}
 
-	return routers;
-}
+		if (options.google?.store) {
+			routers.push(getGoogleStoreAuthRouter(options.google, configModule));
+		}
 
-export function loadGoogleStrategies(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	options: AuthOptions
-): void {
-	if (options.google?.admin) {
-		loadGoogleAdminStrategy(container, configModule, options.google);
-	}
-
-	if (options.google?.store) {
-		loadGoogleStoreStrategy(container, configModule, options.google);
-	}
-}
+		return routers;
+	},
+} as StrategyExport;

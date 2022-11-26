@@ -4,56 +4,66 @@ import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
-import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { GoogleAuthOptions } from './types';
+import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
+import { PassportStrategy } from '../../core/Strategy';
 
-const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin.medusa-auth-plugin';
+export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_ADMIN_STRATEGY_NAME) {
+	constructor(
+		protected readonly container: MedusaContainer,
+		protected readonly configModule: ConfigModule,
+		protected readonly strategyOptions: GoogleAuthOptions
+	) {
+		super({
+			clientID: strategyOptions.clientID,
+			clientSecret: strategyOptions.clientSecret,
+			callbackURL: strategyOptions.admin.callbackUrl,
+			passReqToCallback: true,
+		});
+	}
 
-/**
- * Load the google strategy and attach the given verifyCallback or use the default implementation
- * @param container
- * @param configModule
- * @param google
- */
-export function loadGoogleAdminStrategy(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	google: GoogleAuthOptions
-): void {
-	const verifyCallbackFn: GoogleAuthOptions['admin']['verifyCallback'] =
-		google.admin.verifyCallback ?? verifyAdminCallback;
+	async validate(
+		req: Request,
+		accessToken: string,
+		refreshToken: string,
+		profile: Profile
+	): Promise<null | { id: string }> {
+		if (this.strategyOptions.admin.verifyCallback) {
+			return await this.strategyOptions.admin.verifyCallback(
+				this.container,
+				req,
+				accessToken,
+				refreshToken,
+				profile
+			);
+		}
+		return await this.defaultValidate(profile);
+	}
 
-	passport.use(
-		GOOGLE_ADMIN_STRATEGY_NAME,
-		new GoogleStrategy(
-			{
-				clientID: google.clientID,
-				clientSecret: google.clientSecret,
-				callbackURL: google.admin.callbackUrl,
-				passReqToCallback: true,
-			},
-			async (
-				req: Request & { session: { jwt: string } },
-				accessToken: string,
-				refreshToken: string,
-				profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-				done: (err: null | unknown, data: null | { id: string }) => void
-			) => {
-				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					if (err) {
-						return done(err, null);
-					}
-					done(null, data);
-				};
+	private async defaultValidate(profile: Profile): Promise<{ id: string } | never> {
+		const userService: UserService = this.container.resolve('userService');
+		const email = profile.emails?.[0]?.value;
 
-				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
-			}
-		)
-	);
+		if (!email) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Your Google account does not contains any email and cannot be used`
+			);
+		}
+
+		const user = await userService.retrieveByEmail(email).catch(() => void 0);
+		if (!user) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Unable to authenticate the user with the email ${email}`
+			);
+		}
+
+		return { id: user.id };
+	}
 }
 
 /**
@@ -68,10 +78,12 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 		origin: configModule.projectConfig.admin_cors.split(','),
 		credentials: true,
 	};
+	
+	const authPath = google.admin.authPath ?? "/admin/auth/google"
 
-	router.get(google.admin.authPath, cors(adminCorsOptions));
+	router.get(authPath, cors(adminCorsOptions));
 	router.get(
-		google.admin.authPath,
+		authPath,
 		passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
 			scope: [
 				'https://www.googleapis.com/auth/userinfo.email',
@@ -88,9 +100,11 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.admin.successRedirect);
 	};
 
-	router.get(google.admin.authCallbackPath, cors(adminCorsOptions));
+	const authPathCb = google.admin.authCallbackPath ?? "/admin/auth/google/cb"
+	
+	router.get(authPathCb, cors(adminCorsOptions));
 	router.get(
-		google.admin.authCallbackPath,
+		authPathCb,
 		(req, res, next) => {
 			if (req.user) {
 				callbackHandler(req, res);
@@ -106,44 +120,4 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 	);
 
 	return router;
-}
-
-/**
- * Default callback to execute when the strategy is called.
- * @param container
- * @param req
- * @param accessToken
- * @param refreshToken
- * @param profile
- * @param done
- */
-export async function verifyAdminCallback(
-	container: MedusaContainer,
-	req: Request,
-	accessToken: string,
-	refreshToken: string,
-	profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-	done: (err: null | unknown, data: null | { id: string }) => void
-): Promise<void> {
-	const userService: UserService = container.resolve(formatRegistrationName(`${process.cwd()}/services/user.js`));
-	const email = profile.emails?.[0]?.value;
-
-	if (!email) {
-		const err = new MedusaError(
-			MedusaError.Types.NOT_ALLOWED,
-			`Your Google account does not contains any email and cannot be used`
-		);
-		return done(err, null);
-	}
-
-	const user = await userService.retrieveByEmail(email).catch(() => void 0);
-	if (!user) {
-		const err = new MedusaError(
-			MedusaError.Types.NOT_ALLOWED,
-			`Unable to authenticate the user with the email ${email}`
-		);
-		return done(err, null);
-	}
-
-	return done(null, { id: user.id });
 }

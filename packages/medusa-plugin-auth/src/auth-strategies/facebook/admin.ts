@@ -4,57 +4,67 @@ import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
-import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { FacebookAuthOptions } from './types';
+import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
+import { PassportStrategy } from '../../core/Strategy';
 
-const FACEBOOK_ADMIN_STRATEGY_NAME = 'facebook.admin.medusa-auth-plugin';
+export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
+	constructor(
+		protected readonly container: MedusaContainer,
+		protected readonly configModule: ConfigModule,
+		protected readonly strategyOptions: FacebookAuthOptions
+	) {
+		super({
+			clientID: strategyOptions.clientID,
+			clientSecret: strategyOptions.clientSecret,
+			callbackURL: strategyOptions.admin.callbackUrl,
+			passReqToCallback: true,
+			profileFields: ['id', 'displayName', 'email', 'gender', 'name'],
+		});
+	}
 
-/**
- * Load the facebook strategy and attach the given verifyCallback or use the default implementation
- * @param container
- * @param configModule
- * @param facebook
- */
-export function loadFacebookAdminStrategy(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	facebook: FacebookAuthOptions
-): void {
-	const verifyCallbackFn: FacebookAuthOptions['admin']['verifyCallback'] =
-		facebook.admin.verifyCallback ?? verifyAdminCallback;
+	async validate(
+		req: Request,
+		accessToken: string,
+		refreshToken: string,
+		profile: Profile
+	): Promise<null | { id: string }> {
+		if (this.strategyOptions.admin.verifyCallback) {
+			return await this.strategyOptions.admin.verifyCallback(
+				this.container,
+				req,
+				accessToken,
+				refreshToken,
+				profile
+			);
+		}
+		return await this.defaultValidate(profile);
+	}
 
-	passport.use(
-		FACEBOOK_ADMIN_STRATEGY_NAME,
-		new FacebookStrategy(
-			{
-				clientID: facebook.clientID,
-				clientSecret: facebook.clientSecret,
-				callbackURL: facebook.admin.callbackUrl,
-				passReqToCallback: true,
-				profileFields: ['id', 'displayName', 'email', 'gender', 'name'],
-			},
-			async (
-				req: Request & { session: { jwt: string } },
-				accessToken: string,
-				refreshToken: string,
-				profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-				done: (err: null | unknown, data: null | { id: string }) => void
-			) => {
-				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					if (err) {
-						return done(err, null);
-					}
-					done(null, data);
-				};
+	private async defaultValidate(profile: Profile): Promise<{ id: string } | never> {
+		const userService: UserService = this.container.resolve('userService');
+		const email = profile.emails?.[0]?.value;
 
-				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
-			}
-		)
-	);
+		if (!email) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Your facebook account does not contains any email and cannot be used`
+			);
+		}
+
+		const user = await userService.retrieveByEmail(email).catch(() => void 0);
+		if (!user) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Unable to authenticate the user with the email ${email}`
+			);
+		}
+
+		return { id: user.id };
+	}
 }
 
 /**
@@ -70,9 +80,11 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		credentials: true,
 	};
 
-	router.get(facebook.admin.authPath, cors(adminCorsOptions));
+	const authPath = facebook.admin.authPath ?? "/admin/auth/facebook"
+
+	router.get(authPath, cors(adminCorsOptions));
 	router.get(
-		facebook.admin.authPath,
+		authPath,
 		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
 			scope: ['email'],
 			session: false,
@@ -86,9 +98,11 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
 	};
 
-	router.get(facebook.admin.authCallbackPath, cors(adminCorsOptions));
+	const authPathCb = facebook.admin.authCallbackPath ?? "/admin/auth/facebook/cb"
+
+	router.get(authPathCb, cors(adminCorsOptions));
 	router.get(
-		facebook.admin.authCallbackPath,
+		authPathCb,
 		(req, res, next) => {
 			if (req.user) {
 				callbackHandler(req, res);
@@ -104,44 +118,4 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 	);
 
 	return router;
-}
-
-/**
- * Default callback to execute when the strategy is called.
- * @param container
- * @param req
- * @param accessToken
- * @param refreshToken
- * @param profile
- * @param done
- */
-export async function verifyAdminCallback(
-	container: MedusaContainer,
-	req: Request,
-	accessToken: string,
-	refreshToken: string,
-	profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-	done: (err: null | unknown, data: null | { id: string }) => void
-): Promise<void> {
-	const userService: UserService = container.resolve(formatRegistrationName(`${process.cwd()}/services/user.js`));
-	const email = profile.emails?.[0]?.value;
-
-	if (!email) {
-		const err = new MedusaError(
-			MedusaError.Types.NOT_ALLOWED,
-			`Your facebook account does not contains any email and cannot be used`
-		);
-		return done(err, null);
-	}
-
-	const user = await userService.retrieveByEmail(email).catch(() => void 0);
-	if (!user) {
-		const err = new MedusaError(
-			MedusaError.Types.NOT_ALLOWED,
-			`Unable to authenticate the user with the email ${email}`
-		);
-		return done(err, null);
-	}
-
-	return done(null, { id: user.id });
 }

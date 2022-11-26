@@ -1,37 +1,38 @@
-import { AuthOptions } from '../../types';
+import { AuthOptions, StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getLinkedinAdminAuthRouter, loadLinkedinAdminStrategy } from './admin';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { getLinkedinStoreAuthRouter, loadLinkedinStoreStrategy } from './store';
+import {
+	getLinkedinAdminAuthRouter,
+	getLinkedinStoreAuthRouter,
+	LinkedinAdminStrategy,
+	LinkedinStoreStrategy,
+} from '../linkedin';
 
 export * from './types';
 export * from './admin';
 export * from './store';
 
-export function getLinkedinRoutes(configModule: ConfigModule, options: AuthOptions): Router[] {
-	const routers = [];
+export default {
+	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
+		if (options.linkedin?.admin) {
+			new LinkedinAdminStrategy(container, configModule, options.linkedin);
+		}
 
-	if (options.linkedin?.admin) {
-		routers.push(getLinkedinAdminAuthRouter(options.linkedin, configModule));
-	}
+		if (options.linkedin?.store) {
+			new LinkedinStoreStrategy(container, configModule, options.linkedin);
+		}
+	},
+	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+		const routers = [];
 
-	if (options.linkedin?.store) {
-		routers.push(getLinkedinStoreAuthRouter(options.linkedin, configModule));
-	}
+		if (options.linkedin?.admin) {
+			routers.push(getLinkedinAdminAuthRouter(options.linkedin, configModule));
+		}
 
-	return routers;
-}
+		if (options.linkedin?.store) {
+			routers.push(getLinkedinStoreAuthRouter(options.linkedin, configModule));
+		}
 
-export function loadLinkedinStrategies(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	options: AuthOptions
-): void {
-	if (options.linkedin?.admin) {
-		loadLinkedinAdminStrategy(container, configModule, options.linkedin);
-	}
-
-	if (options.linkedin?.store) {
-		loadLinkedinStoreStrategy(container, configModule, options.linkedin);
-	}
-}
+		return routers;
+	},
+} as StrategyExport;

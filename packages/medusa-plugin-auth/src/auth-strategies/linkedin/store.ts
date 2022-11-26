@@ -5,59 +5,93 @@ import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/globa
 import jwt from 'jsonwebtoken';
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { CustomerService } from '@medusajs/medusa';
-import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
 import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { LinkedinAuthOptions } from './index';
+import { PassportStrategy } from '../../core/Strategy';
+import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from "./types";
 
-const LINKEDIN_STORE_STRATEGY_NAME = 'linkedin.store.medusa-auth-plugin';
+export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_STORE_STRATEGY_NAME) {
+	constructor(
+		protected readonly container: MedusaContainer,
+		protected readonly configModule: ConfigModule,
+		protected readonly strategyOptions: LinkedinAuthOptions
+	) {
+		super({
+			clientID: strategyOptions.clientID,
+			clientSecret: strategyOptions.clientSecret,
+			callbackURL: strategyOptions.store.callbackUrl,
+			passReqToCallback: true,
+			scope: ['r_emailaddress'],
+			state: true,
+		});
+	}
 
-/**
- * Load the linkedin strategy and attach the given verifyCallback or use the default implementation
- * @param container
- * @param configModule
- * @param linkedin
- */
-export function loadLinkedinStoreStrategy(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	linkedin: LinkedinAuthOptions
-): void {
-	const verifyCallbackFn: LinkedinAuthOptions['store']['verifyCallback'] =
-		linkedin.store.verifyCallback ?? verifyStoreCallback;
+	async validate(
+		req: Request,
+		accessToken: string,
+		refreshToken: string,
+		profile: Profile
+	): Promise<null | { id: string }> {
+		if (this.strategyOptions.store.verifyCallback) {
+			return await this.strategyOptions.store.verifyCallback(
+				this.container,
+				req,
+				accessToken,
+				refreshToken,
+				profile
+			);
+		}
+		return await this.defaultValidate(profile);
+	}
 
-	passport.use(
-		LINKEDIN_STORE_STRATEGY_NAME,
-		new LinkedinStrategy(
-			{
-				clientID: linkedin.clientID,
-				clientSecret: linkedin.clientSecret,
-				callbackURL: linkedin.store.callbackUrl,
-				passReqToCallback: true,
-				scope: ['r_emailaddress'],
-				state: true,
-			},
-			async function (
-				req: Request & { session: { jwt: string } },
-				accessToken: string,
-				refreshToken: string,
-				profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-				done: (err: null | unknown, data: null | { customer_id: string }) => void
-			) {
-				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					if (err) {
-						return done(err, null);
-					}
-					done(null, { customer_id: data.id });
-				};
+	private async defaultValidate(profile: Profile): Promise<{ id: string } | never> {
+		const manager: EntityManager = this.container.resolve('manager');
+		const customerService: CustomerService = this.container.resolve('customerService');
 
-				await verifyCallbackFn(container, req, accessToken, refreshToken, profile, done_);
+		return await manager.transaction(async (transactionManager) => {
+			const email = profile.emails?.[0]?.value;
+
+			if (!email) {
+				throw new MedusaError(
+					MedusaError.Types.NOT_ALLOWED,
+					`Your Linkedin account does not contains any email and cannot be used`
+				);
 			}
-		)
-	);
+
+			const customer = await customerService
+				.withTransaction(transactionManager)
+				.retrieveByEmail(email)
+				.catch(() => void 0);
+
+			if (customer) {
+				if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
+					throw new MedusaError(
+						MedusaError.Types.INVALID_DATA,
+						`Customer with email ${email} already exists`
+					);
+				} else {
+					return { id: customer.id };
+				}
+			}
+
+			return await customerService
+				.withTransaction(transactionManager)
+				.create({
+					email,
+					metadata: {
+						[CUSTOMER_METADATA_KEY]: true,
+					},
+					first_name: profile?.name.givenName ?? '',
+					last_name: profile?.name.familyName ?? '',
+				})
+				.then((customer) => {
+					return { id: customer.id };
+				});
+		});
+	}
 }
 
 /**
@@ -72,10 +106,12 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 		origin: configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
+	
+	const authPath = linkedin.store.authPath ?? "/store/auth/linkedin"
 
-	router.get(linkedin.store.authPath, cors(storeCorsOptions));
+	router.get(authPath, cors(storeCorsOptions));
 	router.get(
-		linkedin.store.authPath,
+		authPath,
 		passport.authenticate(LINKEDIN_STORE_STRATEGY_NAME, {
 			scope: [
 				'https://www.linkedinapis.com/auth/userinfo.email',
@@ -85,9 +121,11 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 		})
 	);
 
-	router.get(linkedin.store.authCallbackPath, cors(storeCorsOptions));
+	const authPathCb = linkedin.store.authCallbackPath ?? "/store/auth/linkedin/cb"
+	
+	router.get(authPathCb, cors(storeCorsOptions));
 	router.get(
-		linkedin.store.authCallbackPath,
+		authPathCb,
 		passport.authenticate(LINKEDIN_STORE_STRATEGY_NAME, {
 			failureRedirect: linkedin.store.failureRedirect,
 			session: false,
@@ -103,73 +141,4 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 	);
 
 	return router;
-}
-
-/**
- * Default callback to execute when the strategy is called.
- * @param container
- * @param req
- * @param accessToken
- * @param refreshToken
- * @param profile
- * @param done
- */
-export async function verifyStoreCallback(
-	container: MedusaContainer,
-	req: Request,
-	accessToken: string,
-	refreshToken: string,
-	profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-	done: (err: null | unknown, data: null | { id: string }) => void
-): Promise<void> {
-	const manager: EntityManager = container.resolve('manager');
-	const customerService: CustomerService = container.resolve(
-		formatRegistrationName(`${process.cwd()}/services/customer.js`)
-	);
-
-	await manager.transaction(async (transactionManager) => {
-		const email = profile.emails?.[0]?.value;
-
-		if (!email) {
-			const err = new MedusaError(
-				MedusaError.Types.NOT_ALLOWED,
-				`Your Linkedin account does not contains any email and cannot be used`
-			);
-			return done(err, null);
-		}
-
-		const customer = await customerService
-			.withTransaction(transactionManager)
-			.retrieveByEmail(email)
-			.catch(() => void 0);
-
-		if (customer) {
-			if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
-				const err = new MedusaError(
-					MedusaError.Types.INVALID_DATA,
-					`Customer with email ${email} already exists`
-				);
-				return done(err, null);
-			} else {
-				return done(null, { id: customer.id });
-			}
-		}
-
-		await customerService
-			.withTransaction(transactionManager)
-			.create({
-				email,
-				metadata: {
-					[CUSTOMER_METADATA_KEY]: true,
-				},
-				first_name: profile?.name.givenName ?? '',
-				last_name: profile?.name.familyName ?? '',
-			})
-			.then((customer) => {
-				return done(null, { id: customer.id });
-			})
-			.catch((err) => {
-				return done(err, null);
-			});
-	});
 }
