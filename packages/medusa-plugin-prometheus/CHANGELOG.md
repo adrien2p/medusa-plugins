@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-prometheus@1.1.2...medusa-plugin-prometheus@1.2.0) (2022-11-26)
+
+
+### Features
+
+* update strategies according to the latest auth changes from medusa core ([#26](https://github.com/adrien2p/medusa-plugins/issues/26)) ([9afc2fd](https://github.com/adrien2p/medusa-plugins/commit/9afc2fd43df96567e511087bd4a725e7e711e54a))
+
+
+
+
+
 ## [1.1.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-prometheus@1.1.1...medusa-plugin-prometheus@1.1.2) (2022-11-04)
 
 **Note:** Version bump only for package medusa-plugin-prometheus
