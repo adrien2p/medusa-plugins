@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         node-verion: [16.x]
-        medusajs-version: [1.5.x, 1.6.x]
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.9.1
@@ -36,6 +35,4 @@ jobs:
 
       - name: 'run unit tests'
         working-directory: ./packages/medusa-plugin-sentry
-        run: yarn run test:ci
-        env:
-          MEDUSAJS_VERSION: ${{ matrix.medusajs-version }}
+        run: yarn run test

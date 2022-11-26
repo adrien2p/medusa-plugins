@@ -1,6 +1,7 @@
 .idea
 
 /api
+/core
 /handlers
 /utils
 /types

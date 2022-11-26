@@ -1,5 +1,10 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
 
+export const GOOGLE_STORE_STRATEGY_NAME = 'google.store.medusa-auth-plugin';
+export const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin.medusa-auth-plugin';
+
+export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
+
 export type GoogleAuthOptions = {
 	clientID: string;
 	clientSecret: string;
@@ -7,8 +12,14 @@ export type GoogleAuthOptions = {
 		callbackUrl: string;
 		successRedirect: string;
 		failureRedirect: string;
-		authPath: string;
-		authCallbackPath: string;
+		/**
+		 * Default /admin/auth/google
+		 */
+		authPath?: string;
+		/**
+		 * Default /admin/auth/google/cb
+		 */
+		authCallbackPath?: string;
 		/**
 		 * The default verify callback function will be used if this configuration is not specified
 		 */
@@ -17,18 +28,23 @@ export type GoogleAuthOptions = {
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-			done: (err: null | unknown, data: null | { id: string }) => void
-		) => Promise<void>;
+			profile: Profile
+		) => Promise<null | { id: string } | never>;
 
-		expiresIn?: string;
+		expiresIn?: number;
 	};
 	store?: {
 		callbackUrl: string;
 		successRedirect: string;
 		failureRedirect: string;
-		authPath: string;
-		authCallbackPath: string;
+		/**
+		 * Default /store/auth/google
+		 */
+		authPath?: string;
+		/**
+		 * Default /store/auth/google/cb
+		 */
+		authCallbackPath?: string;
 		/**
 		 * The default verify callback function will be used if this configuration is not specified
 		 */
@@ -37,10 +53,9 @@ export type GoogleAuthOptions = {
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-			done: (err: null | unknown, data: null | { id: string }) => void
-		) => Promise<void>;
+			profile: Profile
+		) => Promise<null | { id: string } | never>;
 
-		expiresIn?: string;
+		expiresIn?: number;
 	};
 };

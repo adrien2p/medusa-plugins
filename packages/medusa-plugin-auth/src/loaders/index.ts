@@ -1,16 +1,16 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 
 import { AuthOptions } from '../types';
-import { loadGoogleStrategies } from '../auth-strategies/google';
-import { loadFacebookStrategies } from '../auth-strategies/facebook';
-import { loadTwitterStrategies } from '../auth-strategies/twitter';
-import { loadLinkedinStrategies } from "../auth-strategies/linkedin";
+import JwtStrategy from '../auth-strategies/jwt';
+import GoogleStrategy from '../auth-strategies/google';
+import FacebookStrategy from '../auth-strategies/facebook';
+import LinkedinStrategy from '../auth-strategies/linkedin';
 
 export default async function authStrategiesLoader(container: MedusaContainer, authOptions: AuthOptions) {
 	const configModule = container.resolve('configModule') as ConfigModule;
 
-	loadGoogleStrategies(container, configModule, authOptions);
-	loadFacebookStrategies(container, configModule, authOptions);
-	loadTwitterStrategies(container, configModule, authOptions);
-	loadLinkedinStrategies(container, configModule, authOptions);
+	JwtStrategy.load(container, configModule);
+	GoogleStrategy.load(container, configModule, authOptions);
+	FacebookStrategy.load(container, configModule, authOptions);
+	LinkedinStrategy.load(container, configModule, authOptions);
 }

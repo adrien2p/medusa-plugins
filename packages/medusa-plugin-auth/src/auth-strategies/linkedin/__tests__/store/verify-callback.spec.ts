@@ -1,6 +1,7 @@
-import { verifyStoreCallback } from '../../store';
-import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { CUSTOMER_METADATA_KEY } from "../../../../types";
+import { LinkedinStoreStrategy } from '../../store';
+import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import { AuthOptions, CUSTOMER_METADATA_KEY } from '../../../../types';
+import { Profile } from '../../types';
 
 describe('Linkedin store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -10,7 +11,8 @@ describe('Linkedin store strategy verify callback', function () {
 	let req: Request;
 	let accessToken: string;
 	let refreshToken: string;
-	let profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
+	let profile: Profile;
+	let linkedinStoreStrategy: LinkedinStoreStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -22,7 +24,7 @@ describe('Linkedin store strategy verify callback', function () {
 				const container_ = {
 					manager: {
 						transaction: function (cb) {
-							cb();
+							return cb();
 						},
 					},
 					customerService: {
@@ -56,6 +58,12 @@ describe('Linkedin store strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
+
+		linkedinStoreStrategy = new LinkedinStoreStrategy(
+			container,
+			{} as ConfigModule,
+			{ clientID: 'fake', clientSecret: 'fake', store: {} } as AuthOptions['linkedin']
+		);
 	});
 
 	afterEach(() => {
@@ -67,15 +75,12 @@ describe('Linkedin store strategy verify callback', function () {
 			emails: [{ value: existsEmailWithMeta }],
 		};
 
-		const done = (err, data) => {
-			expect(data).toEqual(
-				expect.objectContaining({
-					id: 'test2',
-				})
-			);
-		};
-
-		await verifyStoreCallback(container, req, accessToken, refreshToken, profile, done);
+		const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+		expect(data).toEqual(
+			expect.objectContaining({
+				id: 'test2',
+			})
+		);
 	});
 
 	it('should fail when the customer exists without the metadata', async () => {
@@ -83,11 +88,8 @@ describe('Linkedin store strategy verify callback', function () {
 			emails: [{ value: existsEmail }],
 		};
 
-		const done = (err) => {
-			expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
-		};
-
-		await verifyStoreCallback(container, req, accessToken, refreshToken, profile, done);
+		const err = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
 	});
 
 	it('should succeed and create a new customer if it has not been found', async () => {
@@ -99,14 +101,11 @@ describe('Linkedin store strategy verify callback', function () {
 			},
 		};
 
-		const done = (err, data) => {
-			expect(data).toEqual(
-				expect.objectContaining({
-					id: 'test',
-				})
-			);
-		};
-
-		await verifyStoreCallback(container, req, accessToken, refreshToken, profile, done);
+		const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+		expect(data).toEqual(
+			expect.objectContaining({
+				id: 'test',
+			})
+		);
 	});
 });
