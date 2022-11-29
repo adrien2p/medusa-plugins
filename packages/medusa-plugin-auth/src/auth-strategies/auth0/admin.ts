@@ -4,56 +4,69 @@ import jwt from 'jsonwebtoken'
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
-import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
 import { getCookieOptions } from '../../utils/get-cookie-options';
-import { Auth0Options } from './types';
+import { AUTH0_ADMIN_STRATEGY_NAME, Auth0Options, Profile, ExtraParams } from './types';
+import { PassportStrategy } from '../../core/Strategy';
+export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ADMIN_STRATEGY_NAME) {
+  constructor(
+    protected readonly container: MedusaContainer,
+    protected readonly configModule: ConfigModule,
+    protected readonly strategyOptions: Auth0Options
+  ) {
+    super({
+      domain: strategyOptions.auth0Domain,
+      clientID: strategyOptions.clientID,
+      clientSecret: strategyOptions.clientSecret,
+      callbackURL: strategyOptions.admin.callbackUrl,
+      passReqToCallback: true,
+      state: true
+    });
+  }
 
-const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin'
+  async validate(
+    req: Request,
+    accessToken: string,
+    refreshToken: string,
+    extraParams: ExtraParams,
+    profile: Profile
+  ): Promise<null | { id: string }> {
+    if (this.strategyOptions.admin.verifyCallback) {
+      return await this.strategyOptions.admin.verifyCallback(
+        this.container,
+        req,
+        accessToken,
+        refreshToken,
+        extraParams,
+        profile
+      );
+    }
+    return await this.defaultValidate(profile);
+  }
 
-/**
- * Load the auth0 strategy and attach the given verifyCallback or use the default implementation
- * @param container
- * @param configModule
- * @param auth0
- */
- export function loadAuth0AdminStrategy(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	auth0: Auth0Options
-): void {
-	const verifyCallbackFn: Auth0Options['admin']['verifyCallback'] =
-		auth0.admin.verifyCallback ?? verifyAdminCallback;
+	private async defaultValidate(profile: Profile): Promise<{ id: string } | never> {
+		const userService: UserService = this.container.resolve('userService');
+		const email = profile.emails?.[0]?.value;
 
-	passport.use(
-		AUTH0_ADMIN_STRATEGY_NAME,
-    new Auth0Strategy(
-      {
-        domain: auth0.auth0Domain,
-        clientID: auth0.clientID,
-        clientSecret: auth0.clientSecret,
-        callbackURL: auth0.admin.callbackUrl,
-        passReqToCallback: true,
-        state: true,
-      },
-      async (
-				req: Request & { session: { jwt: string } },
-				accessToken: string,
-				refreshToken: string,
-        extraParams: { audience?: string | undefined; connection?: string | undefined; prompt?: string | undefined;},
-				profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-				done: (err: null | unknown, data: null | { id: string }) => void
-			) => {
-				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					done(err, data);
-				};
+		if (!email) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Your facebook account does not contains any email and cannot be used`
+			);
+		}
 
-				await verifyCallbackFn(container, req, accessToken, refreshToken, extraParams, profile, done_);
-			}
-    )
-	);
+		const user = await userService.retrieveByEmail(email).catch(() => void 0);
+		if (!user) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Unable to authenticate the user with the email ${email}`
+			);
+		}
+
+		return { id: user.id };
+	}  
 }
 
 /**
@@ -69,9 +82,11 @@ const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin'
 		credentials: true,
 	};
 
-	router.get(auth0.admin.authPath, cors(adminCorsOptions));
+  const authPath = auth0.admin.authPath ?? '/admin/auth/auth0'
+
+	router.get(authPath, cors(adminCorsOptions));
 	router.get(
-		auth0.admin.authPath,
+		authPath,
 		passport.authenticate(AUTH0_ADMIN_STRATEGY_NAME, {
       scope: 'openid email profile',
 			session: false,
@@ -85,9 +100,11 @@ const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin'
 		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(auth0.admin.successRedirect);
 	};
 
-	router.get(auth0.admin.authCallbackPath, cors(adminCorsOptions));
+  const authPathCb = auth0.admin.authCallbackPath ?? '/admin/auth/auth0/cb'
+
+	router.get(authPathCb, cors(adminCorsOptions));
 	router.get(
-		auth0.admin.authCallbackPath,
+		authPathCb,
 		(req, res, next) => {
 			if (req.user) {
 				callbackHandler(req, res);
@@ -103,46 +120,4 @@ const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin'
 	);
 
 	return router;
-}
-
-/**
- * Default callback to execute when the strategy is called.
- * @param container
- * @param req
- * @param accessToken
- * @param refreshToken
- * @param extraParams
- * @param profile
- * @param done
- */
- export async function verifyAdminCallback(
-	container: MedusaContainer,
-	req: Request,
-	accessToken: string,
-	refreshToken: string,
-  extraParams: { audience?: string | undefined; connection?: string | undefined; prompt?: string | undefined;},
-	profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-	done: (err: null | unknown, data: null | { id: string }) => void
-): Promise<void> {
-	const userService: UserService = container.resolve(formatRegistrationName(`${process.cwd()}/services/user.js`));
-  const email = profile.emails?.[0]?.value;
-
-  if (!email) {
-		const err = new MedusaError(
-			MedusaError.Types.NOT_ALLOWED,
-			`Your Auth0 account does not contain any email and cannot be used`
-		);
-		return done(err, null);
-	}
-
-	const user = await userService.retrieveByEmail(email).catch(() => void 0);
-  if (!user) {
-		const err = new MedusaError(
-			MedusaError.Types.NOT_ALLOWED,
-			`Unable to authenticate the user with the email ${email}`
-		);
-		return done(err, null);
-	}
-
-	return done(null, { id: user.id });
 }

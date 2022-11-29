@@ -1,60 +1,100 @@
-import passport from 'passport'
-import {Strategy as Auth0Strategy} from 'passport-auth0'
-import jwt from 'jsonwebtoken'
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
-import { CustomerService } from '@medusajs/medusa';
-import formatRegistrationName from '@medusajs/medusa/dist/utils/format-registration-name';
-import { MedusaError } from 'medusa-core-utils';
+
+import passport from 'passport';
 import { Router } from 'express';
 import cors from 'cors';
-import { getCookieOptions } from '../../utils/get-cookie-options';
-import { Auth0Options } from './types';
+import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import jwt from 'jsonwebtoken';
+import {Strategy as Auth0Strategy} from 'passport-auth0'
+import { CustomerService } from '@medusajs/medusa';
+import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-const AUTH0_STORE_STRATEGY_NAME = 'auth0.store.medusa-auth-plugin';
+import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import { getCookieOptions } from '../../utils/get-cookie-options';
+import { PassportStrategy } from '../../core/Strategy';
+import { Auth0Options, Profile, ExtraParams, AUTH0_STORE_STRATEGY_NAME } from './types';
 
-/**
- * Load the auth0 strategy and attach the given verifyCallback or use the default implementation
- * @param container
- * @param configModule
- * @param auth0
- */
- export function loadAuth0StoreStrategy(
-	container: MedusaContainer,
-	configModule: ConfigModule,
-	auth0: Auth0Options
-): void {
-	const verifyCallbackFn: Auth0Options['store']['verifyCallback'] =
-		auth0.store.verifyCallback ?? verifyStoreCallback;
+export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_STORE_STRATEGY_NAME) {
+  constructor(
+    protected readonly container: MedusaContainer,
+    protected readonly configModule: ConfigModule,
+    protected readonly strategyOptions: Auth0Options
+  ) {
+    super({
+      domain: strategyOptions.auth0Domain,
+      clientID: strategyOptions.clientID,
+      clientSecret: strategyOptions.clientSecret,
+      callbackURL: strategyOptions.store.callbackUrl,
+      passReqToCallback: true,
+      state: true
+    });
+  }
 
-	passport.use(
-		AUTH0_STORE_STRATEGY_NAME,
-    new Auth0Strategy(
-      {
-        domain: auth0.auth0Domain,
-        clientID: auth0.clientID,
-        clientSecret: auth0.clientSecret,
-        callbackURL: auth0.store.callbackUrl,
-        passReqToCallback: true,
-        state: true,
-      },
-      async (
-				req: Request & { session: { jwt: string } },
-				accessToken: string,
-				refreshToken: string,
-        extraParams: { audience?: string | undefined; connection?: string | undefined; prompt?: string | undefined;},
-				profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-				done: (err: null | unknown, data: null | { id: string }) => void
-			) => {
-				const done_ = (err: null | unknown, data: null | { id: string }) => {
-					done(err, data);
-				};
+  async validate(
+    req: Request,
+    accessToken: string,
+    refreshToken: string,
+    extraParams: ExtraParams,
+    profile: Profile
+  ): Promise<null | { id: string }> {
+    if (this.strategyOptions.store.verifyCallback) {
+      return await this.strategyOptions.store.verifyCallback(
+        this.container,
+        req,
+        accessToken,
+        refreshToken,
+        extraParams,
+        profile
+      );
+    }
+    return await this.defaultValidate(profile);
+  }
 
-				await verifyCallbackFn(container, req, accessToken, refreshToken, extraParams, profile, done_);
+	private async defaultValidate(profile: Profile): Promise<{ id: string } | never> {
+		const manager: EntityManager = this.container.resolve('manager');
+		const customerService: CustomerService = this.container.resolve('customerService');
+
+		return await manager.transaction(async (transactionManager) => {
+			const email = profile.emails?.[0]?.value;
+
+			if (!email) {
+				throw new MedusaError(
+					MedusaError.Types.NOT_ALLOWED,
+					`Your Google account does not contains any email and cannot be used`
+				);
 			}
-    )
-	);
+
+			const customer = await customerService
+				.withTransaction(transactionManager)
+				.retrieveByEmail(email)
+				.catch(() => void 0);
+
+			if (customer) {
+				if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
+					throw new MedusaError(
+						MedusaError.Types.INVALID_DATA,
+						`Customer with email ${email} already exists`
+					);
+				} else {
+					return { id: customer.id };
+				}
+			}
+
+			return await customerService
+				.withTransaction(transactionManager)
+				.create({
+					email,
+					metadata: {
+						[CUSTOMER_METADATA_KEY]: true,
+					},
+					first_name: profile?.name.givenName ?? '',
+					last_name: profile?.name.familyName ?? '',
+				})
+				.then((customer) => {
+					return { id: customer.id };
+				});
+		});
+	}
 }
 
 /**
@@ -70,18 +110,22 @@ const AUTH0_STORE_STRATEGY_NAME = 'auth0.store.medusa-auth-plugin';
 		credentials: true,
 	};
 
-	router.get(auth0.store.authPath, cors(storeCorsOptions));
+  const authPath = auth0.store.authPath ?? '/store/auth/auth0'
+
+	router.get(authPath, cors(storeCorsOptions));
 	router.get(
-		auth0.store.authPath,
+		authPath,
 		passport.authenticate(AUTH0_STORE_STRATEGY_NAME, {
       scope: 'openid email profile',
 			session: false,
 		})
 	);
 
-	router.get(auth0.store.authCallbackPath, cors(storeCorsOptions));
+  const authPathCb = auth0.store.authCallbackPath ?? "/store/auth/auth0/cb"
+
+	router.get(authPathCb, cors(storeCorsOptions));
 	router.get(
-		auth0.store.authCallbackPath,
+		authPathCb,
 		passport.authenticate(AUTH0_STORE_STRATEGY_NAME, {
 			failureRedirect: auth0.store.failureRedirect,
 			session: false,
@@ -95,75 +139,4 @@ const AUTH0_STORE_STRATEGY_NAME = 'auth0.store.medusa-auth-plugin';
 	);
 
 	return router;
-}
-
-/**
- * Default callback to execute when the strategy is called.
- * @param container
- * @param req
- * @param accessToken
- * @param refreshToken
- * @param extraParams
- * @param profile
- * @param done
- */
- export async function verifyStoreCallback(
-	container: MedusaContainer,
-	req: Request,
-	accessToken: string,
-	refreshToken: string,
-  extraParams: { audience?: string | undefined; connection?: string | undefined; prompt?: string | undefined;},
-	profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } },
-	done: (err: null | unknown, data: null | { id: string }) => void
-): Promise<void> {
-	const manager: EntityManager = container.resolve('manager');
-	const customerService: CustomerService = container.resolve(
-		formatRegistrationName(`${process.cwd()}/services/customer.js`)
-	);
-
-	await manager.transaction(async (transactionManager) => {
-		const email = profile.emails?.[0]?.value;
-
-    if (!email) {
-			const err = new MedusaError(
-				MedusaError.Types.NOT_ALLOWED,
-				`Your Auth0 account does not contains any email and cannot be used`
-			);
-			return done(err, null);
-		}
-
-		const customer = await customerService
-			.withTransaction(transactionManager)
-			.retrieveByEmail(email)
-			.catch(() => void 0);
-
-		if (customer) {
-			if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
-				const err = new MedusaError(
-					MedusaError.Types.INVALID_DATA,
-					`Customer with email ${email} already exists`
-				);
-				return done(err, null);
-			} else {
-				return done(null, { id: customer.id });
-			}
-		}
-
-		await customerService
-			.withTransaction(transactionManager)
-			.create({
-				email,
-				metadata: {
-					[CUSTOMER_METADATA_KEY]: true,
-				},
-				first_name: profile?.name.givenName ?? '',
-				last_name: profile?.name.familyName ?? '',
-			})
-			.then((customer) => {
-				return done(null, { id: customer.id });
-			})
-			.catch((err) => {
-				return done(err, null);
-			});
-	});
 }
