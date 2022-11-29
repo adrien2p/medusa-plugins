@@ -2,16 +2,15 @@ import passport from 'passport';
 import { Router } from 'express';
 import cors from 'cors';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import jwt from 'jsonwebtoken';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { CustomerService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
 import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
-import { getCookieOptions } from '../../utils/get-cookie-options';
 import { PassportStrategy } from '../../core/Strategy';
-import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from "./types";
+import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
+import { buildCallbackHandler } from '../../utils/build-callback-handler';
 
 export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_STORE_STRATEGY_NAME) {
 	constructor(
@@ -104,8 +103,8 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 		origin: configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
-	
-	const authPath = google.store.authPath ?? "/store/auth/google"
+
+	const authPath = google.store.authPath ?? '/store/auth/google';
 
 	router.get(authPath, cors(storeCorsOptions));
 	router.get(
@@ -118,22 +117,31 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 			session: false,
 		})
 	);
-	
-	const authPathCb = google.store.authCallbackPath ?? "/store/auth/google/cb"
+
+	const expiresIn = google.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
+	const callbackHandler = buildCallbackHandler(
+		STORE_AUTH_TOKEN_COOKIE_NAME,
+		configModule.projectConfig.jwt_secret,
+		expiresIn,
+		google.store.successRedirect
+	);
+	const authPathCb = google.store.authCallbackPath ?? '/store/auth/google/cb';
 
 	router.get(authPathCb, cors(storeCorsOptions));
 	router.get(
 		authPathCb,
+		(req, res, next) => {
+			if (req.user) {
+				return callbackHandler(req, res);
+			}
+
+			next();
+		},
 		passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
 			failureRedirect: google.store.failureRedirect,
 			session: false,
 		}),
-		(req, res) => {
-			const token = jwt.sign({ customer_id: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
-				expiresIn: google.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-			});
-			res.cookie(STORE_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.store.successRedirect);
-		}
+		callbackHandler
 	);
 
 	return router;

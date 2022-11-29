@@ -1,15 +1,14 @@
 import passport from 'passport';
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
-import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
-import { getCookieOptions } from '../../utils/get-cookie-options';
 import { LINKEDIN_ADMIN_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
+import { buildCallbackHandler } from '../../utils/build-callback-handler';
 
 export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -80,8 +79,8 @@ export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, config
 		origin: configModule.projectConfig.admin_cors.split(','),
 		credentials: true,
 	};
-	
-	const authPath = linkedin.admin.authPath ?? "/admin/auth/linkedin"
+
+	const authPath = linkedin.admin.authPath ?? '/admin/auth/linkedin';
 
 	router.get(authPath, cors(adminCorsOptions));
 	router.get(
@@ -95,21 +94,22 @@ export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, config
 		})
 	);
 
-	const callbackHandler = (req, res) => {
-		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-			expiresIn: linkedin.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-		});
-		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(linkedin.admin.successRedirect);
-	};
-	
-	const authPathCb = linkedin.admin.authCallbackPath ?? "/admin/auth/linkedin/cb"
+	const expiresIn = linkedin.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
+
+	const callbackHandler = buildCallbackHandler(
+		ADMIN_AUTH_TOKEN_COOKIE_NAME,
+		configModule.projectConfig.jwt_secret,
+		expiresIn,
+		linkedin.admin.successRedirect
+	);
+	const authPathCb = linkedin.admin.authCallbackPath ?? '/admin/auth/linkedin/cb';
 
 	router.get(authPathCb, cors(adminCorsOptions));
 	router.get(
 		authPathCb,
 		(req, res, next) => {
 			if (req.user) {
-				callbackHandler(req, res);
+				return callbackHandler(req, res);
 			}
 
 			next();

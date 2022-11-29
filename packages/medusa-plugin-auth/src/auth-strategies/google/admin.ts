@@ -1,15 +1,14 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
-import { getCookieOptions } from '../../utils/get-cookie-options';
 import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
+import { buildCallbackHandler } from '../../utils/build-callback-handler';
 
 export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -78,8 +77,8 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 		origin: configModule.projectConfig.admin_cors.split(','),
 		credentials: true,
 	};
-	
-	const authPath = google.admin.authPath ?? "/admin/auth/google"
+
+	const authPath = google.admin.authPath ?? '/admin/auth/google';
 
 	router.get(authPath, cors(adminCorsOptions));
 	router.get(
@@ -93,21 +92,21 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 		})
 	);
 
-	const callbackHandler = (req, res) => {
-		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-			expiresIn: google.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-		});
-		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(google.admin.successRedirect);
-	};
+	const expiresIn = google.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
+	const callbackHandler = buildCallbackHandler(
+		ADMIN_AUTH_TOKEN_COOKIE_NAME,
+		configModule.projectConfig.jwt_secret,
+		expiresIn,
+		google.admin.successRedirect
+	);
+	const authPathCb = google.admin.authCallbackPath ?? '/admin/auth/google/cb';
 
-	const authPathCb = google.admin.authCallbackPath ?? "/admin/auth/google/cb"
-	
 	router.get(authPathCb, cors(adminCorsOptions));
 	router.get(
 		authPathCb,
 		(req, res, next) => {
 			if (req.user) {
-				callbackHandler(req, res);
+				return callbackHandler(req, res);
 			}
 
 			next();

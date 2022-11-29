@@ -1,6 +1,6 @@
 import { CookieOptions } from 'express-serve-static-core';
 
-export function getCookieOptions(): CookieOptions {
+export function getCookieOptions(maxAge: number): CookieOptions {
 	let secure = false;
 	let sameSite: CookieOptions['sameSite'] = false;
 
@@ -12,5 +12,7 @@ export function getCookieOptions(): CookieOptions {
 	return {
 		sameSite,
 		secure,
+		httpOnly: true,
+		maxAge,
 	};
 }

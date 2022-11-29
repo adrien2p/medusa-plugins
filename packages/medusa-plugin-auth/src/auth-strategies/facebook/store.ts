@@ -2,16 +2,15 @@ import passport from 'passport';
 import { Router } from 'express';
 import cors from 'cors';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import jwt from 'jsonwebtoken';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { CustomerService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
 import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
-import { getCookieOptions } from '../../utils/get-cookie-options';
 import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
+import { buildCallbackHandler } from '../../utils/build-callback-handler';
 
 export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_STORE_STRATEGY_NAME) {
 	constructor(
@@ -106,7 +105,7 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 		credentials: true,
 	};
 
-	const authPath = facebook.store.authPath ?? "/store/auth/facebook"
+	const authPath = facebook.store.authPath ?? '/store/auth/facebook';
 
 	router.get(authPath, cors(storeCorsOptions));
 	router.get(
@@ -117,23 +116,30 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 		})
 	);
 
-	const authPathCb = facebook.store.authCallbackPath ?? "/store/auth/facebook/cb"
+	const expiresIn = facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
+	const callbackHandler = buildCallbackHandler(
+		STORE_AUTH_TOKEN_COOKIE_NAME,
+		configModule.projectConfig.jwt_secret,
+		expiresIn,
+		facebook.store.successRedirect
+	);
+	const authPathCb = facebook.store.authCallbackPath ?? '/store/auth/facebook/cb';
 
 	router.get(authPathCb, cors(storeCorsOptions));
 	router.get(
 		authPathCb,
+		(req, res, next) => {
+			if (req.user) {
+				return callbackHandler(req, res);
+			}
+
+			next();
+		},
 		passport.authenticate(FACEBOOK_STORE_STRATEGY_NAME, {
 			failureRedirect: facebook.store.failureRedirect,
 			session: false,
 		}),
-		(req, res) => {
-			const token = jwt.sign({ customer_id: req.user.customer_id }, configModule.projectConfig.jwt_secret, {
-				expiresIn: facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-			});
-			res.cookie(STORE_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(
-				facebook.store.successRedirect
-			);
-		}
+		callbackHandler
 	);
 
 	return router;

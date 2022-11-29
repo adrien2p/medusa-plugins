@@ -1,15 +1,14 @@
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import jwt from 'jsonwebtoken';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
 import cors from 'cors';
-import { getCookieOptions } from '../../utils/get-cookie-options';
 import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
+import { buildCallbackHandler } from '../../utils/build-callback-handler';
 
 export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -80,7 +79,7 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		credentials: true,
 	};
 
-	const authPath = facebook.admin.authPath ?? "/admin/auth/facebook"
+	const authPath = facebook.admin.authPath ?? '/admin/auth/facebook';
 
 	router.get(authPath, cors(adminCorsOptions));
 	router.get(
@@ -91,21 +90,21 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		})
 	);
 
-	const callbackHandler = (req, res) => {
-		const token = jwt.sign({ userId: req.user.id }, configModule.projectConfig.jwt_secret, {
-			expiresIn: facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-		});
-		res.cookie(ADMIN_AUTH_TOKEN_COOKIE_NAME, token, getCookieOptions()).redirect(facebook.admin.successRedirect);
-	};
-
-	const authPathCb = facebook.admin.authCallbackPath ?? "/admin/auth/facebook/cb"
+	const expiresIn = facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
+	const callbackHandler = buildCallbackHandler(
+		ADMIN_AUTH_TOKEN_COOKIE_NAME,
+		configModule.projectConfig.jwt_secret,
+		expiresIn,
+		facebook.admin.successRedirect
+	);
+	const authPathCb = facebook.admin.authCallbackPath ?? '/admin/auth/facebook/cb';
 
 	router.get(authPathCb, cors(adminCorsOptions));
 	router.get(
 		authPathCb,
 		(req, res, next) => {
 			if (req.user) {
-				callbackHandler(req, res);
+				return callbackHandler(req, res);
 			}
 
 			next();
