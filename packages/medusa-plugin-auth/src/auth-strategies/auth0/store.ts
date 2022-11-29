@@ -60,7 +60,7 @@ export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ST
 			if (!email) {
 				throw new MedusaError(
 					MedusaError.Types.NOT_ALLOWED,
-					`Your Google account does not contains any email and cannot be used`
+					`Your Auth0 account does not contain a valid email and cannot be used`
 				);
 			}
 

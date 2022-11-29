@@ -10,22 +10,22 @@ export * from './types'
 
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.google?.admin) {
+		if (options.auth0?.admin) {
 			new Auth0AdminStrategy(container, configModule, options.auth0);
 		}
 
-		if (options.google?.store) {
+		if (options.auth0?.store) {
 			new Auth0StoreStrategy(container, configModule, options.auth0);
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
 		const routers = [];
 
-		if (options.google?.admin) {
+		if (options.auth0?.admin) {
 			routers.push(getAuth0AdminAuthRouter(options.auth0, configModule));
 		}
 
-		if (options.google?.store) {
+		if (options.auth0?.store) {
 			routers.push(getAuth0StoreAuthRouter(options.auth0, configModule));
 		}
 

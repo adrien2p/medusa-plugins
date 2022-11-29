@@ -53,8 +53,8 @@ export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_AD
 		if (!email) {
 			throw new MedusaError(
 				MedusaError.Types.NOT_ALLOWED,
-				`Your facebook account does not contains any email and cannot be used`
-			);
+        `Your Auth0 account does not contain a valid email and cannot be used`
+        );
 		}
 
 		const user = await userService.retrieveByEmail(email).catch(() => void 0);
