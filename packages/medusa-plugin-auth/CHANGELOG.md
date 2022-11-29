@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.0.2...medusa-plugin-auth@1.2.0) (2022-11-29)
+
+
+### Bug Fixes
+
+* Wrong user property used in store auth strategies ([73812dc](https://github.com/adrien2p/medusa-plugins/commit/73812dc795a105053e3735d6c0f21a1aa925ef9a))
+
+
+### Features
+
+* update strategies according to the latest auth changes from medusa core ([#26](https://github.com/adrien2p/medusa-plugins/issues/26)) ([9afc2fd](https://github.com/adrien2p/medusa-plugins/commit/9afc2fd43df96567e511087bd4a725e7e711e54a))
+
+
+
+
+
 # [1.1.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.0.2...medusa-plugin-auth@1.1.0) (2022-11-26)
 
 
