@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.0...medusa-plugin-auth@1.2.1) (2022-11-29)
+
+
+### Bug Fixes
+
+* npm files ([ab44413](https://github.com/adrien2p/medusa-plugins/commit/ab44413b9a7b18f04dcb6354d1e6d96fad2b4561))
+
+
+
+
+
 # [1.2.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.0.2...medusa-plugin-auth@1.2.0) (2022-11-29)
 
 

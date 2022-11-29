@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-auth",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Social authentication plugin for medusajs",
   "keywords": [
     "social",
@@ -45,8 +45,8 @@
   },
   "peerDependencies": {
     "@medusajs/medusa": "^1.6.4",
-    "typeorm": "^0.2.45",
-    "passport": "0.4.0"
+    "passport": "0.4.0",
+    "typeorm": "^0.2.45"
   },
   "devDependencies": {
     "@medusajs/medusa": "^1.6.4",
