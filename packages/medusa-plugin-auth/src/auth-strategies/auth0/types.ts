@@ -45,11 +45,11 @@ export type Auth0Options = {
 		successRedirect: string;
 		failureRedirect: string;
 		/**
-		 * Default /admin/auth/auth0
+		 * Default /store/auth/auth0
 		 */
 		authPath?: string;
 		/**
-		 * Default /admin/auth/auth0/cb
+		 * Default /store/auth/auth0/cb
 		 */
 		authCallbackPath?: string;
 		/**
