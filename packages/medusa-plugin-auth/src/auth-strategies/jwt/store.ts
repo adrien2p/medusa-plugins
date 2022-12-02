@@ -9,7 +9,7 @@ export class JwtStoreStrategy extends PassportStrategy(JWTStrategy, JWT_STORE_ST
 		const { jwt_secret } = configModule.projectConfig;
 		super({
 			jwtFromRequest: (req) => {
-				return req.cookies[STORE_AUTH_TOKEN_COOKIE_NAME] ?? req.session.jwt;
+				return req.cookies[STORE_AUTH_TOKEN_COOKIE_NAME] ?? req.session.jwt_store;
 			},
 			secretOrKey: jwt_secret,
 		});
