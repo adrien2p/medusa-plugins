@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.1...medusa-plugin-auth@1.2.2) (2022-12-02)
+
+
+### Bug Fixes
+
+* jwt store token property ([775df46](https://github.com/adrien2p/medusa-plugins/commit/775df469b04316a4f5a8500051af5ce34e20de50))
+
+
+
+
+
 ## [1.2.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.0...medusa-plugin-auth@1.2.1) (2022-11-29)
 
 
