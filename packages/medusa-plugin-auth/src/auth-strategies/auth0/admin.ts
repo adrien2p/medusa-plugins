@@ -3,9 +3,13 @@ import { Strategy as Auth0Strategy } from 'passport-auth0';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
 import { AUTH0_ADMIN_STRATEGY_NAME, Auth0Options, Profile, ExtraParams } from './types';
+<<<<<<< HEAD
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+=======
+import { PassportStrategy } from '../../core/Strategy';
+>>>>>>> 9aeb275 (.)
 
 export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ADMIN_STRATEGY_NAME) {
 	constructor(
