@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import SentryService from '../../services/sentry';
-import { verifySignature } from '../../core/utils';
+import { verifySignature } from '../../utils';
 import { SentryWebHookOptions } from '../../types';
 
 export default (webHookOptions: SentryWebHookOptions) => {
