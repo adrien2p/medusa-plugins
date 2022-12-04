@@ -8,7 +8,7 @@ import { Router } from 'express';
 import cors from 'cors';
 import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
-import { buildCallbackHandler } from '../../utils/build-callback-handler';
+import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
 
 export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -94,6 +94,7 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 
 	const expiresIn = google.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
+		"admin",
 		ADMIN_AUTH_TOKEN_COOKIE_NAME,
 		configModule.projectConfig.jwt_secret,
 		expiresIn,

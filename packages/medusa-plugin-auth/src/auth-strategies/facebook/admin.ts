@@ -8,7 +8,7 @@ import { Router } from 'express';
 import cors from 'cors';
 import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
-import { buildCallbackHandler } from '../../utils/build-callback-handler';
+import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
 
 export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -92,6 +92,7 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 
 	const expiresIn = facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
+		"admin",
 		ADMIN_AUTH_TOKEN_COOKIE_NAME,
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
