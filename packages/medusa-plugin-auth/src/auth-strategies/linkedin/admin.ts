@@ -8,7 +8,7 @@ import { Router } from 'express';
 import cors from 'cors';
 import { LINKEDIN_ADMIN_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
-import { buildCallbackHandler } from '../../utils/build-callback-handler';
+import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
 
 export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -97,6 +97,7 @@ export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, config
 	const expiresIn = linkedin.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 
 	const callbackHandler = buildCallbackHandler(
+		"admin",
 		ADMIN_AUTH_TOKEN_COOKIE_NAME,
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
