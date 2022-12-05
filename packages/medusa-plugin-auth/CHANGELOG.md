@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.2...medusa-plugin-auth@1.2.3) (2022-12-05)
+
+
+### Bug Fixes
+
+* build callback handler token gegeneration ([#31](https://github.com/adrien2p/medusa-plugins/issues/31)) ([69313db](https://github.com/adrien2p/medusa-plugins/commit/69313db72916c9681214aef27176ee00aec5eb05))
+
+
+
+
+
 ## [1.2.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.1...medusa-plugin-auth@1.2.2) (2022-12-02)
 
 
