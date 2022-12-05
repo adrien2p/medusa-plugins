@@ -1,11 +1,13 @@
 import { LinkedinStoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions, CUSTOMER_METADATA_KEY } from '../../../../types';
-import { Profile } from '../../types';
+import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY } from '../../../../types';
+import { LinkedinAuthOptions, LINKEDIN_STORE_STRATEGY_NAME, Profile } from '../../types'
 
 describe('Linkedin store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithMeta = 'exist2s@test.fr';
+	const existsEmailWithMetaAndProviderKey = 'exist3s@test.fr';
+	const existsEmailWithMetaButWrongProviderKey = 'exist4s@test.fr';
 
 	let container: MedusaContainer;
 	let req: Request;
@@ -50,6 +52,26 @@ describe('Linkedin store strategy verify callback', function () {
 								};
 							}
 
+							if (email === existsEmailWithMetaAndProviderKey) {
+								return {
+									id: 'test3',
+									metadata: {
+										[CUSTOMER_METADATA_KEY]: true,
+										[AUTH_PROVIDER_KEY]: LINKEDIN_STORE_STRATEGY_NAME
+									},
+								};
+							}
+
+							if (email === existsEmailWithMetaButWrongProviderKey) {
+								return {
+									id: 'test4',
+									metadata: {
+										[CUSTOMER_METADATA_KEY]: true,
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+									},
+								};
+							}
+
 							return;
 						}),
 					},
@@ -62,7 +84,7 @@ describe('Linkedin store strategy verify callback', function () {
 		linkedinStoreStrategy = new LinkedinStoreStrategy(
 			container,
 			{} as ConfigModule,
-			{ clientID: 'fake', clientSecret: 'fake', store: {} } as AuthOptions['linkedin']
+			{ clientID: 'fake', clientSecret: 'fake', store: {} } as LinkedinAuthOptions
 		);
 	});
 
@@ -72,15 +94,15 @@ describe('Linkedin store strategy verify callback', function () {
 
 	it('should succeed', async () => {
 		profile = {
-			emails: [{ value: existsEmailWithMeta }],
-		};
+			emails: [{ value: existsEmailWithMetaAndProviderKey }],
+		}
 
 		const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
 		expect(data).toEqual(
 			expect.objectContaining({
-				id: 'test2',
+				id: 'test3',
 			})
-		);
+		)
 	});
 
 	it('should fail when the customer exists without the metadata', async () => {
@@ -90,6 +112,24 @@ describe('Linkedin store strategy verify callback', function () {
 
 		const err = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
+	});
+
+	it('should fail when the customer exsits with ONLY customer metadata key', async () => {
+		profile = {
+			emails: [{ value: existsEmailWithMeta }],
+		};
+
+		const err = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMeta} already exists`));
+	});
+
+	it('should fail when the metadata exists but auth provider key is wrong', async () => {
+		profile = {
+			emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
+		};
+
+		const err = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`));
 	});
 
 	it('should succeed and create a new customer if it has not been found', async () => {

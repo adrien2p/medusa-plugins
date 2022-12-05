@@ -151,4 +151,8 @@ describe('Auth0 store strategy verify callback', function () {
 			})
 		);
 	});
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 2b4088a (Update Authentication Plugin tests)
