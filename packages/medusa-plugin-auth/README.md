@@ -46,20 +46,29 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable google OAuth 2
         google: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
+            
             // Enable google OAuth 2 for the admin domain
             admin: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/admin/auth/google/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
+                
+                // ----------- OPTIONAL -----------
                 expiresIn: 24 * 60 * 60 * 1000
             },
+            
             // Enable google OAuth 2 for the store domain
             store: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/google/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
+                
+                // ----------- OPTIONAL -----------
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -92,20 +101,29 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable facebook OAuth 2
         facebook: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
+
             // Enable facebook OAuth 2 for the admin domain
             admin: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/admin/auth/facebook/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
+                
+                // ----------- OPTIONAL -----------
                 expiresIn: 24 * 60 * 60 * 1000
             },
+
             // Enable facebook OAuth 2 for the store domain
             store: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/facebook/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
+                
+                // ----------- OPTIONAL -----------
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -142,20 +160,29 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable linkedin OAuth 2
         linkedin: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
+
             // Enable linkedin OAuth 2 for the admin domain
             admin: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/admin/auth/linkedin/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
+                
+                // ----------- OPTIONAL -----------
                 expiresIn: 24 * 60 * 60 * 1000
             },
+
             // Enable linkedin OAuth 2 for the store domain
             store: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/linkedin/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
+                
+                // ----------- OPTIONAL -----------
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -188,9 +215,11 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable Auth0
         auth0: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
             auth0Domain: "__YOUR_AUTH0_DOMAIN__",
+            
             // Enable Auth0 for Admin domain
             admin: {
                 // ----------- REQUIRED -----------
@@ -202,8 +231,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 authPath: '/admin/auth/auth0',
                 authCallbackPath: '/admin/auth/auth0/cb',
                 expiresIn: 24 * 60 * 60 * 1000,
-
             },
+            
             // Enable Auth0 for Store domain
             store: {
                 callbackUrl: `${process.env.BACKEND_URL}/store/auth/auth0/cb`, 
