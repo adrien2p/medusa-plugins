@@ -36,7 +36,7 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 			);
 		}
 
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'Google' });
+		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'google' });
 	}
 }
 
@@ -47,7 +47,7 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
  */
 export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
 	return passportAuthRoutesBuilder({
-		domain: "admin",
+		domain: 'admin',
 		configModule,
 		authPath: google.admin.authPath ?? '/admin/auth/google',
 		authCallbackPath: google.admin.authCallbackPath ?? '/admin/auth/google/cb',

@@ -37,7 +37,7 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: "Linkedin" });
+		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'linkedin' });
 	}
 }
 
@@ -47,9 +47,8 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
  * @param configModule
  */
 export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, configModule: ConfigModule): Router {
-	return passportAuthRoutesBuilder(
-		{
-			domain: "store",
+	return passportAuthRoutesBuilder({
+		domain: 'store',
 		configModule,
 		authPath: linkedin.store.authPath ?? '/store/auth/linkedin',
 		authCallbackPath: linkedin.store.authCallbackPath ?? '/store/auth/linkedin/cb',

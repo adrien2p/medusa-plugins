@@ -4,9 +4,9 @@ import { Router } from 'express';
 import { getAuth0AdminAuthRouter, Auth0AdminStrategy } from './admin';
 import { getAuth0StoreAuthRouter, Auth0StoreStrategy } from './store';
 
-export * from './admin'
-export * from './store'
-export * from './types'
+export * from './admin';
+export * from './store';
+export * from './types';
 
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {

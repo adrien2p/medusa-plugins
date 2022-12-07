@@ -6,6 +6,7 @@ import { Router } from 'express';
 import { Auth0Options } from '../auth-strategies/auth0';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
+export const AUTH_PROVIDER_KEY = 'authProvider';
 
 export const TWENTY_FOUR_HOURS_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -18,5 +19,5 @@ export type AuthOptions = {
 	google?: GoogleAuthOptions;
 	facebook?: FacebookAuthOptions;
 	linkedin?: LinkedinAuthOptions;
-	auth0?: Auth0Options
+	auth0?: Auth0Options;
 };

@@ -1,7 +1,38 @@
 import { CustomerService, UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
-import { CUSTOMER_METADATA_KEY } from '../types';
+import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY, AuthOptions } from '../types';
+import { AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME } from '../auth-strategies/auth0/types';
+import { FACEBOOK_ADMIN_STRATEGY_NAME, FACEBOOK_STORE_STRATEGY_NAME } from '../auth-strategies/facebook/types';
+import { GOOGLE_ADMIN_STRATEGY_NAME, GOOGLE_STORE_STRATEGY_NAME } from '../auth-strategies/google/types';
+import { LINKEDIN_ADMIN_STRATEGY_NAME, LINKEDIN_STORE_STRATEGY_NAME } from '../auth-strategies/linkedin/types';
+
+type StrategyErrorIdentifierType = keyof AuthOptions;
+type StrategyNames = {
+	[key in StrategyErrorIdentifierType]: {
+		admin: string;
+		store: string;
+	};
+};
+
+const strategyNames: StrategyNames = {
+	auth0: {
+		admin: AUTH0_ADMIN_STRATEGY_NAME,
+		store: AUTH0_STORE_STRATEGY_NAME,
+	},
+	facebook: {
+		admin: FACEBOOK_ADMIN_STRATEGY_NAME,
+		store: FACEBOOK_STORE_STRATEGY_NAME,
+	},
+	google: {
+		admin: GOOGLE_ADMIN_STRATEGY_NAME,
+		store: GOOGLE_STORE_STRATEGY_NAME,
+	},
+	linkedin: {
+		admin: LINKEDIN_ADMIN_STRATEGY_NAME,
+		store: LINKEDIN_STORE_STRATEGY_NAME,
+	},
+};
 
 /**
  * Default validate callback used by an admin passport strategy
@@ -17,7 +48,7 @@ export function validateAdminCallback(this_: any) {
 	 */
 	return async <T extends { emails?: { value: string }[] } = { emails?: { value: string }[] }>(
 		profile: T,
-		{ strategyErrorIdentifier }: { strategyErrorIdentifier: string }
+		{ strategyErrorIdentifier }: { strategyErrorIdentifier: StrategyErrorIdentifierType }
 	): Promise<{ id: string } | never> => {
 		const userService: UserService = this_.container.resolve('userService');
 		const email = profile.emails?.[0]?.value;
@@ -25,12 +56,17 @@ export function validateAdminCallback(this_: any) {
 		if (!email) {
 			throw new MedusaError(
 				MedusaError.Types.NOT_ALLOWED,
-				`Your ${strategyErrorIdentifier} account does not contains any email and cannot be used`
+				`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`
 			);
 		}
 
 		const user = await userService.retrieveByEmail(email).catch(() => void 0);
-		if (!user) {
+
+		if (user) {
+			if (!user.metadata || user.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].admin) {
+				throw new MedusaError(MedusaError.Types.INVALID_DATA, `Admin with email ${email} already exists`);
+			}
+		} else {
 			throw new MedusaError(
 				MedusaError.Types.NOT_ALLOWED,
 				`Unable to authenticate the user with the email ${email}`
@@ -59,7 +95,7 @@ export function validateStoreCallback(this_: any) {
 		}
 	>(
 		profile: T,
-		{ strategyErrorIdentifier }: { strategyErrorIdentifier: string }
+		{ strategyErrorIdentifier }: { strategyErrorIdentifier: StrategyErrorIdentifierType }
 	): Promise<{ id: string } | never> => {
 		const manager: EntityManager = this_.container.resolve('manager');
 		const customerService: CustomerService = this_.container.resolve('customerService');
@@ -70,7 +106,7 @@ export function validateStoreCallback(this_: any) {
 			if (!email) {
 				throw new MedusaError(
 					MedusaError.Types.NOT_ALLOWED,
-					`Your ${strategyErrorIdentifier} account does not contains any email and cannot be used`
+					`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`
 				);
 			}
 
@@ -80,7 +116,23 @@ export function validateStoreCallback(this_: any) {
 				.catch(() => void 0);
 
 			if (customer) {
-				if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
+				// To prevent Legacy applications from not authenticating because only CUSTOMER_METADATA_KEY was set
+				if (
+					customer.metadata &&
+					customer.metadata[CUSTOMER_METADATA_KEY] &&
+					!customer.metadata[AUTH_PROVIDER_KEY]
+				) {
+					customer.metadata[AUTH_PROVIDER_KEY] = strategyNames[strategyErrorIdentifier].store;
+					await customerService.withTransaction(transactionManager).update(customer.id, {
+						metadata: customer.metadata,
+					});
+				}
+
+				if (
+					!customer.metadata ||
+					!customer.metadata[CUSTOMER_METADATA_KEY] ||
+					customer.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].store
+				) {
 					throw new MedusaError(
 						MedusaError.Types.INVALID_DATA,
 						`Customer with email ${email} already exists`
@@ -96,14 +148,19 @@ export function validateStoreCallback(this_: any) {
 					email,
 					metadata: {
 						[CUSTOMER_METADATA_KEY]: true,
+						[AUTH_PROVIDER_KEY]: strategyNames[strategyErrorIdentifier].store,
 					},
 					first_name: profile.name?.givenName ?? '',
 					last_name: profile.name?.familyName ?? '',
-					has_account: true
+					has_account: true,
 				})
 				.then((customer) => {
 					return { id: customer.id };
 				});
 		});
 	};
+}
+
+function capitalize(s: string) {
+	return s.charAt(0).toUpperCase() + s.slice(1);
 }
