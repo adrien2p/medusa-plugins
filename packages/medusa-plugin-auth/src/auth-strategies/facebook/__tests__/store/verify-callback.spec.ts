@@ -33,6 +33,9 @@ describe('Facebook store strategy verify callback', function () {
 						withTransaction: function () {
 							return this;
 						},
+						update: jest.fn().mockImplementation(async (customerId: string, update: any) => {
+							return { id: 'test' };
+						}),
 						create: jest.fn().mockImplementation(async () => {
 							return { id: 'test' };
 						}),
@@ -114,13 +117,19 @@ describe('Facebook store strategy verify callback', function () {
 		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
 	});
 
-	it('should fail when the customer exsits with ONLY customer metadata key', async () => {
+	it('should set AUTH_PROVIDER_KEY when CUSTOMER_METADATA_KEY exists but AUTH_PROVIDER_KEY does not', async () => {
 		profile = {
 			emails: [{ value: existsEmailWithMeta }],
 		};
 
-		const err = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMeta} already exists`));
+		const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+		expect(data).toEqual(
+			expect.objectContaining({
+				id: 'test2',
+			})
+		);
+
+		// @TODO - expect(container.customerService.update) to have been called
 	});
 
 	it('should fail when the metadata exists but auth provider key is wrong', async () => {

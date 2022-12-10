@@ -3,13 +3,9 @@ import { Strategy as Auth0Strategy } from 'passport-auth0';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
 import { AUTH0_ADMIN_STRATEGY_NAME, Auth0Options, Profile, ExtraParams } from './types';
-<<<<<<< HEAD
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
-=======
-import { PassportStrategy } from '../../core/Strategy';
->>>>>>> 9aeb275 (.)
 
 export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -64,6 +60,36 @@ export function getAuth0AdminAuthRouter(auth0: Auth0Options, configModule: Confi
 		passportAuthenticateMiddleware: passport.authenticate(AUTH0_ADMIN_STRATEGY_NAME, {
 			scope: 'openid email profile',
 			session: false,
+<<<<<<< HEAD
+=======
+		})
+	);
+
+	const expiresIn = auth0.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
+	const callbackHandler = buildCallbackHandler(
+		'store',
+		ADMIN_AUTH_TOKEN_COOKIE_NAME,
+		configModule.projectConfig.jwt_secret,
+		expiresIn,
+		auth0.admin.successRedirect
+	);
+
+	const authPathCb = auth0.admin.authCallbackPath ?? '/admin/auth/auth0/cb';
+
+	router.get(authPathCb, cors(adminCorsOptions));
+	router.get(
+		authPathCb,
+		(req, res, next) => {
+			if (req.user) {
+				callbackHandler(req, res);
+			}
+
+			next();
+		},
+		passport.authenticate(AUTH0_ADMIN_STRATEGY_NAME, {
+			failureRedirect: auth0.admin.failureRedirect,
+			session: false,
+>>>>>>> 224ee9c (Updated Tests and re-added Legacy authentication default)
 		}),
 	});
 }
