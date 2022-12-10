@@ -60,36 +60,6 @@ export function getAuth0AdminAuthRouter(auth0: Auth0Options, configModule: Confi
 		passportAuthenticateMiddleware: passport.authenticate(AUTH0_ADMIN_STRATEGY_NAME, {
 			scope: 'openid email profile',
 			session: false,
-<<<<<<< HEAD
-=======
-		})
-	);
-
-	const expiresIn = auth0.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
-	const callbackHandler = buildCallbackHandler(
-		'store',
-		ADMIN_AUTH_TOKEN_COOKIE_NAME,
-		configModule.projectConfig.jwt_secret,
-		expiresIn,
-		auth0.admin.successRedirect
-	);
-
-	const authPathCb = auth0.admin.authCallbackPath ?? '/admin/auth/auth0/cb';
-
-	router.get(authPathCb, cors(adminCorsOptions));
-	router.get(
-		authPathCb,
-		(req, res, next) => {
-			if (req.user) {
-				callbackHandler(req, res);
-			}
-
-			next();
-		},
-		passport.authenticate(AUTH0_ADMIN_STRATEGY_NAME, {
-			failureRedirect: auth0.admin.failureRedirect,
-			session: false,
->>>>>>> 224ee9c (Updated Tests and re-added Legacy authentication default)
 		}),
 	});
 }
