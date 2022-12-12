@@ -16,6 +16,8 @@ describe('Google store strategy verify callback', function () {
 	let profile: Profile;
 	let googleStoreStrategy: GoogleStoreStrategy;
 
+	const updateFn = jest.fn();
+
 	beforeEach(() => {
 		profile = {
 			emails: [{ value: existsEmail }],
@@ -33,7 +35,7 @@ describe('Google store strategy verify callback', function () {
 						withTransaction: function () {
 							return this;
 						},
-						update: jest.fn().mockImplementation(async (customerId: string, update: any) => {
+						update: updateFn.mockImplementation(async (customerId: string, update: any) => {
 							return { id: 'test' };
 						}),
 						create: jest.fn().mockImplementation(async () => {
@@ -128,8 +130,7 @@ describe('Google store strategy verify callback', function () {
 				id: 'test2',
 			})
 		);
-
-		// @TODO - expect(container.customerService.update) to have been called
+		expect(updateFn).toHaveBeenCalledTimes(1);
 	});
 
 	it('should fail when the metadata exists but auth provider key is wrong', async () => {
