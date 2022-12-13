@@ -7,7 +7,7 @@ import { CustomerService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import { CUSTOMER_METADATA_KEY, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/Strategy';
 import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
@@ -119,7 +119,6 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 	const expiresIn = facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
 		"store",
-		STORE_AUTH_TOKEN_COOKIE_NAME,
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		facebook.store.successRedirect
