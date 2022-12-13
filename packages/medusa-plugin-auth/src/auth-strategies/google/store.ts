@@ -120,7 +120,7 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 
 	const expiresIn = google.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
-		"store",
+		'store',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		google.store.successRedirect

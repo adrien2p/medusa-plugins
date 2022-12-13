@@ -118,7 +118,7 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 
 	const expiresIn = facebook.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
-		"store",
+		'store',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		facebook.store.successRedirect

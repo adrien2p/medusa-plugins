@@ -97,7 +97,7 @@ export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, config
 	const expiresIn = linkedin.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 
 	const callbackHandler = buildCallbackHandler(
-		"admin",
+		'admin',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		linkedin.admin.successRedirect

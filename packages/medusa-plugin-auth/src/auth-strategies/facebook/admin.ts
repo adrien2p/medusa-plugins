@@ -92,7 +92,7 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 
 	const expiresIn = facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
-		"admin",
+		'admin',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		facebook.admin.successRedirect

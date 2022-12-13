@@ -122,7 +122,7 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 
 	const expiresIn = linkedin.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
-		"store",
+		'store',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		linkedin.store.successRedirect
