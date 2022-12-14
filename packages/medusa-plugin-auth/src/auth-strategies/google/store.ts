@@ -7,7 +7,7 @@ import { CustomerService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 
-import { CUSTOMER_METADATA_KEY, STORE_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import { CUSTOMER_METADATA_KEY, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { PassportStrategy } from '../../core/Strategy';
 import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
@@ -120,8 +120,7 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 
 	const expiresIn = google.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
-		"store",
-		STORE_AUTH_TOKEN_COOKIE_NAME,
+		'store',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		google.store.successRedirect

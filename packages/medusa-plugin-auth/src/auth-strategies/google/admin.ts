@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { ADMIN_AUTH_TOKEN_COOKIE_NAME, TWENTY_FOUR_HOURS_IN_MS } from '../../types';
+import { TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
@@ -94,8 +94,7 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 
 	const expiresIn = google.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
 	const callbackHandler = buildCallbackHandler(
-		"admin",
-		ADMIN_AUTH_TOKEN_COOKIE_NAME,
+		'admin',
 		configModule.projectConfig.jwt_secret,
 		expiresIn,
 		google.admin.successRedirect
