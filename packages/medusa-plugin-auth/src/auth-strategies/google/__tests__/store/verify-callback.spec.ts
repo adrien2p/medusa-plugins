@@ -34,7 +34,7 @@ describe('Google store strategy verify callback', function () {
 						create: jest.fn().mockImplementation(async () => {
 							return { id: 'test' };
 						}),
-						retrieveByEmail: jest.fn().mockImplementation(async (email: string) => {
+						retrieveRegisteredByEmail: jest.fn().mockImplementation(async (email: string) => {
 							if (email === existsEmail) {
 								return {
 									id: 'test',

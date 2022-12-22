@@ -1,6 +1,14 @@
 import jwt from 'jsonwebtoken';
 
-export function buildCallbackHandler(
+/**
+ * Return the handler of the auth callback for an auth strategy. Once the auth is successful this callback
+ * will be called.
+ * @param domain
+ * @param secret
+ * @param expiresIn
+ * @param successRedirect
+ */
+export function authCallbackMiddleware(
 	domain: 'admin' | 'store',
 	secret: string,
 	expiresIn: number,
