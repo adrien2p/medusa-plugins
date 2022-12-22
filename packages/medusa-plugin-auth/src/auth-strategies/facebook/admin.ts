@@ -1,14 +1,11 @@
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { TWENTY_FOUR_HOURS_IN_MS } from '../../types';
-import { UserService } from '@medusajs/medusa';
-import { MedusaError } from 'medusa-core-utils';
 import { Router } from 'express';
-import cors from 'cors';
 import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
-import { PassportStrategy } from '../../core/Strategy';
-import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
+import { PassportStrategy } from '../../core/passport/Strategy';
+import { validateAdminCallback } from "../../core/validate-callback";
+import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
 
 export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -40,29 +37,7 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await this.defaultValidate(profile);
-	}
-
-	private async defaultValidate(profile: Profile): Promise<{ id: string } | never> {
-		const userService: UserService = this.container.resolve('userService');
-		const email = profile.emails?.[0]?.value;
-
-		if (!email) {
-			throw new MedusaError(
-				MedusaError.Types.NOT_ALLOWED,
-				`Your facebook account does not contains any email and cannot be used`
-			);
-		}
-
-		const user = await userService.retrieveByEmail(email).catch(() => void 0);
-		if (!user) {
-			throw new MedusaError(
-				MedusaError.Types.NOT_ALLOWED,
-				`Unable to authenticate the user with the email ${email}`
-			);
-		}
-
-		return { id: user.id };
+		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'Facebook' });
 	}
 }
 
@@ -72,49 +47,16 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
  * @param configModule
  */
 export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
-	const router = Router();
-
-	const adminCorsOptions = {
-		origin: configModule.projectConfig.admin_cors.split(','),
-		credentials: true,
-	};
-
-	const authPath = facebook.admin.authPath ?? '/admin/auth/facebook';
-
-	router.get(authPath, cors(adminCorsOptions));
-	router.get(
-		authPath,
-		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
+	return passportAuthRoutesBuilder({
+		domain: "admin",
+		configModule,
+		authPath: facebook.admin.authPath ?? '/admin/auth/facebook',
+		authCallbackPath: facebook.admin.authCallbackPath ?? '/admin/auth/facebook/cb',
+		successRedirect: facebook.admin.successRedirect,
+		failureRedirect: facebook.admin.failureRedirect,
+		passportAuthenticateMiddleware: passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
 			scope: ['email'],
 			session: false,
 		})
-	);
-
-	const expiresIn = facebook.admin.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
-	const callbackHandler = buildCallbackHandler(
-		'admin',
-		configModule.projectConfig.jwt_secret,
-		expiresIn,
-		facebook.admin.successRedirect
-	);
-	const authPathCb = facebook.admin.authCallbackPath ?? '/admin/auth/facebook/cb';
-
-	router.get(authPathCb, cors(adminCorsOptions));
-	router.get(
-		authPathCb,
-		(req, res, next) => {
-			if (req.user) {
-				return callbackHandler(req, res);
-			}
-
-			next();
-		},
-		passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
-			failureRedirect: facebook.admin.failureRedirect,
-			session: false,
-		}),
-		callbackHandler
-	);
-
-	return router;
+	});
 }
