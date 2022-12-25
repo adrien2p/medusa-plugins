@@ -9,6 +9,8 @@ export function PassportStrategy<T extends Type<any> = any>(
 	new (...args): InstanceType<T>;
 } {
 	abstract class MixinStrategy extends Strategy {
+		AUTH_PROVIDER_NAME: string;
+
 		abstract validate(...args: any[]): any;
 
 		protected constructor(...args: any[]) {
@@ -24,6 +26,8 @@ export function PassportStrategy<T extends Type<any> = any>(
 			};
 
 			super(...args, callback);
+
+			this.AUTH_PROVIDER_NAME = name;
 
 			const passportInstance = this.getPassportInstance();
 			if (name) {

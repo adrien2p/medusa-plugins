@@ -4,8 +4,8 @@ import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/globa
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
-import { validateStoreCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateStoreCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_STORE_STRATEGY_NAME) {
 	constructor(
@@ -38,7 +38,7 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: "Linkedin" });
+		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'Linkedin' });
 	}
 }
 
@@ -48,9 +48,8 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
  * @param configModule
  */
 export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, configModule: ConfigModule): Router {
-	return passportAuthRoutesBuilder(
-		{
-			domain: "store",
+	return passportAuthRoutesBuilder({
+		domain: 'store',
 		configModule,
 		authPath: linkedin.store.authPath ?? '/store/auth/linkedin',
 		authCallbackPath: linkedin.store.authCallbackPath ?? '/store/auth/linkedin/cb',

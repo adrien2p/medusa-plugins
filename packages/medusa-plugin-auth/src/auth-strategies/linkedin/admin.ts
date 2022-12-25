@@ -4,8 +4,8 @@ import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/globa
 import { Router } from 'express';
 import { LINKEDIN_ADMIN_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { validateAdminCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateAdminCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -50,7 +50,7 @@ export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LI
  */
 export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, configModule: ConfigModule): Router {
 	return passportAuthRoutesBuilder({
-		domain: "admin",
+		domain: 'admin',
 		configModule,
 		authPath: linkedin.admin.authPath ?? '/admin/auth/linkedin',
 		authCallbackPath: linkedin.admin.authCallbackPath ?? '/admin/auth/linkedin/cb',

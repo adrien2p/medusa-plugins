@@ -5,6 +5,7 @@ import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/globa
 import { Router } from 'express';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
+export const ALLOWED_AUTH_PROVIDERS_KEY = 'allowed_providers';
 
 export const TWENTY_FOUR_HOURS_IN_MS = 24 * 60 * 60 * 1000;
 

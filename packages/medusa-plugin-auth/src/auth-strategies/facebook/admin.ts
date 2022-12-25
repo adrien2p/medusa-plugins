@@ -4,8 +4,8 @@ import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/globa
 import { Router } from 'express';
 import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { validateAdminCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateAdminCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -48,7 +48,7 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
  */
 export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
 	return passportAuthRoutesBuilder({
-		domain: "admin",
+		domain: 'admin',
 		configModule,
 		authPath: facebook.admin.authPath ?? '/admin/auth/facebook',
 		authCallbackPath: facebook.admin.authCallbackPath ?? '/admin/auth/facebook/cb',
@@ -57,6 +57,6 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		passportAuthenticateMiddleware: passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
 			scope: ['email'],
 			session: false,
-		})
+		}),
 	});
 }

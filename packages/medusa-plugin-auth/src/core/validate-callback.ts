@@ -1,7 +1,7 @@
 import { CustomerService, UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
-import { CUSTOMER_METADATA_KEY } from '../types';
+import { ALLOWED_AUTH_PROVIDERS_KEY, CUSTOMER_METADATA_KEY } from '../types';
 
 /**
  * Default validate callback used by an admin passport strategy
@@ -19,7 +19,9 @@ export function validateAdminCallback(this_: any) {
 		profile: T,
 		{ strategyErrorIdentifier }: { strategyErrorIdentifier: string }
 	): Promise<{ id: string } | never> => {
+		const manager: EntityManager = this_.container.resolve('manager');
 		const userService: UserService = this_.container.resolve('userService');
+
 		const email = profile.emails?.[0]?.value;
 
 		if (!email) {
@@ -29,15 +31,21 @@ export function validateAdminCallback(this_: any) {
 			);
 		}
 
-		const user = await userService.retrieveByEmail(email).catch(() => void 0);
-		if (!user) {
-			throw new MedusaError(
-				MedusaError.Types.NOT_ALLOWED,
-				`Unable to authenticate the user with the email ${email}`
-			);
-		}
+		return await manager.transaction(async (transactionManager) => {
+			const user = await userService
+				.withTransaction(transactionManager)
+				.retrieveByEmail(email)
+				.catch(() => void 0);
 
-		return { id: user.id };
+			if (!user?.metadata?.[ALLOWED_AUTH_PROVIDERS_KEY]?.includes(this_.AUTH_PROVIDER_NAME)) {
+				throw new MedusaError(
+					MedusaError.Types.NOT_ALLOWED,
+					`Unable to authenticate the admin with the email ${email}`
+				);
+			}
+
+			return { id: user.id };
+		});
 	};
 }
 
@@ -64,30 +72,36 @@ export function validateStoreCallback(this_: any) {
 		const manager: EntityManager = this_.container.resolve('manager');
 		const customerService: CustomerService = this_.container.resolve('customerService');
 
+		const email = profile.emails?.[0]?.value;
+
+		if (!email) {
+			throw new MedusaError(
+				MedusaError.Types.NOT_ALLOWED,
+				`Your ${strategyErrorIdentifier} account does not contains any email and cannot be used`
+			);
+		}
+
 		return await manager.transaction(async (transactionManager) => {
-			const email = profile.emails?.[0]?.value;
-
-			if (!email) {
-				throw new MedusaError(
-					MedusaError.Types.NOT_ALLOWED,
-					`Your ${strategyErrorIdentifier} account does not contains any email and cannot be used`
-				);
-			}
-
 			const customer = await customerService
 				.withTransaction(transactionManager)
 				.retrieveRegisteredByEmail(email)
 				.catch(() => void 0);
 
 			if (customer) {
-				if (!customer.metadata || !customer.metadata[CUSTOMER_METADATA_KEY]) {
-					throw new MedusaError(
-						MedusaError.Types.INVALID_DATA,
-						`Customer with email ${email} already exists`
-					);
-				} else {
+				if (customer.metadata?.[ALLOWED_AUTH_PROVIDERS_KEY]?.includes(this_.AUTH_PROVIDER_NAME)) {
 					return { id: customer.id };
 				}
+
+				// TODO: Backward compatibility with update to the new checks. Will be removed in later version.
+				if (customer.metadata?.[CUSTOMER_METADATA_KEY] && !customer.metadata?.[ALLOWED_AUTH_PROVIDERS_KEY]) {
+					customer.metadata[ALLOWED_AUTH_PROVIDERS_KEY] = [this_.AUTH_PROVIDER_NAME];
+					await customerService.withTransaction(transactionManager).update(customer.id, {
+						metadata: customer.metadata,
+					});
+					return { id: customer.id };
+				}
+
+				throw new MedusaError(MedusaError.Types.INVALID_DATA, `Customer with email ${email} already exists`);
 			}
 
 			return await customerService
@@ -95,11 +109,11 @@ export function validateStoreCallback(this_: any) {
 				.create({
 					email,
 					metadata: {
-						[CUSTOMER_METADATA_KEY]: true,
+						[ALLOWED_AUTH_PROVIDERS_KEY]: [this_.name],
 					},
 					first_name: profile.name?.givenName ?? '',
 					last_name: profile.name?.familyName ?? '',
-					has_account: true
+					has_account: true,
 				})
 				.then((customer) => {
 					return { id: customer.id };

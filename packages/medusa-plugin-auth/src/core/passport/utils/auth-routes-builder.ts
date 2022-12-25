@@ -27,7 +27,7 @@ export function passportAuthRoutesBuilder({
 	authCallbackPath,
 	failureRedirect,
 }: {
-	domain: "admin" | "store",
+	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
 	passportAuthenticateMiddleware: RequestHandler<any>;
