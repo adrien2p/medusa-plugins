@@ -44,6 +44,8 @@ export function passportAuthRoutesBuilder({
 	};
 
 	router.get(authPath, cors(adminCorsOptions));
+	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
+	router.options(authPath, cors(adminCorsOptions));
 	router.get(authPath, passportAuthenticateMiddleware);
 
 	const callbackHandler = authCallbackMiddleware(
