@@ -149,7 +149,7 @@ Now you can add your Facebook sign in button in your client with something along
 
 ### Linkedin
 
-> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
+> By default, the admin only allow to authenticate while the store create a new user if it does not exist yet.
 > This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
 
 Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/linkedin/types.ts))
