@@ -58,6 +58,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 
                 // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/google',
+                authCallbackPath: '/admin/auth/google/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             },
             
@@ -69,6 +71,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
                 
                 // ----------- OPTIONAL -----------
+                authPath: '/store/auth/google',
+                authCallbackPath: '/store/auth/google/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -113,6 +117,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 
                 // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/facebook',
+                authCallbackPath: '/admin/auth/facebook/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             },
 
@@ -124,6 +130,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
                 
                 // ----------- OPTIONAL -----------
+                authPath: '/store/auth/facebook',
+                authCallbackPath: '/store/auth/facebook/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -172,6 +180,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 
                 // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/linkedin',
+                authCallbackPath: '/admin/auth/linkedin/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             },
 
@@ -183,6 +193,8 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
                 
                 // ----------- OPTIONAL -----------
+                authPath: '/store/auth/linkedin',
+                authCallbackPath: '/store/auth/linkedin/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
