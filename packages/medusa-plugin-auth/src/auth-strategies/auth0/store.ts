@@ -2,20 +2,6 @@ import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as Auth0Strategy } from 'passport-auth0';
-<<<<<<< HEAD
-=======
-import { CustomerService } from '@medusajs/medusa';
-import { MedusaError } from 'medusa-core-utils';
-import { EntityManager } from 'typeorm';
-import {
-	CUSTOMER_METADATA_KEY,
-	AUTH_PROVIDER_KEY,
-	STORE_AUTH_TOKEN_COOKIE_NAME,
-	TWENTY_FOUR_HOURS_IN_MS,
-} from '../../types';
-import { buildCallbackHandler } from '../../core/utils/build-callback-handler';
-import { PassportStrategy } from '../../core/Strategy';
->>>>>>> 224ee9c (Updated Tests and re-added Legacy authentication default)
 import { Auth0Options, Profile, ExtraParams, AUTH0_STORE_STRATEGY_NAME } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateStoreCallback } from '../../core/validate-callback';
@@ -74,36 +60,6 @@ export function getAuth0StoreAuthRouter(auth0: Auth0Options, configModule: Confi
 		passportAuthenticateMiddleware: passport.authenticate(AUTH0_STORE_STRATEGY_NAME, {
 			scope: 'openid email profile',
 			session: false,
-<<<<<<< HEAD
-=======
-		})
-	);
-
-	const expiresIn = auth0.store.expiresIn ?? TWENTY_FOUR_HOURS_IN_MS;
-	const callbackHandler = buildCallbackHandler(
-		'store',
-		STORE_AUTH_TOKEN_COOKIE_NAME,
-		configModule.projectConfig.jwt_secret,
-		expiresIn,
-		auth0.store.successRedirect
-	);
-
-	const authPathCb = auth0.store.authCallbackPath ?? '/store/auth/auth0/cb';
-
-	router.get(authPathCb, cors(storeCorsOptions));
-	router.get(
-		authPathCb,
-		(req, res, next) => {
-			if (req.user) {
-				return callbackHandler(req, res);
-			}
-
-			next();
-		},
-		passport.authenticate(AUTH0_STORE_STRATEGY_NAME, {
-			failureRedirect: auth0.store.failureRedirect,
-			session: false,
->>>>>>> 224ee9c (Updated Tests and re-added Legacy authentication default)
 		}),
 	});
 }
