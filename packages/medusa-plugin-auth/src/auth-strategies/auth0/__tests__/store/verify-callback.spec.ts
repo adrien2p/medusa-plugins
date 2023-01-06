@@ -39,7 +39,10 @@ describe('Auth0 store strategy verify callback', function () {
 						create: jest.fn().mockImplementation(async () => {
 							return { id: 'test' };
 						}),
-						retrieveByEmail: jest.fn().mockImplementation(async (email: string) => {
+            update: jest.fn().mockImplementation(async () => {
+              return {id: 'test'}
+            }),
+						retrieveRegisteredByEmail: jest.fn().mockImplementation(async (email: string) => {
 							if (email === existsEmail) {
 								return {
 									id: 'test',
@@ -117,13 +120,17 @@ describe('Auth0 store strategy verify callback', function () {
 		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
 	});
 
-	it('should fail when the customer exsits with ONLY customer metadata key', async () => {
+	it('should update customer metadata when the customer exsits with ONLY customer metadata key', async () => {
 		profile = {
 			emails: [{ value: existsEmailWithMeta }],
 		};
 
-		const err = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMeta} already exists`));
+    const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+		expect(data).toEqual(
+			expect.objectContaining({
+				id: 'test2',
+			})
+		);
 	});
 
 	it('should fail when the metadata exists but auth provider key is wrong', async () => {
