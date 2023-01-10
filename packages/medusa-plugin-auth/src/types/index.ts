@@ -3,6 +3,7 @@ import { FacebookAuthOptions } from '../auth-strategies/facebook';
 import { LinkedinAuthOptions } from '../auth-strategies/linkedin';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
+import { FirebaseAuthOptions } from 'src/auth-strategies/firebase';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 
@@ -17,4 +18,5 @@ export type AuthOptions = {
 	google?: GoogleAuthOptions;
 	facebook?: FacebookAuthOptions;
 	linkedin?: LinkedinAuthOptions;
+	firebase?: FirebaseAuthOptions;
 };

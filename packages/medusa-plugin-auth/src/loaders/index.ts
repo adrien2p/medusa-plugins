@@ -4,6 +4,7 @@ import { AuthOptions } from '../types';
 import GoogleStrategy from '../auth-strategies/google';
 import FacebookStrategy from '../auth-strategies/facebook';
 import LinkedinStrategy from '../auth-strategies/linkedin';
+import FireaseStrategy from '../auth-strategies/firebase';
 
 export default async function authStrategiesLoader(container: MedusaContainer, authOptions: AuthOptions) {
 	const configModule = container.resolve('configModule') as ConfigModule;
@@ -11,4 +12,5 @@ export default async function authStrategiesLoader(container: MedusaContainer, a
 	GoogleStrategy.load(container, configModule, authOptions);
 	FacebookStrategy.load(container, configModule, authOptions);
 	LinkedinStrategy.load(container, configModule, authOptions);
+	FireaseStrategy.load(container, configModule, authOptions);
 }

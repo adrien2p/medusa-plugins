@@ -1,0 +1,51 @@
+import passport from 'passport';
+import { Router } from 'express';
+import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import { Strategy as FirebaseStrategy, ExtractJwt } from 'passport-firebase-jwt';
+import { PassportStrategy } from '../../core/passport/Strategy';
+import { validateStoreCallback } from '../../core/validate-callback';
+import { FIREBASE_STORE_STRATEGY_NAME, FirebaseAuthOptions, Profile } from './types';
+import { firebaseAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { auth } from 'firebase-admin';
+
+export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FIREBASE_STORE_STRATEGY_NAME) {
+	constructor(
+		protected readonly container: MedusaContainer,
+		protected readonly configModule: ConfigModule,
+		protected readonly strategyOptions: FirebaseAuthOptions,
+	) {
+		super({
+			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken()
+		});
+	}
+
+	async validate(token: string): Promise<null | { id: string }> {
+		const decodedToken = await auth().verifyIdToken(token);
+
+		const profile: Profile = { emails: [{ value: decodedToken.email }] };
+		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: "Firebase" });
+	}
+}
+
+/**
+ * Return the router that hold the firebase store authentication routes
+ * @param firebase
+ * @param configModule
+ */
+export function getFirebaseStoreAuthRouter(firebase: FirebaseAuthOptions, configModule: ConfigModule): Router {
+	
+    
+    return firebaseAuthRoutesBuilder(
+		{
+			domain: "store",
+            configModule,
+            authPath: firebase.store.authPath ?? '/store/auth/firebase',
+            successRedirect: firebase.store.successRedirect,
+            failureRedirect: firebase.store.failureRedirect,
+            passportAuthenticateMiddleware: passport.authenticate(FIREBASE_STORE_STRATEGY_NAME, {
+                session: false,
+            }),
+			enableRedirects: firebase.store.enableRedirects ?? true,
+		}
+	);
+}

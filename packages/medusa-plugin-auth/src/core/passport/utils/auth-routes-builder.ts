@@ -3,7 +3,7 @@ import passport from 'passport';
 import cors from 'cors';
 import { GOOGLE_ADMIN_STRATEGY_NAME } from '../../../auth-strategies/google';
 import { TWENTY_FOUR_HOURS_IN_MS } from '../../../types';
-import { authCallbackMiddleware } from '../../auth-callback-middleware';
+import { authCallbackMiddleware, firebaseCallbackMiddleware } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 
 /**
@@ -71,6 +71,50 @@ export function passportAuthRoutesBuilder({
 		}),
 		callbackHandler
 	);
+
+	return router;
+}
+
+
+export function firebaseAuthRoutesBuilder({
+	domain,
+	configModule,
+	authPath,
+	passportAuthenticateMiddleware,
+	expiresIn,
+	successRedirect,
+	failureRedirect,
+	enableRedirects,
+}: {
+	domain: "admin" | "store",
+	configModule: ConfigModule;
+	authPath: string;
+	passportAuthenticateMiddleware: RequestHandler<any>;
+	expiresIn?: number;
+	successRedirect: string;
+	failureRedirect?: string;
+	enableRedirects: boolean;
+}): Router {
+	const router = Router();
+
+	const adminCorsOptions = {
+		origin: configModule.projectConfig.admin_cors.split(','),
+		credentials: true,
+	};
+
+	router.get(authPath, cors(adminCorsOptions));
+	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
+	router.options(authPath, cors(adminCorsOptions));
+
+	const callbackHandler = firebaseCallbackMiddleware(
+		domain,
+		configModule.projectConfig.jwt_secret,
+		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
+		successRedirect,
+		enableRedirects
+	);
+
+	router.get(authPath, passportAuthenticateMiddleware, callbackHandler);
 
 	return router;
 }

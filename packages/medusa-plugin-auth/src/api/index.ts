@@ -4,6 +4,7 @@ import loadConfig from '@medusajs/medusa/dist/loaders/config';
 import GoogleStrategy from '../auth-strategies/google';
 import FacebookStrategy from '../auth-strategies/facebook';
 import LinkedinStrategy from '../auth-strategies/linkedin';
+import FirebaseStrategy from '../auth-strategies/firebase';
 
 import { AuthOptions } from '../types';
 
@@ -18,6 +19,7 @@ function loadRouters(configModule: ConfigModule, options: AuthOptions): Router[]
 	routers.push(...GoogleStrategy.getRouter(configModule, options));
 	routers.push(...FacebookStrategy.getRouter(configModule, options));
 	routers.push(...LinkedinStrategy.getRouter(configModule, options));
+	routers.push(...FirebaseStrategy.getRouter(configModule, options));
 
 	return routers;
 }
