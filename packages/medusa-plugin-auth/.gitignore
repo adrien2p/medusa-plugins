@@ -8,7 +8,7 @@
 /services
 /loaders
 /auth-strategies
-index.*
+# index.*
 
 node_modules
 .DS_store
