@@ -82,18 +82,12 @@ export function firebaseAuthRoutesBuilder({
 	authPath,
 	passportAuthenticateMiddleware,
 	expiresIn,
-	successRedirect,
-	failureRedirect,
-	enableRedirects,
 }: {
 	domain: "admin" | "store",
 	configModule: ConfigModule;
 	authPath: string;
 	passportAuthenticateMiddleware: RequestHandler<any>;
 	expiresIn?: number;
-	successRedirect: string;
-	failureRedirect?: string;
-	enableRedirects: boolean;
 }): Router {
 	const router = Router();
 
@@ -109,9 +103,7 @@ export function firebaseAuthRoutesBuilder({
 	const callbackHandler = firebaseCallbackMiddleware(
 		domain,
 		configModule.projectConfig.jwt_secret,
-		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-		successRedirect,
-		enableRedirects
+		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS
 	);
 
 	router.get(authPath, passportAuthenticateMiddleware, callbackHandler);

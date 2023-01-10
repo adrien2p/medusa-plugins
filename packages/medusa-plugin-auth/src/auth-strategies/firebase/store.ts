@@ -20,6 +20,10 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
 	}
 
 	async validate(token: string): Promise<null | { id: string }> {
+		if(this.strategyOptions.store.verifyCallback) {
+			return await this.strategyOptions.store.verifyCallback(this.container, token);
+		}
+
 		const decodedToken = await auth().verifyIdToken(token);
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
@@ -33,19 +37,14 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
  * @param configModule
  */
 export function getFirebaseStoreAuthRouter(firebase: FirebaseAuthOptions, configModule: ConfigModule): Router {
-	
-    
     return firebaseAuthRoutesBuilder(
 		{
 			domain: "store",
             configModule,
             authPath: firebase.store.authPath ?? '/store/auth/firebase',
-            successRedirect: firebase.store.successRedirect,
-            failureRedirect: firebase.store.failureRedirect,
             passportAuthenticateMiddleware: passport.authenticate(FIREBASE_STORE_STRATEGY_NAME, {
                 session: false,
-            }),
-			enableRedirects: firebase.store.enableRedirects ?? true,
+            })
 		}
 	);
 }

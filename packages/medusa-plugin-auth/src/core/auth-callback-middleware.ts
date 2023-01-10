@@ -25,13 +25,7 @@ export function firebaseCallbackMiddleware(
 	domain: 'admin' | 'store',
 	secret: string,
 	expiresIn: number,
-	successRedirect: string,
-	enableRedirects: boolean,
 ) {
-	if(enableRedirects) {
-		return authCallbackMiddleware(domain, secret, expiresIn, successRedirect);
-	}
-
 	return (req, res) => {
 		const sendToken = sendTokenFactory(domain, secret, expiresIn);
 		sendToken(req, res);

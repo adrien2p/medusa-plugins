@@ -20,6 +20,10 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 	}
 
 	async validate(token: string): Promise<null | { id: string }> {
+		if(this.strategyOptions.store.verifyCallback) {
+			return await this.strategyOptions.store.verifyCallback(this.container, token);
+		}
+
 		const decodedToken = await auth().verifyIdToken(token);
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
@@ -38,12 +42,9 @@ export function getFirebaseAdminAuthRouter(firebase: FirebaseAuthOptions, config
 			domain: "admin",
             configModule,
             authPath: firebase.admin.authPath ?? '/admin/auth/firebase',
-            successRedirect: firebase.admin.successRedirect,
-            failureRedirect: firebase.admin.failureRedirect,
             passportAuthenticateMiddleware: passport.authenticate(FIREBASE_ADMIN_STRATEGY_NAME, {
                 session: false,
-            }),
-			enableRedirects: firebase.admin.enableRedirects ?? true,
+            })
 		}
 	);
 }
