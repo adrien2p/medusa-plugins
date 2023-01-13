@@ -1,11 +1,10 @@
-import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
-import { validateStoreCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateStoreCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_STORE_STRATEGY_NAME) {
 	constructor(
@@ -55,13 +54,15 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 		authPath: linkedin.store.authPath ?? '/store/auth/linkedin',
 		authCallbackPath: linkedin.store.authCallbackPath ?? '/store/auth/linkedin/cb',
 		successRedirect: linkedin.store.successRedirect,
-		failureRedirect: linkedin.store.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(LINKEDIN_STORE_STRATEGY_NAME, {
+		strategyName: LINKEDIN_STORE_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.linkedinapis.com/auth/userinfo.email',
 				'https://www.linkedinapis.com/auth/userinfo.profile',
 			],
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: linkedin.store.failureRedirect
+		}
 	});
 }
