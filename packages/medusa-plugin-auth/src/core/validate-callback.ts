@@ -1,7 +1,7 @@
 import { CustomerService, UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
-import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY, AuthOptions } from '../types';
+import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY } from '../types';
 import { strategyNames, StrategyErrorIdentifierType } from '../types';
 
 /**
