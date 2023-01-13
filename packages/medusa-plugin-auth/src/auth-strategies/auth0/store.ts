@@ -56,10 +56,12 @@ export function getAuth0StoreAuthRouter(auth0: Auth0Options, configModule: Confi
 		authPath: auth0.store.authPath ?? '/store/auth/auth0',
 		authCallbackPath: auth0.store.authCallbackPath ?? '/store/auth/auth0/cb',
 		successRedirect: auth0.store.successRedirect,
-		failureRedirect: auth0.store.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(AUTH0_STORE_STRATEGY_NAME, {
+		strategyName: AUTH0_STORE_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: 'openid email profile',
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: auth0.store.failureRedirect,
+		},
 	});
 }

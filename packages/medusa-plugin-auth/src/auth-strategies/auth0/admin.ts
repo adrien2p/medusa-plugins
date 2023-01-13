@@ -56,10 +56,12 @@ export function getAuth0AdminAuthRouter(auth0: Auth0Options, configModule: Confi
 		authPath: auth0.admin.authPath ?? '/admin/auth/auth0',
 		authCallbackPath: auth0.admin.authCallbackPath ?? '/admin/auth/auth0/cb',
 		successRedirect: auth0.admin.successRedirect,
-		failureRedirect: auth0.admin.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(AUTH0_ADMIN_STRATEGY_NAME, {
+		strategyName: AUTH0_ADMIN_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: 'openid email profile',
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: auth0.admin.failureRedirect,
+		},
 	});
 }

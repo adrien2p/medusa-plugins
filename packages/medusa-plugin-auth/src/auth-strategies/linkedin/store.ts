@@ -61,7 +61,7 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 			],
 		},
 		passportCallbackAuthenticateMiddlewareOptions: {
-			failureRedirect: linkedin.store.failureRedirect
-		}
+			failureRedirect: linkedin.store.failureRedirect,
+		},
 	});
 }
