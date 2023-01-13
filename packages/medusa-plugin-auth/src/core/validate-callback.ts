@@ -2,37 +2,7 @@ import { CustomerService, UserService } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY, AuthOptions } from '../types';
-import { AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME } from '../auth-strategies/auth0/types';
-import { FACEBOOK_ADMIN_STRATEGY_NAME, FACEBOOK_STORE_STRATEGY_NAME } from '../auth-strategies/facebook/types';
-import { GOOGLE_ADMIN_STRATEGY_NAME, GOOGLE_STORE_STRATEGY_NAME } from '../auth-strategies/google/types';
-import { LINKEDIN_ADMIN_STRATEGY_NAME, LINKEDIN_STORE_STRATEGY_NAME } from '../auth-strategies/linkedin/types';
-
-type StrategyErrorIdentifierType = keyof AuthOptions;
-type StrategyNames = {
-	[key in StrategyErrorIdentifierType]: {
-		admin: string;
-		store: string;
-	};
-};
-
-const strategyNames: StrategyNames = {
-	auth0: {
-		admin: AUTH0_ADMIN_STRATEGY_NAME,
-		store: AUTH0_STORE_STRATEGY_NAME,
-	},
-	facebook: {
-		admin: FACEBOOK_ADMIN_STRATEGY_NAME,
-		store: FACEBOOK_STORE_STRATEGY_NAME,
-	},
-	google: {
-		admin: GOOGLE_ADMIN_STRATEGY_NAME,
-		store: GOOGLE_STORE_STRATEGY_NAME,
-	},
-	linkedin: {
-		admin: LINKEDIN_ADMIN_STRATEGY_NAME,
-		store: LINKEDIN_STORE_STRATEGY_NAME,
-	},
-};
+import { strategyNames, StrategyErrorIdentifierType } from '../types';
 
 /**
  * Default validate callback used by an admin passport strategy
