@@ -1,4 +1,3 @@
-import passport from 'passport';
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
@@ -55,13 +54,15 @@ export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, config
 		authPath: linkedin.admin.authPath ?? '/admin/auth/linkedin',
 		authCallbackPath: linkedin.admin.authCallbackPath ?? '/admin/auth/linkedin/cb',
 		successRedirect: linkedin.admin.successRedirect,
-		failureRedirect: linkedin.admin.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(LINKEDIN_ADMIN_STRATEGY_NAME, {
+		strategyName: LINKEDIN_ADMIN_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.linkedinapis.com/auth/userinfo.email',
 				'https://www.linkedinapis.com/auth/userinfo.profile',
 			],
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: linkedin.admin.failureRedirect
+		}
 	});
 }

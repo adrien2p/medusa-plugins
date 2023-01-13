@@ -1,4 +1,3 @@
-import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
@@ -53,10 +52,12 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		authPath: facebook.admin.authPath ?? '/admin/auth/facebook',
 		authCallbackPath: facebook.admin.authCallbackPath ?? '/admin/auth/facebook/cb',
 		successRedirect: facebook.admin.successRedirect,
-		failureRedirect: facebook.admin.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
+		strategyName: FACEBOOK_ADMIN_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: ['email'],
-			session: false,
-		})
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: facebook.admin.failureRedirect
+		}
 	});
 }

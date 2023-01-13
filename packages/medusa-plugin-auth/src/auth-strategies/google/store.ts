@@ -1,4 +1,3 @@
-import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
@@ -53,13 +52,15 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 		authPath: google.store.authPath ?? '/store/auth/google',
 		authCallbackPath: google.store.authCallbackPath ?? '/store/auth/google/cb',
 		successRedirect: google.store.successRedirect,
-		failureRedirect: google.store.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
+		strategyName: GOOGLE_STORE_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.googleapis.com/auth/userinfo.email',
 				'https://www.googleapis.com/auth/userinfo.profile',
 			],
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: google.admin.failureRedirect
+		}
 	});
 }
