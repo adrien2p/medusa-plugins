@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { LINKEDIN_ADMIN_STRATEGY_NAME, LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
+import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
 import { validateStoreCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
@@ -54,7 +54,7 @@ export function getLinkedinStoreAuthRouter(linkedin: LinkedinAuthOptions, config
 		authPath: linkedin.store.authPath ?? '/store/auth/linkedin',
 		authCallbackPath: linkedin.store.authCallbackPath ?? '/store/auth/linkedin/cb',
 		successRedirect: linkedin.store.successRedirect,
-		strategyName: LINKEDIN_ADMIN_STRATEGY_NAME,
+		strategyName: LINKEDIN_STORE_STRATEGY_NAME,
 		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.linkedinapis.com/auth/userinfo.email',
