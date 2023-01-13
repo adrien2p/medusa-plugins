@@ -15,13 +15,20 @@ describe('Google store strategy verify callback', function () {
 	let refreshToken: string;
 	let profile: Profile;
 	let googleStoreStrategy: GoogleStoreStrategy;
-
-	const updateFn = jest.fn();
+	let updateFn;
+	let createFn;
 
 	beforeEach(() => {
 		profile = {
 			emails: [{ value: existsEmail }],
 		};
+
+		updateFn = jest.fn().mockImplementation(async () => {
+      return {id: 'test'}
+    });
+    createFn = jest.fn().mockImplementation(async () => {
+      return { id: 'test' };
+    });
 
 		container = {
 			resolve: <T>(name: string): T => {
@@ -35,12 +42,8 @@ describe('Google store strategy verify callback', function () {
 						withTransaction: function () {
 							return this;
 						},
-						update: updateFn.mockImplementation(async (customerId: string, update: any) => {
-							return { id: 'test' };
-						}),
-						create: jest.fn().mockImplementation(async () => {
-							return { id: 'test' };
-						}),
+						update: updateFn,
+						create: createFn,
 						retrieveRegisteredByEmail: jest.fn().mockImplementation(async (email: string) => {
 							if (email === existsEmail) {
 								return {
@@ -157,5 +160,6 @@ describe('Google store strategy verify callback', function () {
 				id: 'test',
 			})
 		);
+		expect(createFn).toHaveBeenCalledTimes(1)
 	});
 });

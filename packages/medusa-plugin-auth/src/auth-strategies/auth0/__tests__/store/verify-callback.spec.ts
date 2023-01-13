@@ -16,6 +16,8 @@ describe('Auth0 store strategy verify callback', function () {
 	let profile: Profile;
 	let extraParams: ExtraParams;
 	let auth0StoreStrategy: Auth0StoreStrategy;
+  let updateFn;
+  let createFn;
 
 	beforeEach(() => {
 		profile = {
@@ -23,6 +25,12 @@ describe('Auth0 store strategy verify callback', function () {
 		};
 		
 		extraParams = {};
+    updateFn = jest.fn().mockImplementation(async () => {
+      return {id: 'test'}
+    });
+    createFn = jest.fn().mockImplementation(async () => {
+      return { id: 'test' };
+    });
 
 		container = {
 			resolve: <T>(name: string): T => {
@@ -36,12 +44,8 @@ describe('Auth0 store strategy verify callback', function () {
 						withTransaction: function () {
 							return this;
 						},
-						create: jest.fn().mockImplementation(async () => {
-							return { id: 'test' };
-						}),
-            update: jest.fn().mockImplementation(async () => {
-              return {id: 'test'}
-            }),
+						create: createFn,
+            update: updateFn,
 						retrieveRegisteredByEmail: jest.fn().mockImplementation(async (email: string) => {
 							if (email === existsEmail) {
 								return {
@@ -131,6 +135,7 @@ describe('Auth0 store strategy verify callback', function () {
 				id: 'test2',
 			})
 		);
+    expect(updateFn).toHaveBeenCalledTimes(1)
 	});
 
 	it('should fail when the metadata exists but auth provider key is wrong', async () => {
@@ -157,5 +162,6 @@ describe('Auth0 store strategy verify callback', function () {
 				id: 'test',
 			})
 		);
+    expect(createFn).toHaveBeenCalledTimes(1)
 	});
 });
