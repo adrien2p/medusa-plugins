@@ -36,7 +36,7 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'facebook' });
+		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'facebook' });
 	}
 }
 

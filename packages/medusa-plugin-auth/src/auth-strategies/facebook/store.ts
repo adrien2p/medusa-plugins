@@ -36,7 +36,7 @@ export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'facebook' });
+		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'facebook' });
 	}
 }
 

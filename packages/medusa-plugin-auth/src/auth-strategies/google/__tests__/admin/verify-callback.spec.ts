@@ -35,7 +35,7 @@ describe('Google admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: GOOGLE_ADMIN_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: GOOGLE_ADMIN_STRATEGY_NAME,
 									},
 								};
 							}
@@ -44,7 +44,7 @@ describe('Google admin strategy verify callback', function () {
 								return {
 									id: 'test3',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
@@ -90,7 +90,7 @@ describe('Google admin strategy verify callback', function () {
 		const err = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 		expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
 	});
-	
+
 	it('should fail when a user exists with the wrong auth provider key', async () => {
 		profile = {
 			emails: [{ value: existsEmailWithWrongProviderKey }],

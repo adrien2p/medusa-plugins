@@ -37,7 +37,7 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'linkedin' });
+		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'linkedin' });
 	}
 }
 

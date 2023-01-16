@@ -38,7 +38,7 @@ describe('Auth0 admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: AUTH0_ADMIN_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: AUTH0_ADMIN_STRATEGY_NAME,
 									},
 								};
 							}
@@ -47,7 +47,7 @@ describe('Auth0 admin strategy verify callback', function () {
 								return {
 									id: 'test3',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
@@ -64,7 +64,12 @@ describe('Auth0 admin strategy verify callback', function () {
 		auth0AdminStrategy = new Auth0AdminStrategy(
 			container,
 			{} as ConfigModule,
-			{ auth0Domain: 'fakeDomain', clientID: 'fake', clientSecret: 'fake', admin: { callbackUrl: '/fakeCallbackUrl'} } as Auth0Options
+			{
+				auth0Domain: 'fakeDomain',
+				clientID: 'fake',
+				clientSecret: 'fake',
+				admin: { callbackUrl: '/fakeCallbackUrl' },
+			} as Auth0Options
 		);
 	});
 
@@ -90,16 +95,20 @@ describe('Auth0 admin strategy verify callback', function () {
 			emails: [{ value: existsEmail }],
 		};
 
-		const err = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
+		const err = await auth0AdminStrategy
+			.validate(req, accessToken, refreshToken, extraParams, profile)
+			.catch((err) => err);
 		expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
 	});
-	
+
 	it('should fail when a user exists with the wrong auth provider key', async () => {
 		profile = {
 			emails: [{ value: existsEmailWithWrongProviderKey }],
 		};
 
-		const err = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
+		const err = await auth0AdminStrategy
+			.validate(req, accessToken, refreshToken, extraParams, profile)
+			.catch((err) => err);
 		expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
 	});
 
@@ -108,7 +117,9 @@ describe('Auth0 admin strategy verify callback', function () {
 			emails: [{ value: 'fake' }],
 		};
 
-		const err = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
+		const err = await auth0AdminStrategy
+			.validate(req, accessToken, refreshToken, extraParams, profile)
+			.catch((err) => err);
 		expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
 	});
 });
