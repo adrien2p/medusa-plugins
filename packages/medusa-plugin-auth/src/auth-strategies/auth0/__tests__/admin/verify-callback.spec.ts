@@ -1,9 +1,9 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { FacebookAdminStrategy } from '../../admin';
+import { Auth0AdminStrategy } from '../../admin';
 import { AUTH_PROVIDER_KEY } from '../../../../types';
-import { FacebookAuthOptions, FACEBOOK_ADMIN_STRATEGY_NAME, Profile} from '../../types'
+import { Auth0Options, AUTH0_ADMIN_STRATEGY_NAME, Profile, ExtraParams } from '../../types';
 
-describe('Facebook admin strategy verify callback', function () {
+describe('Auth0 admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -13,12 +13,15 @@ describe('Facebook admin strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let facebookAdminStrategy: FacebookAdminStrategy;
+	let extraParams: ExtraParams;
+	let auth0AdminStrategy: Auth0AdminStrategy;
 
 	beforeEach(() => {
 		profile = {
 			emails: [{ value: existsEmail }],
 		};
+
+		extraParams = {};
 
 		container = {
 			resolve: (name: string) => {
@@ -35,7 +38,7 @@ describe('Facebook admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: FACEBOOK_ADMIN_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: AUTH0_ADMIN_STRATEGY_NAME
 									},
 								};
 							}
@@ -49,7 +52,6 @@ describe('Facebook admin strategy verify callback', function () {
 								};
 							}
 
-
 							return;
 						}),
 					},
@@ -59,10 +61,10 @@ describe('Facebook admin strategy verify callback', function () {
 			},
 		} as MedusaContainer;
 
-		facebookAdminStrategy = new FacebookAdminStrategy(
+		auth0AdminStrategy = new Auth0AdminStrategy(
 			container,
 			{} as ConfigModule,
-			{ clientID: 'fake', clientSecret: 'fake', admin: {} } as FacebookAuthOptions
+			{ auth0Domain: 'fakeDomain', clientID: 'fake', clientSecret: 'fake', admin: { callbackUrl: '/fakeCallbackUrl'} } as Auth0Options
 		);
 	});
 
@@ -75,7 +77,7 @@ describe('Facebook admin strategy verify callback', function () {
 			emails: [{ value: existsEmailWithProviderKey }],
 		};
 
-		const data = await facebookAdminStrategy.validate(req, accessToken, refreshToken, profile);
+		const data = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
 		expect(data).toEqual(
 			expect.objectContaining({
 				id: 'test2',
@@ -88,16 +90,16 @@ describe('Facebook admin strategy verify callback', function () {
 			emails: [{ value: existsEmail }],
 		};
 
-		const err = await facebookAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		const err = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
 		expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
 	});
-
+	
 	it('should fail when a user exists with the wrong auth provider key', async () => {
 		profile = {
 			emails: [{ value: existsEmailWithWrongProviderKey }],
 		};
 
-		const err = await facebookAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		const err = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
 		expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
 	});
 
@@ -106,7 +108,7 @@ describe('Facebook admin strategy verify callback', function () {
 			emails: [{ value: 'fake' }],
 		};
 
-		const err = await facebookAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+		const err = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
 		expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
 	});
 });

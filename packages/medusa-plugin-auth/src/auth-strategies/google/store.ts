@@ -4,7 +4,7 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
-import { validateStoreCallback } from "../../core/validate-callback";
+import { validateStoreCallback } from '../../core/validate-callback';
 
 export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_STORE_STRATEGY_NAME) {
 	constructor(
@@ -35,7 +35,7 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: "Google" });
+		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'google' });
 	}
 }
 
@@ -45,9 +45,8 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
  * @param configModule
  */
 export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
-	return passportAuthRoutesBuilder(
-		{
-			domain: "store",
+	return passportAuthRoutesBuilder({
+		domain: 'store',
 		configModule,
 		authPath: google.store.authPath ?? '/store/auth/google',
 		authCallbackPath: google.store.authCallbackPath ?? '/store/auth/google/cb',
@@ -60,7 +59,7 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 			],
 		},
 		passportCallbackAuthenticateMiddlewareOptions: {
-			failureRedirect: google.admin.failureRedirect
-		}
+			failureRedirect: google.admin.failureRedirect,
+		},
 	});
 }

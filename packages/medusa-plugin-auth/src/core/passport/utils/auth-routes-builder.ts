@@ -5,6 +5,16 @@ import { TWENTY_FOUR_HOURS_IN_MS } from '../../../types';
 import { authCallbackMiddleware } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 
+type PassportAuthenticateMiddlewareOptions = {
+	[key: string]: unknown;
+	scope?: unknown;
+};
+
+type PassportCallbackAuthenticateMiddlewareOptions = {
+	[key: string]: unknown;
+	failureRedirect: string;
+};
+
 /**
  * Build and return a router including the different route and configuration for a passport strategy
  * @param domain
@@ -28,12 +38,12 @@ export function passportAuthRoutesBuilder({
 	successRedirect,
 	authCallbackPath,
 }: {
-	domain: "admin" | "store",
+	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
 	strategyName: string;
-	passportAuthenticateMiddlewareOptions: Record<string, unknown>;
-	passportCallbackAuthenticateMiddlewareOptions: Record<string, unknown>;
+	passportAuthenticateMiddlewareOptions: PassportAuthenticateMiddlewareOptions;
+	passportCallbackAuthenticateMiddlewareOptions: PassportCallbackAuthenticateMiddlewareOptions;
 	expiresIn?: number;
 	successRedirect: string;
 	authCallbackPath: string;
@@ -48,10 +58,13 @@ export function passportAuthRoutesBuilder({
 	router.get(authPath, cors(adminCorsOptions));
 	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
 	router.options(authPath, cors(adminCorsOptions));
-	router.get(authPath, passport.authenticate(strategyName, {
-		...passportAuthenticateMiddlewareOptions,
-		session: false,
-	}));
+	router.get(
+		authPath,
+		passport.authenticate(strategyName, {
+			...passportAuthenticateMiddlewareOptions,
+			session: false,
+		})
+	);
 
 	const callbackHandler = authCallbackMiddleware(
 		domain,

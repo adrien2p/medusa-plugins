@@ -46,20 +46,33 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable google OAuth 2
         google: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
+            
             // Enable google OAuth 2 for the admin domain
             admin: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/admin/auth/google/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
+                
+                // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/google',
+                authCallbackPath: '/admin/auth/google/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             },
+            
             // Enable google OAuth 2 for the store domain
             store: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/google/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
+                
+                // ----------- OPTIONAL -----------
+                authPath: '/store/auth/google',
+                authCallbackPath: '/store/auth/google/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -92,20 +105,33 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable facebook OAuth 2
         facebook: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
+
             // Enable facebook OAuth 2 for the admin domain
             admin: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/admin/auth/facebook/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
+                
+                // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/facebook',
+                authCallbackPath: '/admin/auth/facebook/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             },
+
             // Enable facebook OAuth 2 for the store domain
             store: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/facebook/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
+                
+                // ----------- OPTIONAL -----------
+                authPath: '/store/auth/facebook',
+                authCallbackPath: '/store/auth/facebook/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -131,7 +157,7 @@ Now you can add your Facebook sign in button in your client with something along
 
 ### Linkedin
 
-> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
+> By default, the admin only allow to authenticate while the store create a new user if it does not exist yet.
 > This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
 
 Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/linkedin/types.ts))
@@ -142,20 +168,33 @@ Then, in your medusa config plugins collection you can add the following configu
     options: {
         // Enable linkedin OAuth 2
         linkedin: {
+            // ----------- REQUIRED -----------
             clientID: "__YOUR_CLIENT_ID__",
             clientSecret: "__YOUR_CLIENT_SECRET__",
+
             // Enable linkedin OAuth 2 for the admin domain
             admin: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/admin/auth/linkedin/cb`, 
                 failureRedirect: `${process.env.ADMIN_URL}/login`,
                 successRedirect: `${process.env.ADMIN_URL}/`,
+                
+                // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/linkedin',
+                authCallbackPath: '/admin/auth/linkedin/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             },
+
             // Enable linkedin OAuth 2 for the store domain
             store: {
+                // ----------- REQUIRED -----------
                 callbackUrl:`${process.env.BACKEND_URL}/store/auth/linkedin/cb`, 
                 failureRedirect: `${process.env.STORE_URL}/login`,
                 successRedirect: `${process.env.STORE_URL}/`,
+                
+                // ----------- OPTIONAL -----------
+                authPath: '/store/auth/linkedin',
+                authCallbackPath: '/store/auth/linkedin/cb',
                 expiresIn: 24 * 60 * 60 * 1000
             }
         }
@@ -177,7 +216,53 @@ Now you can add your Linkedin sign in button in your client with something along
 
 ### Auth0
 
-Coming soon
+> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
+> This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
+
+Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/auth0/types.ts))
+
+```ts
+{
+    resolve: "medusa-plugin-auth",
+    options: {
+        // Enable Auth0
+        auth0: {
+            // ----------- REQUIRED -----------
+            clientID: "__YOUR_CLIENT_ID__",
+            clientSecret: "__YOUR_CLIENT_SECRET__",
+            auth0Domain: "__YOUR_AUTH0_DOMAIN__",
+            
+            // Enable Auth0 for Admin domain
+            admin: {
+                // ----------- REQUIRED -----------
+                callbackUrl: `${process.env.BACKEND_URL}/admin/auth/auth0/cb`, 
+                failureRedirect: `${process.env.ADMIN_URL}/login`,
+                successRedirect: `${process.env.ADMIN_URL}/`,
+
+                // ----------- OPTIONAL -----------
+                authPath: '/admin/auth/auth0',
+                authCallbackPath: '/admin/auth/auth0/cb',
+                expiresIn: 24 * 60 * 60 * 1000,
+            },
+            
+            // Enable Auth0 for Store domain
+            store: {
+                callbackUrl: `${process.env.BACKEND_URL}/store/auth/auth0/cb`, 
+                failureRedirect: `${process.env.STORE_URL}/login`,
+                successRedirect: `${process.env.STORE_URL}/`,
+
+                // ----------- OPTIONAL -----------
+                authPath: '/store/auth/auth0',
+                authCallbackPath: '/store/auth/auth0/cb',
+                expiresIn: 24 * 60 * 60 * 1000,
+            }
+        }
+        // ...
+        // ... Other authentication provider options
+        // ...
+    }
+}
+```
 
 ### Github
 
