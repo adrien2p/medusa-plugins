@@ -23,7 +23,7 @@ The data can be served to **kibana through ElasticSearch** or can also be consum
 
 ## Getting started
 
-First of all, you need to install the plugin as follow `yarn add @medusa-plugins/medusa-plugnig-prometheus`
+First of all, you need to install the plugin as follow `yarn add medusa-plugnig-prometheus`
 
 Then, go to your `medusa-config.js` file and in the plugins collection property add the following at the beginning to be registered first
 ```javascript
