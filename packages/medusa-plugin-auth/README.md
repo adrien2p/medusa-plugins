@@ -29,7 +29,7 @@ First of all, you need to install the plugin as follow `yarn add medusa-plugin-a
 - [Facebook](#facebook)
 - [Linkedin](#linkedin)
 - [Auth0](#auth0)
-- [Twitter](#twitter)
+- [Firebase](#firebase)
 - [Github](#github)
 - [Microsoft](#microsoft)
 
@@ -58,9 +58,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 
                 // ----------- OPTIONAL -----------
-                authPath: '/admin/auth/google',
-                authCallbackPath: '/admin/auth/google/cb',
-                expiresIn: 24 * 60 * 60 * 1000
+                // authPath: '/admin/auth/google',
+                // authCallbackPath: '/admin/auth/google/cb',
+                // expiresIn: 24 * 60 * 60 * 1000
             },
             
             // Enable google OAuth 2 for the store domain
@@ -71,9 +71,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
                 
                 // ----------- OPTIONAL -----------
-                authPath: '/store/auth/google',
-                authCallbackPath: '/store/auth/google/cb',
-                expiresIn: 24 * 60 * 60 * 1000
+                // authPath: '/store/auth/google',
+                // authCallbackPath: '/store/auth/google/cb',
+                // expiresIn: 24 * 60 * 60 * 1000
             }
         }
         // ...
@@ -117,9 +117,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 
                 // ----------- OPTIONAL -----------
-                authPath: '/admin/auth/facebook',
-                authCallbackPath: '/admin/auth/facebook/cb',
-                expiresIn: 24 * 60 * 60 * 1000
+                // authPath: '/admin/auth/facebook',
+                // authCallbackPath: '/admin/auth/facebook/cb',
+                // expiresIn: 24 * 60 * 60 * 1000
             },
 
             // Enable facebook OAuth 2 for the store domain
@@ -130,9 +130,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
                 
                 // ----------- OPTIONAL -----------
-                authPath: '/store/auth/facebook',
-                authCallbackPath: '/store/auth/facebook/cb',
-                expiresIn: 24 * 60 * 60 * 1000
+                // authPath: '/store/auth/facebook',
+                // authCallbackPath: '/store/auth/facebook/cb',
+                // expiresIn: 24 * 60 * 60 * 1000
             }
         }
         // ...
@@ -180,9 +180,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
                 
                 // ----------- OPTIONAL -----------
-                authPath: '/admin/auth/linkedin',
-                authCallbackPath: '/admin/auth/linkedin/cb',
-                expiresIn: 24 * 60 * 60 * 1000
+                // authPath: '/admin/auth/linkedin',
+                // authCallbackPath: '/admin/auth/linkedin/cb',
+                // expiresIn: 24 * 60 * 60 * 1000
             },
 
             // Enable linkedin OAuth 2 for the store domain
@@ -193,9 +193,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
                 
                 // ----------- OPTIONAL -----------
-                authPath: '/store/auth/linkedin',
-                authCallbackPath: '/store/auth/linkedin/cb',
-                expiresIn: 24 * 60 * 60 * 1000
+                // authPath: '/store/auth/linkedin',
+                // authCallbackPath: '/store/auth/linkedin/cb',
+                // expiresIn: 24 * 60 * 60 * 1000
             }
         }
         // ...
@@ -240,9 +240,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.ADMIN_URL}/`,
 
                 // ----------- OPTIONAL -----------
-                authPath: '/admin/auth/auth0',
-                authCallbackPath: '/admin/auth/auth0/cb',
-                expiresIn: 24 * 60 * 60 * 1000,
+                // authPath: '/admin/auth/auth0',
+                // authCallbackPath: '/admin/auth/auth0/cb',
+                // expiresIn: 24 * 60 * 60 * 1000,
             },
             
             // Enable Auth0 for Store domain
@@ -252,9 +252,9 @@ Then, in your medusa config plugins collection you can add the following configu
                 successRedirect: `${process.env.STORE_URL}/`,
 
                 // ----------- OPTIONAL -----------
-                authPath: '/store/auth/auth0',
-                authCallbackPath: '/store/auth/auth0/cb',
-                expiresIn: 24 * 60 * 60 * 1000,
+                // authPath: '/store/auth/auth0',
+                // authCallbackPath: '/store/auth/auth0/cb',
+                // expiresIn: 24 * 60 * 60 * 1000,
             }
         }
         // ...
@@ -263,6 +263,10 @@ Then, in your medusa config plugins collection you can add the following configu
     }
 }
 ```
+
+### Firebase
+
+Coming soon
 
 ### Github
 
