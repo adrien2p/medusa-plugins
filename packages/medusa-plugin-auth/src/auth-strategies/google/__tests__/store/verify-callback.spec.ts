@@ -24,11 +24,11 @@ describe('Google store strategy verify callback', function () {
 		};
 
 		updateFn = jest.fn().mockImplementation(async () => {
-      return {id: 'test'}
-    });
-    createFn = jest.fn().mockImplementation(async () => {
-      return { id: 'test' };
-    });
+			return { id: 'test' };
+		});
+		createFn = jest.fn().mockImplementation(async () => {
+			return { id: 'test' };
+		});
 
 		container = {
 			resolve: <T>(name: string): T => {
@@ -65,7 +65,7 @@ describe('Google store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: GOOGLE_STORE_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: GOOGLE_STORE_STRATEGY_NAME,
 									},
 								};
 							}
@@ -75,7 +75,7 @@ describe('Google store strategy verify callback', function () {
 									id: 'test4',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
@@ -160,6 +160,6 @@ describe('Google store strategy verify callback', function () {
 				id: 'test',
 			})
 		);
-		expect(createFn).toHaveBeenCalledTimes(1)
+		expect(createFn).toHaveBeenCalledTimes(1);
 	});
 });

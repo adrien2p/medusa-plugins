@@ -35,7 +35,7 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'google' });
+		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'google' });
 	}
 }
 

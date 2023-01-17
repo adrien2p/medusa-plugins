@@ -1,7 +1,7 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { FacebookAdminStrategy } from '../../admin';
 import { AUTH_PROVIDER_KEY } from '../../../../types';
-import { FacebookAuthOptions, FACEBOOK_ADMIN_STRATEGY_NAME, Profile} from '../../types'
+import { FacebookAuthOptions, FACEBOOK_ADMIN_STRATEGY_NAME, Profile } from '../../types';
 
 describe('Facebook admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -35,7 +35,7 @@ describe('Facebook admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: FACEBOOK_ADMIN_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: FACEBOOK_ADMIN_STRATEGY_NAME,
 									},
 								};
 							}
@@ -44,11 +44,10 @@ describe('Facebook admin strategy verify callback', function () {
 								return {
 									id: 'test3',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
-
 
 							return;
 						}),

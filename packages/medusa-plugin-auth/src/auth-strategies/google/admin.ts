@@ -36,7 +36,7 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 			);
 		}
 
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'google' });
+		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'google' });
 	}
 }
 

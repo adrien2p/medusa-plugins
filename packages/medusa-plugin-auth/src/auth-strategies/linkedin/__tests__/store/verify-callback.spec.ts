@@ -1,7 +1,7 @@
 import { LinkedinStoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY } from '../../../../types';
-import { LinkedinAuthOptions, LINKEDIN_STORE_STRATEGY_NAME, Profile } from '../../types'
+import { LinkedinAuthOptions, LINKEDIN_STORE_STRATEGY_NAME, Profile } from '../../types';
 
 describe('Linkedin store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -24,11 +24,11 @@ describe('Linkedin store strategy verify callback', function () {
 		};
 
 		updateFn = jest.fn().mockImplementation(async () => {
-      return {id: 'test'}
-    });
-    createFn = jest.fn().mockImplementation(async () => {
-      return { id: 'test' };
-    });
+			return { id: 'test' };
+		});
+		createFn = jest.fn().mockImplementation(async () => {
+			return { id: 'test' };
+		});
 
 		container = {
 			resolve: <T>(name: string): T => {
@@ -65,7 +65,7 @@ describe('Linkedin store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: LINKEDIN_STORE_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: LINKEDIN_STORE_STRATEGY_NAME,
 									},
 								};
 							}
@@ -75,7 +75,7 @@ describe('Linkedin store strategy verify callback', function () {
 									id: 'test4',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
@@ -103,14 +103,14 @@ describe('Linkedin store strategy verify callback', function () {
 	it('should succeed', async () => {
 		profile = {
 			emails: [{ value: existsEmailWithMetaAndProviderKey }],
-		}
+		};
 
 		const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
 		expect(data).toEqual(
 			expect.objectContaining({
 				id: 'test3',
 			})
-		)
+		);
 	});
 
 	it('should fail when the customer exists without the metadata', async () => {
@@ -135,7 +135,6 @@ describe('Linkedin store strategy verify callback', function () {
 		);
 		expect(updateFn).toHaveBeenCalledTimes(1);
 	});
-	
 
 	it('should fail when the metadata exists but auth provider key is wrong', async () => {
 		profile = {

@@ -1,4 +1,3 @@
-import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as Auth0Strategy } from 'passport-auth0';
@@ -29,9 +28,9 @@ export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ST
 		refreshToken: string,
 		extraParams: ExtraParams,
 		profile: Profile
-	): Promise<null | { id: string }> {
+	): Promise<null | { id: string; accessToken: string }> {
 		if (this.strategyOptions.store.verifyCallback) {
-			return await this.strategyOptions.store.verifyCallback(
+			const validateRes = await this.strategyOptions.store.verifyCallback(
 				this.container,
 				req,
 				accessToken,
@@ -39,8 +38,20 @@ export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ST
 				extraParams,
 				profile
 			);
+
+			return {
+				...validateRes,
+				accessToken,
+			};
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: 'auth0' });
+		const validateRes = await validateStoreCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'auth0',
+		});
+		return {
+			...validateRes,
+			accessToken,
+		};
 	}
 }
 

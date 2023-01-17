@@ -1,7 +1,7 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AUTH_PROVIDER_KEY } from '../../../../types';
 import { LinkedinAdminStrategy } from '../../admin';
-import { LinkedinAuthOptions, LINKEDIN_ADMIN_STRATEGY_NAME, Profile } from '../../types'
+import { LinkedinAuthOptions, LINKEDIN_ADMIN_STRATEGY_NAME, Profile } from '../../types';
 
 describe('Linkedin admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -35,7 +35,7 @@ describe('Linkedin admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: LINKEDIN_ADMIN_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: LINKEDIN_ADMIN_STRATEGY_NAME,
 									},
 								};
 							}
@@ -44,7 +44,7 @@ describe('Linkedin admin strategy verify callback', function () {
 								return {
 									id: 'test3',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
@@ -61,7 +61,7 @@ describe('Linkedin admin strategy verify callback', function () {
 		linkedinAdminStrategy = new LinkedinAdminStrategy(
 			container,
 			{} as ConfigModule,
-			{ clientID: 'fake', clientSecret: 'fake', admin: {} } as LinkedinAuthOptions,
+			{ clientID: 'fake', clientSecret: 'fake', admin: {} } as LinkedinAuthOptions
 		);
 	});
 

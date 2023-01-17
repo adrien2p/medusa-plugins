@@ -16,21 +16,21 @@ describe('Auth0 store strategy verify callback', function () {
 	let profile: Profile;
 	let extraParams: ExtraParams;
 	let auth0StoreStrategy: Auth0StoreStrategy;
-  let updateFn;
-  let createFn;
+	let updateFn;
+	let createFn;
 
 	beforeEach(() => {
 		profile = {
 			emails: [{ value: existsEmail }],
 		};
-		
+
 		extraParams = {};
-    updateFn = jest.fn().mockImplementation(async () => {
-      return {id: 'test'}
-    });
-    createFn = jest.fn().mockImplementation(async () => {
-      return { id: 'test' };
-    });
+		updateFn = jest.fn().mockImplementation(async () => {
+			return { id: 'test' };
+		});
+		createFn = jest.fn().mockImplementation(async () => {
+			return { id: 'test' };
+		});
 
 		container = {
 			resolve: <T>(name: string): T => {
@@ -45,7 +45,7 @@ describe('Auth0 store strategy verify callback', function () {
 							return this;
 						},
 						create: createFn,
-            update: updateFn,
+						update: updateFn,
 						retrieveRegisteredByEmail: jest.fn().mockImplementation(async (email: string) => {
 							if (email === existsEmail) {
 								return {
@@ -67,7 +67,7 @@ describe('Auth0 store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: AUTH0_STORE_STRATEGY_NAME
+										[AUTH_PROVIDER_KEY]: AUTH0_STORE_STRATEGY_NAME,
 									},
 								};
 							}
@@ -77,7 +77,7 @@ describe('Auth0 store strategy verify callback', function () {
 									id: 'test4',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: 'fake_provider_key'
+										[AUTH_PROVIDER_KEY]: 'fake_provider_key',
 									},
 								};
 							}
@@ -94,7 +94,12 @@ describe('Auth0 store strategy verify callback', function () {
 		auth0StoreStrategy = new Auth0StoreStrategy(
 			container,
 			{} as ConfigModule,
-			{ auth0Domain: 'fakeDomain', clientID: 'fake', clientSecret: 'fake', store: { callbackUrl: '/fakeCallbackUrl'} } as Auth0Options
+			{
+				auth0Domain: 'fakeDomain',
+				clientID: 'fake',
+				clientSecret: 'fake',
+				store: { callbackUrl: '/fakeCallbackUrl' },
+			} as Auth0Options
 		);
 	});
 
@@ -120,7 +125,9 @@ describe('Auth0 store strategy verify callback', function () {
 			emails: [{ value: existsEmail }],
 		};
 
-		const err = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
+		const err = await auth0StoreStrategy
+			.validate(req, accessToken, refreshToken, extraParams, profile)
+			.catch((err) => err);
 		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
 	});
 
@@ -129,13 +136,13 @@ describe('Auth0 store strategy verify callback', function () {
 			emails: [{ value: existsEmailWithMeta }],
 		};
 
-    const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+		const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
 		expect(data).toEqual(
 			expect.objectContaining({
 				id: 'test2',
 			})
 		);
-    expect(updateFn).toHaveBeenCalledTimes(1)
+		expect(updateFn).toHaveBeenCalledTimes(1);
 	});
 
 	it('should fail when the metadata exists but auth provider key is wrong', async () => {
@@ -143,7 +150,9 @@ describe('Auth0 store strategy verify callback', function () {
 			emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
 		};
 
-		const err = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile).catch((err) => err);
+		const err = await auth0StoreStrategy
+			.validate(req, accessToken, refreshToken, extraParams, profile)
+			.catch((err) => err);
 		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`));
 	});
 
@@ -162,6 +171,6 @@ describe('Auth0 store strategy verify callback', function () {
 				id: 'test',
 			})
 		);
-    expect(createFn).toHaveBeenCalledTimes(1)
+		expect(createFn).toHaveBeenCalledTimes(1);
 	});
 });
