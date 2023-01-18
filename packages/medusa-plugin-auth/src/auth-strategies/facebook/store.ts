@@ -1,11 +1,10 @@
-import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { validateStoreCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateStoreCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_STORE_STRATEGY_NAME) {
 	constructor(
@@ -37,7 +36,7 @@ export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: "Facebook" });
+		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'facebook' });
 	}
 }
 
@@ -47,17 +46,18 @@ export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FA
  * @param configModule
  */
 export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
-	return passportAuthRoutesBuilder(
-		{
-			domain: "store",
+	return passportAuthRoutesBuilder({
+		domain: 'store',
 		configModule,
 		authPath: facebook.store.authPath ?? '/store/auth/facebook',
 		authCallbackPath: facebook.store.authCallbackPath ?? '/store/auth/facebook/cb',
 		successRedirect: facebook.store.successRedirect,
-		failureRedirect: facebook.store.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(FACEBOOK_STORE_STRATEGY_NAME, {
+		strategyName: FACEBOOK_STORE_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: ['email'],
-			session: false,
-		})
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: facebook.store.failureRedirect,
+		},
 	});
 }

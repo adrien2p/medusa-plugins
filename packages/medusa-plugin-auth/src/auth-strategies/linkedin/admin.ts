@@ -1,11 +1,10 @@
-import passport from 'passport';
 import { Strategy as LinkedinStrategy } from 'passport-linkedin-oauth2';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
 import { LINKEDIN_ADMIN_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { validateAdminCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateAdminCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -39,7 +38,7 @@ export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LI
 			);
 		}
 
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'Linkedin' });
+		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'linkedin' });
 	}
 }
 
@@ -50,18 +49,20 @@ export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LI
  */
 export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, configModule: ConfigModule): Router {
 	return passportAuthRoutesBuilder({
-		domain: "admin",
+		domain: 'admin',
 		configModule,
 		authPath: linkedin.admin.authPath ?? '/admin/auth/linkedin',
 		authCallbackPath: linkedin.admin.authCallbackPath ?? '/admin/auth/linkedin/cb',
 		successRedirect: linkedin.admin.successRedirect,
-		failureRedirect: linkedin.admin.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(LINKEDIN_ADMIN_STRATEGY_NAME, {
+		strategyName: LINKEDIN_ADMIN_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.linkedinapis.com/auth/userinfo.email',
 				'https://www.linkedinapis.com/auth/userinfo.profile',
 			],
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: linkedin.admin.failureRedirect,
+		},
 	});
 }

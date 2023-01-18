@@ -1,11 +1,10 @@
-import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
 import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { validateAdminCallback } from "../../core/validate-callback";
-import { passportAuthRoutesBuilder } from "../../core/passport/utils/auth-routes-builder";
+import { validateAdminCallback } from '../../core/validate-callback';
+import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 
 export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
 	constructor(
@@ -37,7 +36,7 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'Facebook' });
+		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'facebook' });
 	}
 }
 
@@ -48,15 +47,17 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
  */
 export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, configModule: ConfigModule): Router {
 	return passportAuthRoutesBuilder({
-		domain: "admin",
+		domain: 'admin',
 		configModule,
 		authPath: facebook.admin.authPath ?? '/admin/auth/facebook',
 		authCallbackPath: facebook.admin.authCallbackPath ?? '/admin/auth/facebook/cb',
 		successRedirect: facebook.admin.successRedirect,
-		failureRedirect: facebook.admin.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(FACEBOOK_ADMIN_STRATEGY_NAME, {
+		strategyName: FACEBOOK_ADMIN_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: ['email'],
-			session: false,
-		})
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: facebook.admin.failureRedirect,
+		},
 	});
 }

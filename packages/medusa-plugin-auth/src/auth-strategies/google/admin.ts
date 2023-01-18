@@ -1,4 +1,3 @@
-import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
@@ -37,7 +36,7 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 			);
 		}
 
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'Google' });
+		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'google' });
 	}
 }
 
@@ -48,18 +47,20 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
  */
 export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
 	return passportAuthRoutesBuilder({
-		domain: "admin",
+		domain: 'admin',
 		configModule,
 		authPath: google.admin.authPath ?? '/admin/auth/google',
 		authCallbackPath: google.admin.authCallbackPath ?? '/admin/auth/google/cb',
 		successRedirect: google.admin.successRedirect,
-		failureRedirect: google.admin.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(GOOGLE_ADMIN_STRATEGY_NAME, {
+		strategyName: GOOGLE_ADMIN_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.googleapis.com/auth/userinfo.email',
 				'https://www.googleapis.com/auth/userinfo.profile',
 			],
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: google.admin.failureRedirect,
+		},
 	});
 }

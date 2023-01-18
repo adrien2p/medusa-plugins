@@ -1,11 +1,10 @@
-import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
-import { validateStoreCallback } from "../../core/validate-callback";
+import { validateStoreCallback } from '../../core/validate-callback';
 
 export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_STORE_STRATEGY_NAME) {
 	constructor(
@@ -36,7 +35,7 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 				profile
 			);
 		}
-		return await validateStoreCallback(this)(profile, { strategyErrorIdentifier: "Google" });
+		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'google' });
 	}
 }
 
@@ -46,20 +45,21 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
  * @param configModule
  */
 export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
-	return passportAuthRoutesBuilder(
-		{
-			domain: "store",
+	return passportAuthRoutesBuilder({
+		domain: 'store',
 		configModule,
 		authPath: google.store.authPath ?? '/store/auth/google',
 		authCallbackPath: google.store.authCallbackPath ?? '/store/auth/google/cb',
 		successRedirect: google.store.successRedirect,
-		failureRedirect: google.store.failureRedirect,
-		passportAuthenticateMiddleware: passport.authenticate(GOOGLE_STORE_STRATEGY_NAME, {
+		strategyName: GOOGLE_STORE_STRATEGY_NAME,
+		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.googleapis.com/auth/userinfo.email',
 				'https://www.googleapis.com/auth/userinfo.profile',
 			],
-			session: false,
-		}),
+		},
+		passportCallbackAuthenticateMiddlewareOptions: {
+			failureRedirect: google.admin.failureRedirect,
+		},
 	});
 }

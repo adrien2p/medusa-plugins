@@ -27,7 +27,7 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 		const decodedToken = await auth().verifyIdToken(token);
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
-		return await validateAdminCallback(this)(profile, { strategyErrorIdentifier: 'Firebase' });
+		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'firebase' });
 	}
 }
 
@@ -39,12 +39,11 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 export function getFirebaseAdminAuthRouter(firebase: FirebaseAuthOptions, configModule: ConfigModule): Router {
 	return firebaseAuthRoutesBuilder(
 		{
-			domain: "admin",
+			domain: 'admin',
             configModule,
             authPath: firebase.admin.authPath ?? '/admin/auth/firebase',
-            passportAuthenticateMiddleware: passport.authenticate(FIREBASE_ADMIN_STRATEGY_NAME, {
-                session: false,
-            })
+			strategyName: FIREBASE_ADMIN_STRATEGY_NAME,
+            passportAuthenticateMiddlewareOptions: {}
 		}
 	);
 }
