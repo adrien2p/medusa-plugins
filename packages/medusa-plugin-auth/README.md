@@ -186,3 +186,50 @@ Coming soon
 ### Microsoft
 
 Coming soon
+
+### Firebase
+
+> By default, the admin only allow to authenticate while the store create a new user of it does not exist yet.
+> This behaviour can be changed and customised by specifying a custom `verifyCallback` in the configuration.
+
+Then, in your medusa config plugins collection you can add the following configuration and update it according to your requirements ([full configuration here](https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth/src/auth-strategies/firebase/types.ts))
+
+```ts
+{
+    resolve: "medusa-plugin-auth",
+    options: {
+        // Enable Firebase auth
+        firebase: {
+            credentialJsonPath: "__PATH_TO_JSON_CREDENTIALS__",
+            // Enable Firebase auth for the admin domain
+            admin: {
+                expiresIn: 24 * 60 * 60 * 1000
+            },
+            // Enable Firebase auth for the store domain
+            store: {
+                expiresIn: 24 * 60 * 60 * 1000
+            }
+        }
+        // ...
+        // ... Other authentication provider options
+        // ...
+    }
+}
+```
+
+Now you can authenticate with Firebase ID token by calling the following endpoint
+
+```ts
+const firebaseLogin = async (token: string) => {
+    await fetch('http://localhost:9000/store/auth/firebase', {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        credentials: 'include'
+    })
+}
+```
+
+This endpoint will return a session cookie that you can use to authenticate with the store API. It is important to include the `credentials: 'include'` option in the fetch call to ensure that the cookie is set. If you are using Axios to make the request, the equivalent option is `withCredentials: true`.
+
