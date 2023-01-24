@@ -20,8 +20,8 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 	}
 
 	async validate(token: string): Promise<null | { id: string }> {
-		if(this.strategyOptions.store.verifyCallback) {
-			return await this.strategyOptions.store.verifyCallback(this.container, token);
+		if(this.strategyOptions.admin.verifyCallback) {
+			return await this.strategyOptions.admin.verifyCallback(this.container, token);
 		}
 
 		const decodedToken = await auth().verifyIdToken(token);
