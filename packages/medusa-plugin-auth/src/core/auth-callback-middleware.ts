@@ -21,19 +21,7 @@ export function authCallbackMiddleware(
 	};
 }
 
-export function firebaseCallbackMiddleware(
-	domain: 'admin' | 'store',
-	secret: string,
-	expiresIn: number,
-) {
-	return (req, res) => {
-		const sendToken = sendTokenFactory(domain, secret, expiresIn);
-		sendToken(req, res);
-		res.status(200).json({ result: 'OK' });
-	}
-}
-
-function sendTokenFactory(
+export function sendTokenFactory(
 	domain: 'admin' | 'store',
 	secret: string,
 	expiresIn: number,

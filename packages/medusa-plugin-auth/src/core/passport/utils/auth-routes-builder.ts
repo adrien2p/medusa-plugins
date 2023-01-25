@@ -2,7 +2,7 @@ import { Router } from 'express';
 import passport from 'passport';
 import cors from 'cors';
 import { TWENTY_FOUR_HOURS_IN_MS } from '../../../types';
-import { authCallbackMiddleware, firebaseCallbackMiddleware } from '../../auth-callback-middleware';
+import { authCallbackMiddleware } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 
 type PassportAuthenticateMiddlewareOptions = {
@@ -85,51 +85,6 @@ export function passportAuthRoutesBuilder({
 		},
 		passport.authenticate(strategyName, {
 			...passportCallbackAuthenticateMiddlewareOptions,
-			session: false,
-		}),
-		callbackHandler
-	);
-
-	return router;
-}
-
-
-export function firebaseAuthRoutesBuilder({
-	domain,
-	configModule,
-	authPath,
-	strategyName,
-	passportAuthenticateMiddlewareOptions,
-	expiresIn,
-}: {
-	domain: "admin" | "store",
-	configModule: ConfigModule;
-	authPath: string;
-	strategyName: string;
-	passportAuthenticateMiddlewareOptions: PassportAuthenticateMiddlewareOptions;
-	expiresIn?: number;
-}): Router {
-	const router = Router();
-
-	const corsOptions = {
-		origin: domain === 'admin' ? configModule.projectConfig.admin_cors.split(',') : configModule.projectConfig.store_cors.split(','),
-		credentials: true,
-	};
-
-	router.get(authPath, cors(corsOptions));
-	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
-	router.options(authPath, cors(corsOptions));
-
-	const callbackHandler = firebaseCallbackMiddleware(
-		domain,
-		configModule.projectConfig.jwt_secret,
-		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS
-	);
-
-	router.get(
-		authPath,
-		passport.authenticate(strategyName, {
-			...passportAuthenticateMiddlewareOptions,
 			session: false,
 		}),
 		callbackHandler

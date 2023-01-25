@@ -1,11 +1,10 @@
-import passport from 'passport';
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Strategy as FirebaseStrategy, ExtractJwt } from 'passport-firebase-jwt';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateStoreCallback } from '../../core/validate-callback';
 import { FIREBASE_STORE_STRATEGY_NAME, FirebaseAuthOptions, Profile } from './types';
-import { firebaseAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { firebaseAuthRoutesBuilder } from './utils';
 import { auth } from 'firebase-admin';
 
 export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FIREBASE_STORE_STRATEGY_NAME) {
@@ -43,7 +42,6 @@ export function getFirebaseStoreAuthRouter(firebase: FirebaseAuthOptions, config
             configModule,
             authPath: firebase.store.authPath ?? '/store/auth/firebase',
             strategyName: FIREBASE_STORE_STRATEGY_NAME,
-            passportAuthenticateMiddlewareOptions: {}
 		}
 	);
 }

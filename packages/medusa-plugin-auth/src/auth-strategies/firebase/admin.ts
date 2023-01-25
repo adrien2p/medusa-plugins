@@ -5,7 +5,7 @@ import { Router } from 'express';
 import { FIREBASE_ADMIN_STRATEGY_NAME, FirebaseAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
-import { firebaseAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { firebaseAuthRoutesBuilder } from './utils';
 import { auth } from 'firebase-admin';
 
 export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FIREBASE_ADMIN_STRATEGY_NAME) {
@@ -43,7 +43,6 @@ export function getFirebaseAdminAuthRouter(firebase: FirebaseAuthOptions, config
             configModule,
             authPath: firebase.admin.authPath ?? '/admin/auth/firebase',
 			strategyName: FIREBASE_ADMIN_STRATEGY_NAME,
-            passportAuthenticateMiddlewareOptions: {}
 		}
 	);
 }
