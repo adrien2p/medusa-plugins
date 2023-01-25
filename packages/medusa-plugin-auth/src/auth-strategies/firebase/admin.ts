@@ -32,8 +32,8 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 }
 
 /**
- * Return the router that hold the google admin authentication routes
- * @param google
+ * Return the router that hold the firebase admin authentication routes
+ * @param firebase
  * @param configModule
  */
 export function getFirebaseAdminAuthRouter(firebase: FirebaseAuthOptions, configModule: ConfigModule): Router {

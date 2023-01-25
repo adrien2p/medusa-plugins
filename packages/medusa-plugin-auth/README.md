@@ -316,7 +316,7 @@ Now you can authenticate with Firebase ID token by calling the following endpoin
 
 ```ts
 const firebaseLogin = async (token: string) => {
-    await fetch('http://localhost:9000/store/auth/firebase', {
+    await fetch(`${medusa_url}/${firabse_authPath}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token}`
