@@ -16,6 +16,10 @@
     <a href="https://github.com/sponsors/adrien2p"><img alt="sponsor" src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" height="20"/></a>
 </p>
 
+## Documentation
+
+[Medusa plugin authentication documentation (WIP)](https://medusa-plugins.vercel.app/Authentication)
+
 ## Description
 
 Social authentication for the admin and store client.

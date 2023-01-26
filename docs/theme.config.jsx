@@ -53,9 +53,10 @@ export default {
     const { frontMatter } = useConfig()
 
     return <>
-      <meta property="og:url" content={`https://my-app.com${asPath}`} />
+      <meta property="og:url" content={`https://medusa-plugins.vercel.app${asPath}`} />
       <meta property="og:title" content={frontMatter.title || 'Medusa plugins'} />
       <meta property="og:description" content={frontMatter.description || 'A collection of awesome plugins for medusa'} />
+      <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/medusa-plugins-logo.png" />
     </>
   },
 

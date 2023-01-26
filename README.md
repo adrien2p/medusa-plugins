@@ -20,6 +20,10 @@
 
 <br />
 
+# Documentation
+
+[Medusa plugins documentation (WIP)](https://medusa-plugins.vercel.app/)
+
 [![-----------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/cloudy.png)](#introduction)
 
 # Introduction
