@@ -19,11 +19,11 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
 	}
 
 	async validate(token: string): Promise<null | { id: string }> {
+		const decodedToken = await auth().verifyIdToken(token);
+		
 		if(this.strategyOptions.store.verifyCallback) {
 			return await this.strategyOptions.store.verifyCallback(this.container, token);
 		}
-
-		const decodedToken = await auth().verifyIdToken(token);
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
 		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'firebase' });
