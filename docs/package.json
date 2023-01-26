@@ -1,0 +1,42 @@
+{
+  "name": "@medusa-plugins/medusa-plugins-docs",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Medusa plugins documentation",
+  "engines": {
+    "node": ">14.17.3"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/lerna run --parallel build",
+    "bootstrap": "./node_modules/.bin/lerna bootstrap",
+    "clean": "./node_modules/.bin/lerna run --parallel clean",
+    "release": "./node_modules/.bin/lerna publish",
+    "watch": "./node_modules/.bin/lerna run watch",
+    "test": "./node_modules/.bin/lerna run test",
+    "test:local": "./node_modules/.bin/lerna run test:local",
+    "lint": "./node_modules/.bin/eslint 'packages/**' --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrien2p/medusa-plugins.git"
+  },
+  "author": "Adrien de Peretti <adrien.deperetti@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrien2p/medusa-plugins/issues"
+  },
+  "homepage": "https://github.com/adrien2p/medusa-plugins#readme",
+  "scripts": {
+    "start": "yarn next"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "next": "^13.1.5",
+    "nextra": "^2.2.13",
+    "nextra-theme-docs": "^2.2.13",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^4.5.5"
+  }
+}

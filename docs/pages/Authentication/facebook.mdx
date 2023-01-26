@@ -1,0 +1,102 @@
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-auth.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+### Configuration
+
+In order to be able to use the **facebook** authentication provider, you have to add the configuration to your
+newly added plugins. To do so here are the steps
+
+<CircleStep index={1}>
+    Configure your **facebook developer console**
+</CircleStep>
+
+<CircleStep index={2}>
+    Go to your `medusa-config.js`
+</CircleStep>
+
+<CircleStep index={3}>
+    Check that the variables are set with the appropriate values
+
+    ```js
+    const BACKEND_URL = process.env.BACKEND_URL || "localhost:9000"
+    const ADMIN_URL = process.env.ADMIN_URL || "localhost:7000"
+    const STORE_URL = process.env.STORE_URL || "localhost:8000"
+
+    const FacebookClientId = process.env.FACEBOOK_CLIENT_ID || ""
+    const FacebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET || ""
+    ```
+
+    Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
+    just add the `facebook` options to your auth plugin options
+    ```js
+    {
+        resolve: "medusa-plugin-auth",
+        options: {
+            facebook: {
+                clientID: FacebookClientId,
+                clientSecret: FacebookClientSecret,
+
+                admin: {
+                    callbackUrl:`${BACKEND_URL}/admin/auth/facebook/cb`,
+                    failureRedirect: `${ADMIN_URL}/login`,
+                    successRedirect: `${ADMIN_URLL}/`,
+                    // authPath: '/admin/auth/facebook',
+                    // authCallbackPath: '/admin/auth/facebook/cb',
+                    // expiresIn: 24 * 60 * 60 * 1000,
+                    // verifyCallback: (container, req, accessToken, refreshToken, profile) => {
+                    //    // implement your custom verify callback here if you need it
+                    // }
+                },
+
+                store: {
+                    callbackUrl:`${process.env.BACKEND_URL}/store/auth/facebook/cb`,
+                    failureRedirect: `${STORE_URL}/login`,
+                    successRedirect: `${STORE_URL}/`,
+                    // authPath: '/store/auth/facebook',
+                    // authCallbackPath: '/store/auth/facebook/cb',
+                    // expiresIn: 24 * 60 * 60 * 1000,
+                    // verifyCallback: (container, req, accessToken, refreshToken, profile) => {
+                    //    // implement your custom verify callback here if you need it
+                    // }
+                }
+            }
+        }
+    }
+    ```
+    The options that are commented are `optional` and the value that you see are the default values
+</CircleStep>
+
+<CircleStep index={4}>
+    Update your client to add the authentication action
+    ```html
+    <a href="${medusa_url}/${facebook_authPath}" type="button" class="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 mr-2 mb-2">
+      <svg class="mr-2 -ml-1 w-4 h-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="facebook-f" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M279.1 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.4 0 225.4 0c-73.22 0-121.1 44.38-121.1 124.7v70.62H22.89V288h81.39v224h100.2V288z"></path></svg>
+      Sign in with Facebook
+    </a>
+    ```
+    - `medusa_url` correspond to your backend server url (e.g `http://localhost:9000`)
+    - `authPath` correspond to `authPath` configuration in your plugin (e.g `admin/auth/facebook`)
+</CircleStep>
+
+### Default behaviour
+
+The default `verifyCallback` flow looks as follow,
+- for the `admin`
+    - if the user trying to authenticate exists
+        - then we are looking in the metadata to find if any other external authentication methods have been used.
+          If none are found, then the user gets authenticated and can proceed and the metadata gets updated.
+          In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned. If you want to allow a user to use multiple external authentication methods, you can
+          update his metadata
+   - if the user trying to authenticate does not exist, an unauthorized error will be returned
+- for the `store`
+    - if the customer trying to authenticate exists
+        - then we are looking in the metadata to find if any other external authentication methods have been used.
+          If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
+          In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned. If you want to allow a customer to use multiple external authentication methods, you can
+          update his metadata
+   - if the customer trying to authenticate does not exist, a new customer will be created and the authentication
+     flow follow the previous point

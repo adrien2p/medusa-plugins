@@ -1,0 +1,19 @@
+.circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 3px solid #000;
+    color: #000;
+    text-align: center;
+    padding: 1rem;
+    margin: 0 1rem
+}
+
+.nextra-code-block {
+    display: grid;
+}

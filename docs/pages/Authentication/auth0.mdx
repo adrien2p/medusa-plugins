@@ -1,0 +1,96 @@
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-auth.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+### Configuration
+
+In order to be able to use the **auth0** authentication provider, you have to add the configuration to your
+newly added plugins. To do so here are the steps
+
+<CircleStep index={1}>
+    Configure your **auth0 developer console**
+</CircleStep>
+
+<CircleStep index={2}>
+    Go to your `medusa-config.js`
+</CircleStep>
+
+<CircleStep index={3}>
+    Check that the variables are set with the appropriate values
+
+    ```js
+    const BACKEND_URL = process.env.BACKEND_URL || "localhost:9000"
+    const ADMIN_URL = process.env.ADMIN_URL || "localhost:7000"
+    const STORE_URL = process.env.STORE_URL || "localhost:8000"
+
+    const Auth0ClientId = process.env.AUTH0_CLIENT_ID || ""
+    const Auth0ClientSecret = process.env.AUTH0_CLIENT_SECRET || ""
+    const Auth0Domain = process.env.AUTH0_DOMAIN || ""
+    ```
+
+    Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
+    just add the `auth0` options to your auth plugin options
+    ```js
+    {
+        resolve: "medusa-plugin-auth",
+        options: {
+            auth0: {
+                clientID: Auth0ClientId,
+                clientSecret: Auth0ClientSecret,
+                auth0Domain: Auth0Domain,
+
+                admin: {
+                    callbackUrl:`${BACKEND_URL}/admin/auth/auth0/cb`,
+                    failureRedirect: `${ADMIN_URL}/login`,
+                    successRedirect: `${ADMIN_URLL}/`,
+                    // authPath: '/admin/auth/auth0',
+                    // authCallbackPath: '/admin/auth/auth0/cb',
+                    // expiresIn: 24 * 60 * 60 * 1000,
+                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile) => {
+                    //    // implement your custom verify callback here if you need it
+                    // }
+                },
+
+                store: {
+                    callbackUrl:`${process.env.BACKEND_URL}/store/auth/auth0/cb`,
+                    failureRedirect: `${STORE_URL}/login`,
+                    successRedirect: `${STORE_URL}/`,
+                    // authPath: '/store/auth/auth0',
+                    // authCallbackPath: '/store/auth/auth0/cb',
+                    // expiresIn: 24 * 60 * 60 * 1000,
+                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile) => {
+                    //    // implement your custom verify callback here if you need it
+                    // }
+                }
+            }
+        }
+    }
+    ```
+    The options that are commented are `optional` and the value that you see are the default values
+</CircleStep>
+
+<CircleStep index={4}>
+    Update your client to add the authentication action
+</CircleStep>
+
+### Default behaviour
+
+The default `verifyCallback` flow looks as follow,
+- for the `admin`
+    - if the user trying to authenticate exists
+        - then we are looking in the metadata to find if any other external authentication methods have been used.
+          If none are found, then the user gets authenticated and can proceed and the metadata gets updated.
+          In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned. If you want to allow a user to use multiple external authentication methods, you can
+          update his metadata
+   - if the user trying to authenticate does not exist, an unauthorized error will be returned
+- for the `store`
+    - if the customer trying to authenticate exists
+        - then we are looking in the metadata to find if any other external authentication methods have been used.
+          If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
+          In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned. If you want to allow a customer to use multiple external authentication methods, you can
+          update his metadata
+   - if the customer trying to authenticate does not exist, a new customer will be created and the authentication
+     flow follow the previous point
