@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.3.0...medusa-plugin-auth@1.3.1) (2023-01-27)
+
+
+### Bug Fixes
+
+* apply expiresIn from the auth provider config ([76d37d4](https://github.com/adrien2p/medusa-plugins/commit/76d37d4bc729524da43748c33f788199dbe8a0b6))
+
+
+
+
+
 # [1.3.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.3...medusa-plugin-auth@1.3.0) (2023-01-27)
 
 
