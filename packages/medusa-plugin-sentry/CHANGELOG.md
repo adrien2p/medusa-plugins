@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.2.3...medusa-plugin-sentry@1.4.0) (2023-01-27)
+
+
+### Bug Fixes
+
+* build callback handler token gegeneration ([#31](https://github.com/adrien2p/medusa-plugins/issues/31)) ([69313db](https://github.com/adrien2p/medusa-plugins/commit/69313db72916c9681214aef27176ee00aec5eb05))
+* revert path changes ([5232bbe](https://github.com/adrien2p/medusa-plugins/commit/5232bbef1971af97f798e891bfbc1a2560d536c0))
+* sentry typo ([1bb7920](https://github.com/adrien2p/medusa-plugins/commit/1bb7920c2f2085eb5efc6500bc49bdf060f6e55b))
+
+
+### Features
+
+* Add twitter OAuth 2 pre-support ([1395689](https://github.com/adrien2p/medusa-plugins/commit/1395689197f1b5b7258e961b52c46c3a16bf1de8))
+* update strategies according to the latest auth changes from medusa core ([#26](https://github.com/adrien2p/medusa-plugins/issues/26)) ([9afc2fd](https://github.com/adrien2p/medusa-plugins/commit/9afc2fd43df96567e511087bd4a725e7e711e54a))
+
+
+
+
+
 # [1.3.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.2.3...medusa-plugin-sentry@1.3.0) (2022-11-26)
 
 

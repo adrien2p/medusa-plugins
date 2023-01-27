@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.3...medusa-plugin-auth@1.3.0) (2023-01-27)
+
+
+### Bug Fixes
+
+* Auth route builder ([#44](https://github.com/adrien2p/medusa-plugins/issues/44)) ([b5f6d7a](https://github.com/adrien2p/medusa-plugins/commit/b5f6d7ad5f2d3e6a1a2e3f0e802bf8b5c761129c))
+
+
+### Features
+
+* Allow to access session from the plugin and remove cookie usage ([#32](https://github.com/adrien2p/medusa-plugins/issues/32)) ([d97a96f](https://github.com/adrien2p/medusa-plugins/commit/d97a96fe1c4fd473d26acc462b9ecefce498b32c))
+* **Auth0:** Add Auth0 Authentication ([#27](https://github.com/adrien2p/medusa-plugins/issues/27)) ([06c0c20](https://github.com/adrien2p/medusa-plugins/commit/06c0c205615a826cc601fb54f994a2a1d48ba45d))
+
+
+
+
+
 ## [1.2.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.2.2...medusa-plugin-auth@1.2.3) (2022-12-05)
 
 
