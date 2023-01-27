@@ -19,7 +19,7 @@ export type FirebaseAuthOptions = {
 		/**
 		 * The default verify callback function will be used if this configuration is not specified
 		 */
-		verifyCallback?: (container: MedusaContainer, token: string) => Promise<null | { id: string } | never>;
+		verifyCallback?: (container: MedusaContainer, decodedToken: any) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
 	};
@@ -35,7 +35,7 @@ export type FirebaseAuthOptions = {
 		/**
 		 * The default verify callback function will be used if this configuration is not specified
 		 */
-		verifyCallback?: (container: MedusaContainer, token: string) => Promise<null | { id: string } | never>;
+		verifyCallback?: (container: MedusaContainer, decodedToken: any) => Promise<null | { id: string } | never>;
 		
 		expiresIn?: number;
 	};
