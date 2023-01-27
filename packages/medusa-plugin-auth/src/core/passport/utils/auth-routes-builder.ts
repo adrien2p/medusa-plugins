@@ -50,14 +50,14 @@ export function passportAuthRoutesBuilder({
 }): Router {
 	const router = Router();
 
-	const adminCorsOptions = {
-		origin: configModule.projectConfig.admin_cors.split(','),
+	const corsOptions = {
+		origin: domain === 'admin' ? configModule.projectConfig.admin_cors.split(',') : configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
 
-	router.get(authPath, cors(adminCorsOptions));
+	router.get(authPath, cors(corsOptions));
 	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
-	router.options(authPath, cors(adminCorsOptions));
+	router.options(authPath, cors(corsOptions));
 	router.get(
 		authPath,
 		passport.authenticate(strategyName, {
@@ -73,7 +73,7 @@ export function passportAuthRoutesBuilder({
 		successRedirect
 	);
 
-	router.get(authCallbackPath, cors(adminCorsOptions));
+	router.get(authCallbackPath, cors(corsOptions));
 	router.get(
 		authCallbackPath,
 		(req, res, next) => {

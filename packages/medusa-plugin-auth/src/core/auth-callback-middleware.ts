@@ -15,10 +15,21 @@ export function authCallbackMiddleware(
 	successRedirect: string
 ) {
 	return (req, res) => {
+		const sendToken = sendTokenFactory(domain, secret, expiresIn);
+		sendToken(req, res);
+		res.redirect(successRedirect);
+	};
+}
+
+export function sendTokenFactory(
+	domain: 'admin' | 'store',
+	secret: string,
+	expiresIn: number,
+) {
+	return (req, res) => {
 		const tokenData = domain === 'admin' ? { userId: req.user.id, ...req.user } : { customer_id: req.user.id, ...req.user };
 		const token = jwt.sign(tokenData, secret, { expiresIn });
 		const sessionKey = domain === 'admin' ? 'jwt' : 'jwt_store';
 		req.session[sessionKey] = token;
-		res.redirect(successRedirect);
-	};
+	}
 }

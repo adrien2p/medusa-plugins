@@ -1,5 +1,6 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
+import { FirebaseAuthOptions, FIREBASE_ADMIN_STRATEGY_NAME, FIREBASE_STORE_STRATEGY_NAME } from '../auth-strategies/firebase';
 import { GoogleAuthOptions, GOOGLE_ADMIN_STRATEGY_NAME, GOOGLE_STORE_STRATEGY_NAME } from '../auth-strategies/google';
 import {
 	FacebookAuthOptions,
@@ -27,6 +28,7 @@ export type AuthOptions = {
 	google?: GoogleAuthOptions;
 	facebook?: FacebookAuthOptions;
 	linkedin?: LinkedinAuthOptions;
+	firebase?: FirebaseAuthOptions;
 	auth0?: Auth0Options;
 };
 
@@ -55,4 +57,8 @@ export const strategyNames: StrategyNames = {
 		admin: LINKEDIN_ADMIN_STRATEGY_NAME,
 		store: LINKEDIN_STORE_STRATEGY_NAME,
 	},
+	firebase: {
+		admin: FIREBASE_ADMIN_STRATEGY_NAME,
+		store: FIREBASE_STORE_STRATEGY_NAME,
+	}
 };
