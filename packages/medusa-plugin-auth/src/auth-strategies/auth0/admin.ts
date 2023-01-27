@@ -74,5 +74,6 @@ export function getAuth0AdminAuthRouter(auth0: Auth0Options, configModule: Confi
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: auth0.admin.failureRedirect,
 		},
+		expiresIn: auth0.admin.expiresIn,
 	});
 }

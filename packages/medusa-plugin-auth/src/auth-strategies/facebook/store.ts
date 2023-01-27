@@ -59,5 +59,6 @@ export function getFacebookStoreAuthRouter(facebook: FacebookAuthOptions, config
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: facebook.store.failureRedirect,
 		},
+		expiresIn: facebook.store.expiresIn,
 	});
 }

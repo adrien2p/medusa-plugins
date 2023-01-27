@@ -59,5 +59,6 @@ export function getFacebookAdminAuthRouter(facebook: FacebookAuthOptions, config
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: facebook.admin.failureRedirect,
 		},
+		expiresIn: facebook.admin.expiresIn,
 	});
 }

@@ -42,5 +42,6 @@ export function getFirebaseAdminAuthRouter(firebase: FirebaseAuthOptions, config
 		configModule,
 		authPath: firebase.admin.authPath ?? '/admin/auth/firebase',
 		strategyName: FIREBASE_ADMIN_STRATEGY_NAME,
+		expiresIn: firebase.admin.expiresIn,
 	});
 }
