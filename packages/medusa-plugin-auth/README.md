@@ -18,7 +18,7 @@
 
 ## Documentation
 
-[Medusa plugin authentication documentation (WIP)](https://medusa-plugins.vercel.app/Authentication)
+[Medusa plugin authentication documentation](https://medusa-plugins.vercel.app/authentication)
 
 ## Description
 

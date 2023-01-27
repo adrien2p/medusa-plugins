@@ -15,14 +15,14 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 		protected readonly strategyOptions: FirebaseAuthOptions
 	) {
 		super({
-			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken()
+			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),
 		});
 	}
 
 	async validate(token: string): Promise<null | { id: string }> {
 		const decodedToken = await auth().verifyIdToken(token);
-		
-		if(this.strategyOptions.admin.verifyCallback) {
+
+		if (this.strategyOptions.admin.verifyCallback) {
 			return await this.strategyOptions.admin.verifyCallback(this.container, decodedToken);
 		}
 
@@ -37,12 +37,10 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
  * @param configModule
  */
 export function getFirebaseAdminAuthRouter(firebase: FirebaseAuthOptions, configModule: ConfigModule): Router {
-	return firebaseAuthRoutesBuilder(
-		{
-			domain: 'admin',
-            configModule,
-            authPath: firebase.admin.authPath ?? '/admin/auth/firebase',
-			strategyName: FIREBASE_ADMIN_STRATEGY_NAME,
-		}
-	);
+	return firebaseAuthRoutesBuilder({
+		domain: 'admin',
+		configModule,
+		authPath: firebase.admin.authPath ?? '/admin/auth/firebase',
+		strategyName: FIREBASE_ADMIN_STRATEGY_NAME,
+	});
 }

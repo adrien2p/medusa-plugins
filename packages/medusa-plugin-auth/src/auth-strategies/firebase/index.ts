@@ -14,7 +14,7 @@ export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
 		// initialize firebase admin sdk
 		if (options.firebase) {
-			if(!options.firebase.credentialJsonPath) {
+			if (!options.firebase.credentialJsonPath) {
 				throw new Error('Firebase authentication requires credentialJsonPath, but it has not been provided.');
 			}
 
@@ -22,10 +22,12 @@ export default {
 				const cred = credential.cert(options.firebase.credentialJsonPath);
 
 				initializeApp({
-					credential: cred
+					credential: cred,
 				});
 			} catch (error) {
-				throw new Error('Firebase authentication failed to initialize. Please check your credentialJsonPath and JSON file.');
+				throw new Error(
+					'Firebase authentication failed to initialize. Please check your credentialJsonPath and JSON file.'
+				);
 			}
 		}
 

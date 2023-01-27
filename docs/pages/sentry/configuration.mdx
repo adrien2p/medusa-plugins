@@ -1,0 +1,82 @@
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+### Configuration
+
+Once the plugin is installed, you have to add it to your project configuration. To do so here are the steps
+
+<CircleStep index={1}>
+    Configure your **sentry** account to get your dsn and api token (optional)
+</CircleStep>
+
+<CircleStep index={2}>
+    Go to your `medusa-config.js`
+</CircleStep>
+
+<CircleStep index={3}>
+    Check that the variables are set with the appropriate values
+
+    ```js
+    const SentryDSN = process.env.SENTRY_DSN || ""
+    const SentryApiToken = process.env.SENTRY_API_TOKEN || ""
+    ```
+
+    Then in your `plugins` collections, you can just add the plugin as follow
+    ```js
+    {
+      resolve: `medusa-plugin-sentry`,
+      options: {
+        dsn: SentryDSN,
+        // apiToken: SentryApiToken,
+        integrations: (router, Sentry, Tracing) => {
+          return [
+            new Sentry.Integrations.Http({ tracing: true }),
+            new Tracing.Integrations.Express({ router }),
+          ];
+        },
+        tracesSampleRate: 1.0,
+        // webHookOptions: {
+        //   path: "/sentry/webhook",
+        //   secret: "__YOUR_SECRET__",
+        //   emitOnIssue: true,
+        //   emitOnError: false,
+        //   emitOnComment: true,
+        //   emitOnEventOrMetricAlert: true,
+        //   emitOnInstallOrDeleted: false,
+        // }
+      },
+    },
+    ```
+    The options that are commented are `optional`. If you want to use the `webHook` options, then the
+    `apiToken` is required
+
+    You can see all the options available here: [NodeOptions](https://github.com/getsentry/sentry-javascript/blob/7304215d875decf0bf555cab82aa90fc1341b27e/packages/node/src/types.ts#L30)
+
+    And here are the plugin configuration typings to help you see what is available
+    ```typescript
+    // Web hook options
+    export type SentryWebHookOptions = {
+        path: string;
+        secret: string;
+        emitOnIssue?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+        emitOnError?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+        emitOnComment?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+        emitOnEventOrMetricAlert?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+        emitOnInstallOrDeleted?: boolean | ((container: unknown, data: SentryWebHookData) => Promise<void>);
+    };
+
+    // Sentry options at the top level
+    export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
+        integrations: Integration[] | ((router: Router, sentry: typeof Sentry, tracing: typeof Tracing) => Integration[]);
+        requestHandlerOptions?: RequestHandlerOptions;
+        enableRequestHandler?: boolean;
+        enableTracing?: boolean;
+        webHookOptions?: SentryWebHookOptions,
+    };
+    ```
+</CircleStep>
+
+With this configuration, you should start to see the requests arriving to your sentry dashboard and start to
+monitor your api.

@@ -1,0 +1,38 @@
+import { Callout } from 'nextra-theme-docs'
+
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+This package comes with the support of the web hooks from sentry. It is not always useful, but in some
+cases it can be something you are looking at if you want to build a custom dashboard of some sort.
+
+### Configuration
+
+<Callout type="info" emoji="ℹ️">
+  Learn more about sentry integration [here](https://docs.sentry.io/product/integrations/integration-platform/)
+</Callout>
+
+With this plugin, you can register the `path` and `options` for the web hooks you want to make available for sentry,
+by using the [webHookOptions](/sentry/configuration). Once the web hooks are activated in your configuration, you should
+start to see the events, that are sent by sentry, arriving to your server. To handle those events,
+you can either
+- create some custom subscribers to take the appropriate actions. Follow this [documentation](https://docs.medusajs.com/advanced/backend/subscribers/overview/)
+to create your custom subscribers.
+- provide a customer function for each `emitOm*` options. The function will get the `request` as the argument and from that
+you can resolve any of your services and call it to handle the event. In that case, the even bus will not fire the corresponding event for the subscriber to handle.
+
+#### Event list
+
+Here are the events to which you can subscribe
+- `SENTRY_RECEIVED_ISSUE` = `'SentryReceivedIssue'`
+- `SENTRY_RECEIVED_ERROR` = `'SentryReceivedError'`
+- `SENTRY_RECEIVED_COMMENT` = `'SentryReceivedComment'`
+- `SENTRY_RECEIVED_EVENT_OR_METRIC_ALERT` = `'SentryReceivedEventOrMetricAlert'`
+- `SENTRY_RECEIVED_INSTALL_OR_DELETED` = `'SentryReceivedInstallOrDeleted'`
+
+The plugin export an enum that contain the above value, you can import it as follow
+```ts
+import { SentryWebHookEvent } from "medusa-plugin-sentry"
+```

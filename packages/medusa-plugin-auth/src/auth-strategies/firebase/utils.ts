@@ -5,16 +5,12 @@ import { Router } from 'express';
 import { TWENTY_FOUR_HOURS_IN_MS } from '../../types';
 import { sendTokenFactory } from '../../core/auth-callback-middleware';
 
-function firebaseCallbackMiddleware(
-	domain: 'admin' | 'store',
-	secret: string,
-	expiresIn: number,
-) {
+function firebaseCallbackMiddleware(domain: 'admin' | 'store', secret: string, expiresIn: number) {
 	return (req, res) => {
 		const sendToken = sendTokenFactory(domain, secret, expiresIn);
 		sendToken(req, res);
 		res.status(200).json({ result: 'OK' });
-	}
+	};
 }
 
 export function firebaseAuthRoutesBuilder({
@@ -24,7 +20,7 @@ export function firebaseAuthRoutesBuilder({
 	strategyName,
 	expiresIn,
 }: {
-	domain: "admin" | "store",
+	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
 	strategyName: string;
@@ -33,7 +29,10 @@ export function firebaseAuthRoutesBuilder({
 	const router = Router();
 
 	const corsOptions = {
-		origin: domain === 'admin' ? configModule.projectConfig.admin_cors.split(',') : configModule.projectConfig.store_cors.split(','),
+		origin:
+			domain === 'admin'
+				? configModule.projectConfig.admin_cors.split(',')
+				: configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
 

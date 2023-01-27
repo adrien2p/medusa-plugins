@@ -11,17 +11,17 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: FirebaseAuthOptions,
+		protected readonly strategyOptions: FirebaseAuthOptions
 	) {
 		super({
-			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken()
+			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),
 		});
 	}
 
 	async validate(token: string): Promise<null | { id: string }> {
 		const decodedToken = await auth().verifyIdToken(token);
-		
-		if(this.strategyOptions.store.verifyCallback) {
+
+		if (this.strategyOptions.store.verifyCallback) {
 			return await this.strategyOptions.store.verifyCallback(this.container, decodedToken);
 		}
 
@@ -36,12 +36,10 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
  * @param configModule
  */
 export function getFirebaseStoreAuthRouter(firebase: FirebaseAuthOptions, configModule: ConfigModule): Router {
-    return firebaseAuthRoutesBuilder(
-		{
-			domain: 'store',
-            configModule,
-            authPath: firebase.store.authPath ?? '/store/auth/firebase',
-            strategyName: FIREBASE_STORE_STRATEGY_NAME,
-		}
-	);
+	return firebaseAuthRoutesBuilder({
+		domain: 'store',
+		configModule,
+		authPath: firebase.store.authPath ?? '/store/auth/firebase',
+		strategyName: FIREBASE_STORE_STRATEGY_NAME,
+	});
 }

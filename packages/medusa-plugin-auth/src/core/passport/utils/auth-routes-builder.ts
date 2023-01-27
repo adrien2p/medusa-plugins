@@ -51,7 +51,10 @@ export function passportAuthRoutesBuilder({
 	const router = Router();
 
 	const corsOptions = {
-		origin: domain === 'admin' ? configModule.projectConfig.admin_cors.split(',') : configModule.projectConfig.store_cors.split(','),
+		origin:
+			domain === 'admin'
+				? configModule.projectConfig.admin_cors.split(',')
+				: configModule.projectConfig.store_cors.split(','),
 		credentials: true,
 	};
 

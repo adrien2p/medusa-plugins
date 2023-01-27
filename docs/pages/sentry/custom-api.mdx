@@ -1,0 +1,132 @@
+import { Callout } from 'nextra-theme-docs'
+
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-sentry.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-sentry"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+The plugin will provide you some authenticated end points if you want to get some data about your transactions and events related to the transactions.
+
+### /admin/sentry-transactions
+
+This end point allow you to retrieve all your transactions for a given period, here are the allowed query parameters
+
+```text
+- organisation    - The organisation to fetch the transactions from
+- project         - The project to fetch the transactions from
+- query           - Equation to filter the result (https://docs.sentry.io/product/sentry-basics/search/)
+- statsPeriod     - The period from when to fetch the transactions (default: 24h)
+- perPage         - The number of transaction per page
+- cursor          - The cursor to send to fetch the transactions for a given page
+```
+
+The result of this request should looks like this
+
+```json
+{
+    "data": [
+        {
+            "transaction": "POST /admin/customers/:id",
+            "id": "***",
+            "project.name": "node-express"
+        },
+        // ... 19 other items
+    ],
+    "meta": {
+        "fields": {
+            "transaction": "string",
+            "id": "string",
+            "project.name": "string"
+        },
+        "units": {
+            "transaction": null,
+            "id": null,
+            "project.name": null
+        },
+        "isMetricsData": false,
+        "tips": {
+            "query": null,
+            "columns": null
+        }
+    },
+    "next_cursor": "0:20:0",
+    "prev_cursor": "0:0:0"
+}
+```
+
+### /admin/sentry-transaction-events
+
+This end point allow you to retrieve all your transaction events for a given period, here are the allowed query parameters
+
+```markdown
+- transaction     - The transaction for which the events must be retrieved (e.g "GET /admin/users")
+- organisation    - The organisation to fetch the transactions from
+- project         - The project to fetch the transactions from
+- query           - Equation to filter the result (https://docs.sentry.io/product/sentry-basics/search/)
+- statsPeriod     - The period from when to fetch the transactions (default: 24h)
+- perPage         - The number of transaction per page
+- cursor          - The cursor to send to fetch the transactions for a given page
+```
+
+The output of that query looks like the following
+
+```json
+{
+    "data": [
+        {
+            "spans.db": 46.443939,
+            "timestamp": "2022-10-11T14:00:11+00:00",
+            "id": "***",
+            "transaction.duration": 115,
+            "spans.http": null,
+            "project.name": "node-express"
+        },
+        {
+            "spans.db": 5.561113,
+            "timestamp": "2022-10-11T13:30:43+00:00",
+            "id": "***",
+            "transaction.duration": 18,
+            "spans.http": null,
+            "project.name": "node-express"
+        }
+    ],
+    "meta": {
+        "fields": {
+            "spans.db": "duration",
+            "timestamp": "date",
+            "id": "string",
+            "transaction.duration": "duration",
+            "spans.http": "duration",
+            "project.name": "string"
+        },
+        "units": {
+            "spans.db": "millisecond",
+            "timestamp": null,
+            "id": null,
+            "transaction.duration": "millisecond",
+            "spans.http": "millisecond",
+            "project.name": null
+        },
+        "isMetricsData": false,
+        "tips": {
+            "query": null,
+            "columns": null
+        }
+    },
+    "prev_cursor": "0:0:0",
+    "next_cursor": "0:100:0"
+}
+```
+
+### /admin/sentry-transactions-stats
+
+This end point allow you to retrieve all your transaction events for a given period, here are the allowed query parameters
+
+```markdown
+- transaction     - The transaction for which the events must be retrieved (e.g "GET /admin/users")
+- organisation    - The organisation to fetch the transactions from
+- project         - The project to fetch the transactions from
+- statsPeriod     - The period from when to fetch the transactions (default: 24h)
+```
+
+The result will be an aggregation of the data for the APDEX/TPM/FAILURE_RATE

@@ -56,6 +56,15 @@ export default {
       <meta property="og:url" content={`https://medusa-plugins.vercel.app${asPath}`} />
       <meta property="og:title" content={frontMatter.title || 'Medusa plugins'} />
       <meta property="og:description" content={frontMatter.description || 'A collection of awesome plugins for medusa'} />
+      <meta property="og:image" content="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/doc-home-page.png" />
+
+      <meta name="twitter:card" content="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/doc-home-page.png" />
+      <meta property="twitter:domain" content="medusa-plugins.vercel.app" />
+      <meta property="twitter:url" content={`https://medusa-plugins.vercel.app${asPath}`} />
+      <meta name="twitter:title" content={frontMatter.title || 'Medusa plugins'} />
+      <meta name="twitter:description" content={frontMatter.description || 'A collection of awesome plugins for medusa'} />
+      <meta name="twitter:image" content="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/doc-home-page.png" />
+
       <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/adrien2p/medusa-plugins/assets/assets/medusa-plugins-logo.png" />
     </>
   },

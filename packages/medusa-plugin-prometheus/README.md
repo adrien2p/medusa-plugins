@@ -16,6 +16,10 @@
     <a href="https://github.com/sponsors/adrien2p"><img alt="sponsor" src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" height="20"/></a>
 </p>
 
+## Documentation
+
+[Medusa plugin prometheus documentation](https://medusa-plugins.vercel.app/prometheus)
+
 ## Description
 
 swagger-stats traces REST API requests and responses in Node.js Microservices, and collects statistics per API Operation. swagger-stats detects API operations based on express routes. You may also provide Swagger (Open API) specification, and swagger-stats will match API requests with API Operations defined in swagger specification.
