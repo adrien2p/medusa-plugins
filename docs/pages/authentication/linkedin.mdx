@@ -41,7 +41,7 @@ newly added plugins. To do so here are the steps
                 admin: {
                     callbackUrl:`${BACKEND_URL}/admin/auth/linkedin/cb`,
                     failureRedirect: `${ADMIN_URL}/login`,
-                    successRedirect: `${ADMIN_URLL}/`,
+                    successRedirect: `${ADMIN_URL}/`,
                     // authPath: '/admin/auth/linkedin',
                     // authCallbackPath: '/admin/auth/linkedin/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
@@ -51,7 +51,7 @@ newly added plugins. To do so here are the steps
                 },
 
                 store: {
-                    callbackUrl:`${process.env.BACKEND_URL}/store/auth/linkedin/cb`,
+                    callbackUrl:`${BACKEND_URL}/store/auth/linkedin/cb`,
                     failureRedirect: `${STORE_URL}/login`,
                     successRedirect: `${STORE_URL}/`,
                     // authPath: '/store/auth/linkedin',

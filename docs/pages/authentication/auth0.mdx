@@ -43,7 +43,7 @@ newly added plugins. To do so here are the steps
                 admin: {
                     callbackUrl:`${BACKEND_URL}/admin/auth/auth0/cb`,
                     failureRedirect: `${ADMIN_URL}/login`,
-                    successRedirect: `${ADMIN_URLL}/`,
+                    successRedirect: `${ADMIN_URL}/`,
                     // authPath: '/admin/auth/auth0',
                     // authCallbackPath: '/admin/auth/auth0/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
@@ -53,7 +53,7 @@ newly added plugins. To do so here are the steps
                 },
 
                 store: {
-                    callbackUrl:`${process.env.BACKEND_URL}/store/auth/auth0/cb`,
+                    callbackUrl:`${BACKEND_URL}/store/auth/auth0/cb`,
                     failureRedirect: `${STORE_URL}/login`,
                     successRedirect: `${STORE_URL}/`,
                     // authPath: '/store/auth/auth0',
