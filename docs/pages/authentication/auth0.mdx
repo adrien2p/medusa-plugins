@@ -79,18 +79,15 @@ newly added plugins. To do so here are the steps
 The default `verifyCallback` flow looks as follow,
 - for the `admin`
     - if the user trying to authenticate exists
-        - then we are looking in the metadata to find if any other external authentication methods have been used.
-          If none are found, then the user gets authenticated and can proceed and the metadata gets updated.
-          In the case another external authentication method have been used in the past, then an unauthorized
-          will be returned. If you want to allow a user to use multiple external authentication methods, you can
-          update his metadata
+        - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
+          - If it is not, the user authentication gets rejected.
+          - In the case it is present, then the user authentication gets authorized.
    - if the user trying to authenticate does not exist, an unauthorized error will be returned
 - for the `store`
     - if the customer trying to authenticate exists
-        - then we are looking in the metadata to find if any other external authentication methods have been used.
-          If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
-          In the case another external authentication method have been used in the past, then an unauthorized
-          will be returned. If you want to allow a customer to use multiple external authentication methods, you can
-          update his metadata
+        - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
+          - If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
+          - In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned.
    - if the customer trying to authenticate does not exist, a new customer will be created and the authentication
      flow follow the previous point
