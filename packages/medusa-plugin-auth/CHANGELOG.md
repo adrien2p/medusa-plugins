@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.3.1...medusa-plugin-auth@1.4.0) (2023-02-17)
+
+
+### Features
+
+* Add support for dynamic success redirect url through a query param ([1d16fc1](https://github.com/adrien2p/medusa-plugins/commit/1d16fc113ea4b3a842b86be9d78fde42b85a8c8d))
+
+
+
+
+
 ## [1.3.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.3.0...medusa-plugin-auth@1.3.1) (2023-01-27)
 
 
