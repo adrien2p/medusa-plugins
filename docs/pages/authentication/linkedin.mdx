@@ -42,9 +42,10 @@ newly added plugins. To do so here are the steps
                     callbackUrl:`${BACKEND_URL}/admin/auth/linkedin/cb`,
                     failureRedirect: `${ADMIN_URL}/login`,
 
-										// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url`
-										// This query param will have the priority over this configuration
+					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+					// This query param will have the priority over this configuration
                     successRedirect: `${ADMIN_URL}/`,
+
                     // authPath: '/admin/auth/linkedin',
                     // authCallbackPath: '/admin/auth/linkedin/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
@@ -57,9 +58,10 @@ newly added plugins. To do so here are the steps
                     callbackUrl:`${BACKEND_URL}/store/auth/linkedin/cb`,
                     failureRedirect: `${STORE_URL}/login`,
 
-										// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url`
-										// This query param will have the priority over this configuration
+					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+					// This query param will have the priority over this configuration
                     successRedirect: `${STORE_URL}/`,
+
                     // authPath: '/store/auth/linkedin',
                     // authCallbackPath: '/store/auth/linkedin/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
