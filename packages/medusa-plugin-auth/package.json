@@ -46,7 +46,7 @@
   },
   "peerDependencies": {
     "@medusajs/medusa": "^1.7.0",
-    "passport": "0.4.0",
+    "passport": "^0.4.1",
     "typeorm": "^0.2.45"
   },
   "devDependencies": {
@@ -54,7 +54,7 @@
     "@types/express": "^4.17.14",
     "@types/jest": "^29.1.2",
     "jest": "^29.1.2",
-    "passport": "0.4.0",
+    "passport": "^0.4.1",
     "ts-jest": "^29.0.3",
     "ts-node": "^8.6.2",
     "typeorm": "^0.2.45"

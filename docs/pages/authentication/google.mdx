@@ -41,6 +41,9 @@ newly added plugins. To do so here are the steps
                 admin: {
                     callbackUrl:`${BACKEND_URL}/admin/auth/google/cb`,
                     failureRedirect: `${ADMIN_URL}/login`,
+
+										// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url`
+										// This query param will have the priority over this configuration
                     successRedirect: `${ADMIN_URL}/`,
                     // authPath: '/admin/auth/google',
                     // authCallbackPath: '/admin/auth/google/cb',
@@ -53,6 +56,9 @@ newly added plugins. To do so here are the steps
                 store: {
                     callbackUrl:`${BACKEND_URL}/store/auth/google/cb`,
                     failureRedirect: `${STORE_URL}/login`,
+
+										// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url`
+										// This query param will have the priority over this configuration
                     successRedirect: `${STORE_URL}/`,
                     // authPath: '/store/auth/google',
                     // authCallbackPath: '/store/auth/google/cb',

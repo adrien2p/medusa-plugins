@@ -6,18 +6,18 @@ import jwt from 'jsonwebtoken';
  * @param domain
  * @param secret
  * @param expiresIn
- * @param successRedirect
+ * @param successRedirectGetter
  */
 export function authCallbackMiddleware(
 	domain: 'admin' | 'store',
 	secret: string,
 	expiresIn: number,
-	successRedirect: string
+	successRedirectGetter: () => string
 ) {
 	return (req, res) => {
 		const sendToken = sendTokenFactory(domain, secret, expiresIn);
 		sendToken(req, res);
-		res.redirect(successRedirect);
+		res.redirect(successRedirectGetter());
 	};
 }
 

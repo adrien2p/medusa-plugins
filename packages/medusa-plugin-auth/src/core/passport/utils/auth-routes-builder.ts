@@ -50,6 +50,8 @@ export function passportAuthRoutesBuilder({
 }): Router {
 	const router = Router();
 
+	const originalSuccessRedirect = successRedirect
+
 	const corsOptions = {
 		origin:
 			domain === 'admin'
@@ -59,10 +61,15 @@ export function passportAuthRoutesBuilder({
 	};
 
 	router.get(authPath, cors(corsOptions));
-	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
+	/* necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get */
 	router.options(authPath, cors(corsOptions));
 	router.get(
 		authPath,
+		(req, res, next) => {
+			// Allow to override the successRedirect by passing a query param `?redirectTo=your_url`
+			successRedirect = (req.query.redirectTo ? req.query.redirectTo : originalSuccessRedirect) as string
+			next()
+		},
 		passport.authenticate(strategyName, {
 			...passportAuthenticateMiddlewareOptions,
 			session: false,
@@ -73,7 +80,7 @@ export function passportAuthRoutesBuilder({
 		domain,
 		configModule.projectConfig.jwt_secret,
 		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-		successRedirect
+		() => successRedirect
 	);
 
 	router.get(authCallbackPath, cors(corsOptions));
