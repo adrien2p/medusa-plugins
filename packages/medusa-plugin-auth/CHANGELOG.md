@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.2...medusa-plugin-auth@1.4.3) (2023-03-03)
+
+
+### Bug Fixes
+
+* google auth route builder ([#60](https://github.com/adrien2p/medusa-plugins/issues/60)) ([f0d678a](https://github.com/adrien2p/medusa-plugins/commit/f0d678aaa1e3e605513943c7fa24cb9f1eb57770))
+
+
+
+
+
 ## [1.4.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.0...medusa-plugin-auth@1.4.2) (2023-02-17)
 
 **Note:** Version bump only for package medusa-plugin-auth
