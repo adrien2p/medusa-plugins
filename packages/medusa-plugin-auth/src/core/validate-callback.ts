@@ -20,6 +20,7 @@ export async function validateAdminCallback<
 		strategyErrorIdentifier,
 	}: { container: MedusaContainer; strategyErrorIdentifier: StrategyErrorIdentifierType }
 ): Promise<{ id: string } | never> {
+  console.log('validateAdminCallback', profile, strategyErrorIdentifier);
 	const userService: UserService = container.resolve('userService');
 	const email = profile.emails?.[0]?.value;
 
@@ -61,7 +62,9 @@ export async function validateStoreCallback<
 		strategyErrorIdentifier,
 	}: { container: MedusaContainer; strategyErrorIdentifier: StrategyErrorIdentifierType }
 ): Promise<{ id: string } | never> {
-	const manager: EntityManager = container.resolve('manager');
+  console.log('validateStoreCallback', profile, strategyErrorIdentifier);
+
+  const manager: EntityManager = container.resolve('manager');
 	const customerService: CustomerService = container.resolve('customerService');
 
 	return await manager.transaction(async (transactionManager) => {

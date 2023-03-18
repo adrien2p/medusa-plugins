@@ -48,6 +48,8 @@ export function passportAuthRoutesBuilder({
 	successRedirect: string;
 	authCallbackPath: string;
 }): Router {
+
+  console.log('AuthRoutesBuilder', authPath);
 	const router = Router();
 
 	const originalSuccessRedirect = successRedirect

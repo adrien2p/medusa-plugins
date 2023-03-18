@@ -70,7 +70,8 @@
     "passport-facebook": "^3.0.0",
     "passport-firebase-jwt": "^1.2.1",
     "passport-google-oauth2": "^0.2.0",
-    "passport-linkedin-oauth2": "^2.0.0"
+    "passport-linkedin-oauth2": "^2.0.0",
+    "passport-oauth2": "^1.7.0"
   },
   "jest": {
     "preset": "ts-jest",

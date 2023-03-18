@@ -15,6 +15,7 @@ export function authCallbackMiddleware(
 	successRedirectGetter: () => string
 ) {
 	return (req, res) => {
+    console.log('authCallbackMiddleware', req.user);
 		const sendToken = sendTokenFactory(domain, secret, expiresIn);
 		sendToken(req, res);
 		res.redirect(successRedirectGetter());
@@ -23,7 +24,8 @@ export function authCallbackMiddleware(
 
 export function sendTokenFactory(domain: 'admin' | 'store', secret: string, expiresIn: number) {
 	return (req, res) => {
-		const tokenData =
+    console.log('sendTokenFactory', req.user);
+    const tokenData =
 			domain === 'admin' ? { userId: req.user.id, ...req.user } : { customer_id: req.user.id, ...req.user };
 		const token = jwt.sign(tokenData, secret, { expiresIn });
 		const sessionKey = domain === 'admin' ? 'jwt' : 'jwt_store';
