@@ -21,21 +21,21 @@
 
 ## Description
 
-Thie spackage provides a set of component to have a sentry dashboard right into your admin
-and be able to get an overview of what is happening without having to leave your admin.
+This package provides a set of components to have a Sentry dashboard right within your admin interface, allowing you to get an overview of what is happening without needing to leave your admin panel.
 
-JavaScript Error and Performance Monitoring
-Resolve JavaScript errors with max efficiency, not max effort. Get actionable insights to resolve JavaScript performance issues with the ability to track, debug, and resolve JavaScript errors across platforms.
+It also provides JavaScript error and performance monitoring, helping you resolve JavaScript errors with maximum efficiency rather than maximum effort. You can obtain actionable insights to resolve JavaScript performance issues and track, debug, and fix JavaScript errors across different platforms.
 
 ## Getting started
 
 > ### Requirements
-> Your server need to have installed `medusa-plugin-sentry` before being able to use that library
-> as the data are comsumed from that plugin.
+> To use this library, the `medusa-plugin-sentry` needs to be installed on your server
+> as it is responsible for providing the necessary data.
 
-First of all, you need to install the plugin as follow `yarn add medusa-plugnin-sentry-ui`
+First of all, you need to install the plugin as follows: `yarn add medusa-plugin-sentry-ui`
 
-For the simple uasge you can open the file `src/pages/a.js` and add the following component above the `Routes` component
+To set up the Sentry dashboard in your Medusa admin interface, follow these steps:
+
+Open the `src/pages/a.js` file and add the following component above the `Routes`:
 ```javascript
 import { medusaUrl } from "../services/config"
 import { Sentry } from "medusa-plugin-sentry-ui"
@@ -52,14 +52,16 @@ const SentryRoute = () => {
   )
 }
 ```
+> **Note**
+> Be sure to replace `YOUR_ORGA_ON_SENTRY` and `YOUR_PROJECT_ON_SENTRY` with the corresponding values for your Sentry account and project
 
-The in the `Routes` component you can add the following content just bellow the other routes
+
+Next, add the following code to the `Routes` component, below the other routes:
 ```javascript
 <SentryRoute path="sentry/*"/>
 ```
 
-Finally, to add an access to your page, you can go to `src/components/organisms/sidebar/index.tsx`
-and add a new item in the component just like the following one
+Finally, to add a link to the Sentry dashboard in the sidebar menu, go to `src/components/organisms/sidebar/index.tsx` and add the following menu item:
 ```javascript
 <SidebarMenuItem
     pageLink={"/a/sentry"}
