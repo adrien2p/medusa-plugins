@@ -14,7 +14,7 @@ It also provides JavaScript error and performance monitoring, helping you resolv
 First of all, you need to install the plugin as follows: `yarn add medusa-plugin-sentry-ui`
 
 To set up the Sentry dashboard in your Medusa admin interface, follow these steps:
-
+<CircleStep index={1}>
 Open the `src/pages/a.js` file and add the following component above the `Routes`:
 ```javascript
 import { medusaUrl } from "../services/config"
@@ -34,13 +34,15 @@ const SentryRoute = () => {
 ```
 > **Note**
 > Be sure to replace `YOUR_ORGA_ON_SENTRY` and `YOUR_PROJECT_ON_SENTRY` with the corresponding values for your Sentry account and project
+</CircleStep>
 
-
+<CircleStep index={2}>
 Next, add the following code to the `Routes` component, below the other routes:
 ```javascript
 <SentryRoute path="sentry/*"/>
 ```
-
+</CircleStep> 
+<CircleStep index={3}>
 Finally, to add a link to the Sentry dashboard in the sidebar menu, go to `src/components/organisms/sidebar/index.tsx` and add the following menu item:
 ```javascript
 <SidebarMenuItem
@@ -49,6 +51,7 @@ Finally, to add a link to the Sentry dashboard in the sidebar menu, go to `src/c
     triggerHandler={triggerHandler}
     text={"Sentry"}
 />
+  </CircleStep> 
 ```
 
 You should now be able to start your admin and go to your page to see your sentry dashboard :rocket:
