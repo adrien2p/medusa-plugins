@@ -1,3 +1,5 @@
+import { Callout } from 'nextra-theme-docs'
+import { Tab, Tabs } from 'nextra-theme-docs'
 
 ## Description
 
@@ -11,7 +13,20 @@ It also provides JavaScript error and performance monitoring, helping you resolv
 > To use this library, the `medusa-plugin-sentry` needs to be installed on your server
 > as it is responsible for providing the necessary data.
 
-First of all, you need to install the plugin as follows: `yarn add medusa-plugin-sentry-ui`
+First of all, you need to install the plugin as follows:
+
+<Tabs items={['npm', 'yarn']}>
+  <Tab>
+    ```shell
+    npm install medusa-plugin-sentry-ui
+    ```
+  </Tab>
+  <Tab>
+    ```shell
+    yarn add medusa-plugin-sentry-ui
+    ```
+  </Tab>
+</Tabs>
 
 To set up the Sentry dashboard in your Medusa admin interface, follow these steps:
 <CircleStep index={1}>
@@ -32,8 +47,10 @@ const SentryRoute = () => {
   )
 }
 ```
-> **Note**
-> Be sure to replace `YOUR_ORGA_ON_SENTRY` and `YOUR_PROJECT_ON_SENTRY` with the corresponding values for your Sentry account and project
+
+<Callout type="info" emoji="ℹ️">
+  Be sure to replace `YOUR_ORGA_ON_SENTRY` and `YOUR_PROJECT_ON_SENTRY` with the corresponding values for your Sentry account and project
+</Callout>
 </CircleStep>
 
 <CircleStep index={2}>
@@ -53,4 +70,4 @@ Finally, to add a link to the Sentry dashboard in the sidebar menu, go to `src/c
 />
 ```
 </CircleStep> 
-You should now be able to start your admin and go to your page to see your sentry dashboard :rocket:
+You can now launch your admin and navigate to the page to view your Sentry dashboard in action! 🚀

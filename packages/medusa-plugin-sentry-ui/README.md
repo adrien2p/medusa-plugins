@@ -71,4 +71,4 @@ Finally, to add a link to the Sentry dashboard in the sidebar menu, go to `src/c
 />
 ```
 
-You should now be able to start your admin and go to your page to see your sentry dashboard :rocket:
+You can now launch your admin and navigate to the page to view your Sentry dashboard in action! 🚀
