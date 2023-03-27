@@ -1,5 +1,6 @@
 {
   "configuration": "Configuration",
   "web-hooks": "Web hooks",
-  "custom-api": "Custom api end points"
+  "custom-api": "Custom api end points",
+  "sentry-ui": "Admin UI"
 }
