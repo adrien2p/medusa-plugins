@@ -66,6 +66,10 @@ export type AzureAuthOption = {
 	 * Required if you want to provide the issuer(s) you want to validate instead of using the issuer from metadata
 	 */
 	issuer?: string;
+	/**
+	 * Default []
+	 */
+	scope?: string[]
 	successRedirect: string;
 	failureRedirect: string;
 	/**

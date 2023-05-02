@@ -59,7 +59,7 @@ export function getAzureStoreAuthRouter(azure: AzureAuthOptions, configModule: C
 		successRedirect: azure.store.successRedirect,
 		strategyName: AZURE_STORE_STRATEGY_NAME,
 		passportAuthenticateMiddlewareOptions: {
-			scope: [],
+			scope: azure.store.scope ?? [],
 		},
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: azure.store.failureRedirect,
