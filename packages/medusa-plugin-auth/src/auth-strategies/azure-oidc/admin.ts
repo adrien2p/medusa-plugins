@@ -59,7 +59,7 @@ export function getAzureAdminAuthRouter(azure: AzureAuthOptions, configModule: C
 		successRedirect: azure.admin.successRedirect,
 		strategyName: AZURE_ADMIN_STRATEGY_NAME,
 		passportAuthenticateMiddlewareOptions: {
-			scope: azure.store.scope ?? [],
+			scope: azure.admin.scope ?? [],
 		},
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: azure.admin.failureRedirect,
