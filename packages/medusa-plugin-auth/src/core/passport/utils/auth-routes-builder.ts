@@ -50,7 +50,7 @@ export function passportAuthRoutesBuilder({
 }): Router {
 	const router = Router();
 
-	const originalSuccessRedirect = successRedirect
+	const originalSuccessRedirect = successRedirect;
 
 	const corsOptions = {
 		origin:
@@ -67,8 +67,8 @@ export function passportAuthRoutesBuilder({
 		authPath,
 		(req, res, next) => {
 			// Allow to override the successRedirect by passing a query param `?redirectTo=your_url`
-			successRedirect = (req.query.redirectTo ? req.query.redirectTo : originalSuccessRedirect) as string
-			next()
+			successRedirect = (req.query.redirectTo ? req.query.redirectTo : originalSuccessRedirect) as string;
+			next();
 		},
 		passport.authenticate(strategyName, {
 			...passportAuthenticateMiddlewareOptions,

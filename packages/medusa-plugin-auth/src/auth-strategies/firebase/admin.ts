@@ -1,4 +1,3 @@
-import passport from 'passport';
 import { ExtractJwt, Strategy as FirebaseStrategy } from 'passport-firebase-jwt';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';

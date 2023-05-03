@@ -1,6 +1,6 @@
 import { Auth0StoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions, AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
 import { Auth0Options, AUTH0_STORE_STRATEGY_NAME, Profile, ExtraParams } from '../../types';
 
 describe('Auth0 store strategy verify callback', function () {
