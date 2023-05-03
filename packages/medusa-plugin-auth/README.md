@@ -37,6 +37,7 @@ First of all, you need to install the plugin as follow `yarn add medusa-plugin-a
 - [Firebase](#firebase)
 - [Github](#github)
 - [Microsoft](#microsoft)
+- [Azure AD OIDC](#azure)
 
 ### Google
 
@@ -55,7 +56,10 @@ First of all, you need to install the plugin as follow `yarn add medusa-plugin-a
 
 [Documentation here](https://medusa-plugins.vercel.app/authentication/auth0)
 
-
 ### Firebase
 
 [Documentation here](https://medusa-plugins.vercel.app/authentication/firebase)
+
+### Azure AD OIDC
+
+[Documentation here](https://medusa-plugins.vercel.app/authentication/azureoidc)
