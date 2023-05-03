@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.4](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry-ui@0.2.3...medusa-plugin-sentry-ui@0.2.4) (2023-05-03)
+
+**Note:** Version bump only for package medusa-plugin-sentry-ui
+
+
+
+
+
 ## [0.2.3](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry-ui@0.2.2...medusa-plugin-sentry-ui@0.2.3) (2023-01-27)
 
 **Note:** Version bump only for package medusa-plugin-sentry-ui

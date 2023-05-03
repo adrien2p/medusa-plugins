@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-auth",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Social authentication plugin for medusajs",
   "keywords": [
     "social",
