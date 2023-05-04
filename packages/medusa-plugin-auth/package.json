@@ -67,6 +67,7 @@
     "firebase-admin": "^11.4.1",
     "jsonwebtoken": "^8.5.1",
     "passport-auth0": "^1.4.3",
+    "passport-azure-ad": "^4.3.5",
     "passport-facebook": "^3.0.0",
     "passport-firebase-jwt": "^1.2.1",
     "passport-google-oauth2": "^0.2.0",

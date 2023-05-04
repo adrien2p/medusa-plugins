@@ -3,5 +3,6 @@
   "facebook": "Facebook",
   "linkedin": "Linkedin",
   "auth0": "Auth0",
-  "firebase": "Firebase"
+  "firebase": "Firebase",
+  "azureoidc": "Azure AD"
 }

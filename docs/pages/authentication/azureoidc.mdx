@@ -1,0 +1,132 @@
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-auth.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+### Configuration
+
+In order to be able to use the **Azure AD OIDC** authentication provider, you have to add the configuration to your
+newly added plugins. To do so here are the steps
+
+<CircleStep index={1}>
+    Create an **Azure AD app registration**, see https://learn.microsoft.com/en-us/power-apps/developer/data-platform/walkthrough-register-app-azure-active-directory
+	It should have API permissions for User.Read - "Sign in and read user profile"
+</CircleStep>
+
+<CircleStep index={2}>
+    Go to your `medusa-config.js`
+</CircleStep>
+
+<CircleStep index={3}>
+    Check that the variables are set with the appropriate values
+
+    ```js
+    const BACKEND_URL = process.env.BACKEND_URL || "localhost:9000"
+    const ADMIN_URL = process.env.ADMIN_URL || "localhost:7000"
+    const STORE_URL = process.env.STORE_URL || "localhost:8000"
+
+	const AzureIdentityMetadata = process.env.AZURE_IDENTITY_METADATA || "https://login.microsoftonline.com/<YOUR AZURE TENANT ID>/.well-known/openid-configuration" 
+	const AzureClientId = process.env.AZURE_CLIENT_ID || "<YOUR APP REGISTRATIONS CLIENT ID>"
+	const AzureClientSecret = process.env.AZURE_CLIENT_SECRET || "<YOUR APP REGISTRATIONS CLIENT SECRET>"
+    ```
+
+    Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
+    just add the `azure_oidc` options to your auth plugin options
+    ```js
+    {
+        resolve: "medusa-plugin-auth",
+        options: {
+            azure_oidc: {
+                admin: {
+					identityMetadata: AzureIdentityMetadata,
+					clientID: AzureClientId,
+					clientSecret: AzureClientSecret,
+					allowHttpForRedirectUrl: true, //localhost only!
+					callbackUrl:`${BACKEND_URL}/admin/auth/azure/cb`,
+					failureRedirect: `${ADMIN_URL}/login`,
+
+					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+					// This query param will have the priority over this configuration
+					successRedirect: `${ADMIN_URL}/`,
+
+					// responseType: ResposeType.Code
+					// responseMode: ResponseMode.Query
+					// allowHttpForRedirectUrl: false
+					// validateIssuer: true
+					// isB2C: false
+					// issuer: null
+					// authPath: '/admin/auth/azure',
+					// authCallbackPath: '/admin/auth/azure/cb',
+					// expiresIn: 24 * 60 * 60 * 1000,
+					// verifyCallback: (container, req, profile) => {
+					//    // implement your custom verify callback here if you need it
+					// }
+				},
+
+                store: {
+					identityMetadata: AzureIdentityMetadata,
+					clientID: AzureClientId,
+					clientSecret: AzureClientSecret,
+					allowHttpForRedirectUrl: true, //localhost only!
+					callbackUrl:`${BACKEND_URL}/store/auth/azure/cb`,
+					failureRedirect: `${STORE_URL}/login`,
+
+					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+					// This query param will have the priority over this configuration
+					successRedirect: `${STORE_URL}/`,
+
+					// responseType: ResposeType.Code
+					// responseMode: ResponseMode.Query
+					// allowHttpForRedirectUrl: false
+					// validateIssuer: true
+					// isB2C: false
+					// issuer: null
+					// authPath: '/store/auth/azure',
+					// authCallbackPath: '/store/auth/azure/cb',
+					// expiresIn: 24 * 60 * 60 * 1000,
+					// verifyCallback: (container, req, profile) => {
+					//    // implement your custom verify callback here if you need it
+					// }
+                }
+            }
+        }
+    }
+    ```
+    The options that are commented are `optional` and the value that you see are the default values
+</CircleStep>
+
+<CircleStep index={4}>
+    Update your client to add the authentication action
+    ```html
+    <a type="button" href=${medusa_url}/${authPath} className="text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 mr-2 mb-2">
+		<svg className="mr-2 -ml-1 w-4 h-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="azure" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 -28.5 256 256"><path d="M118.431947,187.698037 C151.322003,181.887937 178.48731,177.08008 178.799309,177.013916 L179.366585,176.893612 L148.31513,139.958881 C131.236843,119.644776 117.26369,102.945381 117.26369,102.849118 C117.26369,102.666861 149.32694,14.3716012 149.507189,14.057257 C149.567455,13.952452 171.38747,51.62411 202.400338,105.376064 C231.435152,155.699606 255.372949,197.191547 255.595444,197.580359 L255.999996,198.287301 L157.315912,198.274572 L58.6318456,198.261895 L118.431947,187.698073 L118.431947,187.698037 Z M-4.03864498e-06,176.434723 C-4.03864498e-06,176.382721 14.631291,150.983941 32.5139844,119.992969 L65.0279676,63.6457518 L102.919257,31.8473052 C123.759465,14.3581634 140.866667,0.0274832751 140.935253,0.00062917799 C141.003839,-0.0247829554 140.729691,0.665213042 140.326034,1.53468179 C139.922377,2.40415053 121.407304,42.1170321 99.1814268,89.7855264 L58.7707514,176.455514 L29.3853737,176.492355 C13.2234196,176.512639 -4.03864498e-06,176.486664 -4.03864498e-06,176.434703 L-4.03864498e-06,176.434723 Z" fill="#FFFFFF" fill-rule="nonzero"> </path></svg>
+		Sign in with Azure
+    </a>
+    ```
+    - `medusa_url` correspond to your backend server url (e.g `http://localhost:9000`)
+    - `authPath` correspond to `authPath` configuration in your plugin (e.g `admin/auth/azure`)
+</CircleStep>
+
+### Implementation Comments
+
+The implementation is made using the passport strategy [passport-azure-ad](https://www.passportjs.org/packages/passport-azure-ad/). This has an overwhelming amount of options. Read their documentation for further info on the options.
+
+It has only been tested with default options. As of now only ResponseType.Code and ResponseMode.Query is supported by the medusa-plugin-auth core. 
+
+### Default behaviour
+
+The default `verifyCallback` flow looks as follow,
+- for the `admin`
+    - if the user trying to authenticate exists
+        - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
+          - If it is not, the user authentication gets rejected.
+          - In the case it is present, then the user authentication gets authorized.
+   - if the user trying to authenticate does not exist, an unauthorized error will be returned
+- for the `store`
+    - if the customer trying to authenticate exists
+        - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
+          - If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
+          - In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned.
+   - if the customer trying to authenticate does not exist, a new customer will be created and the authentication
+     flow follow the previous point
