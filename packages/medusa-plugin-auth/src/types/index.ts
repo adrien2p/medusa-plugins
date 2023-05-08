@@ -21,6 +21,7 @@ import { AzureAuthOptions, AZURE_ADMIN_STRATEGY_NAME, AZURE_STORE_STRATEGY_NAME 
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 export const AUTH_PROVIDER_KEY = 'authProvider';
+export const EMAIL_VERIFIED_KEY = 'emailVerified';
 
 export const TWENTY_FOUR_HOURS_IN_MS = 24 * 60 * 60 * 1000;
 
