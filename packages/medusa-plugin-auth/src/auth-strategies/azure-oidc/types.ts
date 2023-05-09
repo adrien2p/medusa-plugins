@@ -14,22 +14,22 @@ export enum ResponseType {
 
 export enum ResponseMode {
 	FormPost = 'form_post',
-	Query = 'query'
+	Query = 'query',
 }
 
 export type AzureAuthOption = {
 	/**
-	 * Required  
+	 * Required
 	 * 'https://login.microsoftonline.com/<tenant_name>/.well-known/openid-configuration'
 	 * or equivalently: 'https://login.microsoftonline.com/<tenant_guid>/.well-known/openid-configuration'
 	 *
-  	 * or you can use the common endpoint
-  	 * 'https://login.microsoftonline.com/common/.well-known/openid-configuration'
-   	 * To use the common endpoint, you have to either set `validateIssuer` to false, or provide the `issuer` value.
+	 * or you can use the common endpoint
+	 * 'https://login.microsoftonline.com/common/.well-known/openid-configuration'
+	 * To use the common endpoint, you have to either set `validateIssuer` to false, or provide the `issuer` value.
 	 */
 	identityMetadata: string;
 	/**
-	 * Required 
+	 * Required
 	 * the client ID of your app in AAD
 	 */
 	clientID: string;
@@ -69,7 +69,7 @@ export type AzureAuthOption = {
 	/**
 	 * Default []
 	 */
-	scope?: string[]
+	scope?: string[];
 	successRedirect: string;
 	failureRedirect: string;
 	/**
@@ -87,16 +87,12 @@ export type AzureAuthOption = {
 	/**
 	 * The default verify callback function will be used if this configuration is not specified
 	 */
-	verifyCallback?: (
-		container: MedusaContainer,
-		req: Request,
-		profile: any,
-	) => Promise<null | { id: string } | never>;
+	verifyCallback?: (container: MedusaContainer, req: Request, profile: any) => Promise<null | { id: string } | never>;
 
 	expiresIn?: number;
-}
+};
 
 export type AzureAuthOptions = {
-	admin?: AzureAuthOption
-	store?: AzureAuthOption
+	admin?: AzureAuthOption;
+	store?: AzureAuthOption;
 };
