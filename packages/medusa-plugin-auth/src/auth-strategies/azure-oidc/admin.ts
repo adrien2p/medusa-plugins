@@ -26,7 +26,6 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 			passReqToCallback: true,
 		});
 	}
-
 	async validate(req: Request, profile: any, done?: Function): Promise<null | { id: string }> {
 		if (this.strategyOptions.admin.verifyCallback) {
 			return await this.strategyOptions.admin.verifyCallback(this.container, req, profile);

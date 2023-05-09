@@ -26,7 +26,6 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 			passReqToCallback: true,
 		});
 	}
-
 	async validate(req: Request, profile: any, done?: Function): Promise<null | { id: string }> {
 		if (this.strategyOptions.store.verifyCallback) {
 			return await this.strategyOptions.store.verifyCallback(this.container, req, profile);
