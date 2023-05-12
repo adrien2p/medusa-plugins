@@ -1,7 +1,7 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AzureStoreStrategy } from '../../store';
 import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
-import { AzureAuthOptions, AZURE_STORE_STRATEGY_NAME, Profile } from '../../types';
+import { AzureAuthOptions, AZURE_STORE_STRATEGY_NAME } from '../../types';
 
 describe('Google store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -11,8 +11,6 @@ describe('Google store strategy verify callback', function () {
 
 	let container: MedusaContainer;
 	let req: Request;
-	let accessToken: string;
-	let refreshToken: string;
 	let profile: { upn: string; name?: { givenName?: string; familyName?: string } };
 	let azureStoreStrategy: AzureStoreStrategy;
 	let updateFn;
@@ -92,7 +90,17 @@ describe('Google store strategy verify callback', function () {
 		azureStoreStrategy = new AzureStoreStrategy(
 			container,
 			{} as ConfigModule,
-			{ store: { identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration', clientID: 'fake', clientSecret: 'fake', successRedirect: '/admin/auth/azure', failureRedirect: 'http://localhost:9000/app/login', callbackUrl: 'http://localhost:9000/admin/auth/azure/cb', allowHttpForRedirectUrl: true,  } } as AzureAuthOptions
+			{
+				store: {
+					identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					successRedirect: '/admin/auth/azure',
+					failureRedirect: 'http://localhost:9000/app/login',
+					callbackUrl: 'http://localhost:9000/admin/auth/azure/cb',
+					allowHttpForRedirectUrl: true,
+				},
+			} as AzureAuthOptions
 		);
 	});
 

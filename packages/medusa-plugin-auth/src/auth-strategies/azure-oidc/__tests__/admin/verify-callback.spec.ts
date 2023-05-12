@@ -10,8 +10,6 @@ describe('Azure AD admin strategy verify callback', function () {
 
 	let container: MedusaContainer;
 	let req: Request;
-	let accessToken: string;
-	let refreshToken: string;
 	let profile: { upn: string; name?: { givenName?: string; familyName?: string } };
 	let azureAdminStrategy: AzureAdminStrategy;
 
@@ -61,7 +59,17 @@ describe('Azure AD admin strategy verify callback', function () {
 		azureAdminStrategy = new AzureAdminStrategy(
 			container,
 			{} as ConfigModule,
-			{ admin: { identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration', clientID: 'fake', clientSecret: 'fake', successRedirect: '/admin/auth/azure', failureRedirect: 'http://localhost:9000/app/login', callbackUrl: 'http://localhost:9000/admin/auth/azure/cb', allowHttpForRedirectUrl: true,  } } as AzureAuthOptions
+			{
+				admin: {
+					identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					successRedirect: '/admin/auth/azure',
+					failureRedirect: 'http://localhost:9000/app/login',
+					callbackUrl: 'http://localhost:9000/admin/auth/azure/cb',
+					allowHttpForRedirectUrl: true,
+				},
+			} as AzureAuthOptions
 		);
 	});
 
