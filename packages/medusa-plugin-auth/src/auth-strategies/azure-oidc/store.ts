@@ -27,21 +27,19 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 		});
 	}
 
-	async validate(
-		req: Request,
-		profile: any,
-		done: Function
-	): Promise<null | { id: string }> {
+	async validate(req: Request, profile: any, done?: Function): Promise<null | { id: string }> {
 		if (this.strategyOptions.store.verifyCallback) {
-			return await this.strategyOptions.store.verifyCallback(
-				this.container,
-				req,
-				profile
-			);
+			return await this.strategyOptions.store.verifyCallback(this.container, req, profile);
 		}
 
-		const authprofile: Profile = { emails: [{ value: profile.upn }], name: { givenName: profile.name.givenName, familyName: profile.name.familyName } };
-		return await validateStoreCallback(authprofile, { container: this.container, strategyErrorIdentifier: 'azure_oidc' });
+		const authprofile: Profile = {
+			emails: [{ value: profile?.upn }],
+			name: { givenName: profile?.name?.givenName, familyName: profile?.name?.familyName },
+		};
+		return await validateStoreCallback(authprofile, {
+			container: this.container,
+			strategyErrorIdentifier: 'azure_oidc',
+		});
 	}
 }
 
