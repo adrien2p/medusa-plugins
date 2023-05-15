@@ -1,9 +1,14 @@
 import { CustomerService, UserService } from '@medusajs/medusa';
+import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
-import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY } from '../types';
-import { strategyNames, StrategyErrorIdentifierType } from '../types';
-import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import {
+	AUTH_PROVIDER_KEY,
+	CUSTOMER_METADATA_KEY,
+	EMAIL_VERIFIED_KEY,
+	StrategyErrorIdentifierType,
+	strategyNames,
+} from '../types';
 
 /**
  * Default validate callback used by an admin passport strategy
@@ -51,7 +56,13 @@ export async function validateAdminCallback<
  * @param container
  */
 export async function validateStoreCallback<
-	T extends { name?: { givenName?: string; familyName?: string }; emails?: { value: string }[] } = {
+	T extends {
+		name?: { givenName?: string; familyName?: string };
+		_json?: {
+			email_verified?: boolean;
+		};
+		emails?: { value: string }[];
+	} = {
 		emails?: { value: string }[];
 	}
 >(
@@ -66,6 +77,7 @@ export async function validateStoreCallback<
 
 	return await manager.transaction(async (transactionManager) => {
 		const email = profile.emails?.[0]?.value;
+		const hasEmailVerifiedField = profile._json?.email_verified !== undefined;
 
 		if (!email) {
 			throw new MedusaError(
@@ -93,6 +105,18 @@ export async function validateStoreCallback<
 			}
 
 			if (
+				hasEmailVerifiedField &&
+				customer.metadata &&
+				customer.metadata[CUSTOMER_METADATA_KEY] &&
+				!customer.metadata[EMAIL_VERIFIED_KEY]
+			) {
+				customer.metadata[EMAIL_VERIFIED_KEY] = profile._json.email_verified;
+				await customerService.withTransaction(transactionManager).update(customer.id, {
+					metadata: customer.metadata,
+				});
+			}
+
+			if (
 				!customer.metadata ||
 				!customer.metadata[CUSTOMER_METADATA_KEY] ||
 				customer.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].store
@@ -108,6 +132,7 @@ export async function validateStoreCallback<
 			metadata: {
 				[CUSTOMER_METADATA_KEY]: true,
 				[AUTH_PROVIDER_KEY]: strategyNames[strategyErrorIdentifier].store,
+				[EMAIL_VERIFIED_KEY]: hasEmailVerifiedField ? profile._json.email_verified : false,
 			},
 			first_name: profile.name?.givenName ?? '',
 			last_name: profile.name?.familyName ?? '',
