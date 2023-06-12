@@ -1,0 +1,79 @@
+{
+  "name": "medusa-events-typeorm",
+  "version": "1.0.0",
+  "description": "TypeORM Listener and Subscriber for MedusaJS",
+  "keywords": [
+    "medusajs",
+    "typeorm",
+    "subscriber",
+    "listener",
+    "event"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrien2p/medusa-plugins.git"
+  },
+  "author": "Juan Zapata Gomez <juanzgc@bu.edu",
+  "files": [
+    "api",
+    "utils",
+    "core",
+    "types",
+    "loaders",
+    "auth-strategies"
+  ],
+  "scripts": {
+    "build": "run-s clean build:tsc",
+    "build:tsc:watch": "tsc --build ./tsconfig.json --watch",
+    "build:tsc": "tsc -b",
+    "clean": "rimraf api services utils types loaders auth-strategies coverage tsconfig.tsbuildinfo",
+    "test": "jest",
+    "test:ci": "yarn add -D @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
+  },
+  "peerDependencies": {
+    "@medusajs/medusa": "^1.12.0",
+    "typeorm": "^0.3.16",
+    "awilix": "^8.0.0"
+  },
+  "devDependencies": {
+    "@medusajs/medusa": "^1.12.0",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.1.2",
+    "jest": "^29.1.2",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^8.6.2",
+    "typeorm": "^0.3.16"
+  },
+  "dependencies": {
+    "@types/node": "^18.11.10"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "testTimeout": 100000,
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "collectCoverageFrom": [
+      "**/*.(t|j)s",
+      "!**/__*__/*.(t|j)s"
+    ],
+    "coverageReporters": [
+      "json-summary",
+      "text",
+      "lcov"
+    ],
+    "coverageDirectory": "<rootDir>/../coverage",
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/../setup-tests.js"
+    ]
+  }
+}
