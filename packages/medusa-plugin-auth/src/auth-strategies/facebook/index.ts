@@ -11,11 +11,17 @@ export * from './types';
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
 		if (options.facebook?.admin) {
-			new FacebookAdminStrategy(container, configModule, options.facebook);
+			new FacebookAdminStrategy(container, configModule, options.facebook, {
+				admin_strict: options.admin_strict,
+				strict: options.strict,
+			});
 		}
 
 		if (options.facebook?.store) {
-			new FacebookStoreStrategy(container, configModule, options.facebook);
+			new FacebookStoreStrategy(container, configModule, options.facebook, {
+				store_strict: options.store_strict,
+				strict: options.strict,
+			});
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {

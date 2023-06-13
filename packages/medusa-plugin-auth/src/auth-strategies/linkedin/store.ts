@@ -10,7 +10,8 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: LinkedinAuthOptions
+		protected readonly strategyOptions: LinkedinAuthOptions,
+		protected readonly strictOptions: { store_strict: boolean; strict: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -37,7 +38,12 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 				profile
 			);
 		}
-		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'linkedin' });
+
+		return await validateStoreCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'linkedin',
+			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
+		});
 	}
 }
 

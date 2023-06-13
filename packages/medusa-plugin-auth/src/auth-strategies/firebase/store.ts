@@ -11,7 +11,8 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: FirebaseAuthOptions
+		protected readonly strategyOptions: FirebaseAuthOptions,
+		protected readonly strictOptions: { store_strict: boolean; strict: boolean }
 	) {
 		super({
 			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -26,7 +27,11 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
 		}
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
-		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'firebase' });
+		return await validateStoreCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'firebase',
+			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
+		});
 	}
 }
 

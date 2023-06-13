@@ -10,7 +10,8 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: AzureAuthOptions
+		protected readonly strategyOptions: AzureAuthOptions,
+		protected readonly strictOptions: { admin_strict: boolean; strict: boolean }
 	) {
 		super({
 			identityMetadata: strategyOptions.admin.identityMetadata,
@@ -36,9 +37,11 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 			emails: [{ value: profile?.upn }],
 			name: { givenName: profile?.name?.givenName, familyName: profile?.name?.familyName },
 		};
+
 		return await validateAdminCallback(authprofile, {
 			container: this.container,
 			strategyErrorIdentifier: 'azure_oidc',
+			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
 		});
 	}
 }

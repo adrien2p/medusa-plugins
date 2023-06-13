@@ -11,11 +11,17 @@ export * from './types';
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
 		if (options.auth0?.admin) {
-			new Auth0AdminStrategy(container, configModule, options.auth0);
+			new Auth0AdminStrategy(container, configModule, options.auth0, {
+				admin_strict: options.admin_strict,
+				strict: options.strict,
+			});
 		}
 
 		if (options.auth0?.store) {
-			new Auth0StoreStrategy(container, configModule, options.auth0);
+			new Auth0StoreStrategy(container, configModule, options.auth0, {
+				store_strict: options.store_strict,
+				strict: options.strict,
+			});
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {

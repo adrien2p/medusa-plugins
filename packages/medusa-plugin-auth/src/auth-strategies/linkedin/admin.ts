@@ -10,7 +10,8 @@ export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LI
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: LinkedinAuthOptions
+		protected readonly strategyOptions: LinkedinAuthOptions,
+		protected readonly strictOptions: { admin_strict: boolean; strict: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -38,7 +39,11 @@ export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LI
 			);
 		}
 
-		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'linkedin' });
+		return await validateAdminCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'linkedin',
+			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
+		});
 	}
 }
 

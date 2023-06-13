@@ -10,7 +10,8 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: FacebookAuthOptions
+		protected readonly strategyOptions: FacebookAuthOptions,
+		protected readonly strictOptions: { admin_strict: boolean; strict: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -36,7 +37,12 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'facebook' });
+
+		return await validateAdminCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'facebook',
+			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
+		});
 	}
 }
 

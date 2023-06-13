@@ -10,7 +10,8 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: GoogleAuthOptions
+		protected readonly strategyOptions: GoogleAuthOptions,
+		protected readonly strictOptions: { store_strict: boolean; strict: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -35,7 +36,12 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 				profile
 			);
 		}
-		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'google' });
+
+		return await validateStoreCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'google',
+			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
+		});
 	}
 }
 

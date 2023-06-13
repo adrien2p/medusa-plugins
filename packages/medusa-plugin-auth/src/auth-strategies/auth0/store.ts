@@ -10,7 +10,8 @@ export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ST
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: Auth0Options
+		protected readonly strategyOptions: Auth0Options,
+		protected readonly strictOptions: { store_strict: boolean; strict: boolean }
 	) {
 		super({
 			domain: strategyOptions.auth0Domain,
@@ -44,9 +45,11 @@ export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ST
 				accessToken,
 			};
 		}
+
 		const validateRes = await validateStoreCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'auth0',
+			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
 		});
 		return {
 			...validateRes,

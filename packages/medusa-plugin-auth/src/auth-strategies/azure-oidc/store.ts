@@ -10,7 +10,8 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: AzureAuthOptions
+		protected readonly strategyOptions: AzureAuthOptions,
+		protected readonly strictOptions: { store_strict: boolean; strict: boolean }
 	) {
 		super({
 			identityMetadata: strategyOptions.store.identityMetadata,
@@ -36,9 +37,11 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 			emails: [{ value: profile?.upn }],
 			name: { givenName: profile?.name?.givenName, familyName: profile?.name?.familyName },
 		};
+
 		return await validateStoreCallback(authprofile, {
 			container: this.container,
 			strategyErrorIdentifier: 'azure_oidc',
+			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
 		});
 	}
 }

@@ -10,7 +10,8 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: GoogleAuthOptions
+		protected readonly strategyOptions: GoogleAuthOptions,
+		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -36,7 +37,11 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 			);
 		}
 
-		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'google' });
+		return await validateAdminCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'google',
+			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
+		});
 	}
 }
 
