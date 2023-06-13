@@ -11,7 +11,7 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: FacebookAuthOptions,
-		protected readonly strictOptions: { admin_strict: boolean; strict: boolean }
+		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,

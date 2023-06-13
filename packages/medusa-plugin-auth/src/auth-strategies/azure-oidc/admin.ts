@@ -11,7 +11,7 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: AzureAuthOptions,
-		protected readonly strictOptions: { admin_strict: boolean; strict: boolean }
+		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
 	) {
 		super({
 			identityMetadata: strategyOptions.admin.identityMetadata,

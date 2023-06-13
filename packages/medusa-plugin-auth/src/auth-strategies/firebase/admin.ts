@@ -12,7 +12,7 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: FirebaseAuthOptions,
-		protected readonly strictOptions: { admin_strict: boolean; strict: boolean }
+		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
 	) {
 		super({
 			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),

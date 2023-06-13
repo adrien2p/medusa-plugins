@@ -11,7 +11,7 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: LinkedinAuthOptions,
-		protected readonly strictOptions: { store_strict: boolean; strict: boolean }
+		protected readonly strictOptions?: { store_strict?: boolean; strict?: boolean }
 	) {
 		super({
 			clientID: strategyOptions.clientID,
