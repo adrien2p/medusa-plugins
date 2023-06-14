@@ -5,13 +5,14 @@ import { PassportStrategy } from '../../core/passport/Strategy';
 import { AZURE_STORE_STRATEGY_NAME, AzureAuthOptions, Profile, ResponseType, ResponseMode } from './types';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 import { validateStoreCallback } from '../../core/validate-callback';
+import { AuthOptions } from '../../types';
 
 export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_STORE_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: AzureAuthOptions,
-		protected readonly strictOptions?: { store_strict?: boolean; strict?: boolean }
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			identityMetadata: strategyOptions.store.identityMetadata,
@@ -28,7 +29,7 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 		});
 	}
 
-	async validate(req: Request, profile: any, done?: Function): Promise<null | { id: string }> {
+	async validate(req: Request, profile: any): Promise<null | { id: string }> {
 		if (this.strategyOptions.store.verifyCallback) {
 			return await this.strategyOptions.store.verifyCallback(this.container, req, profile);
 		}
@@ -41,7 +42,7 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 		return await validateStoreCallback(authprofile, {
 			container: this.container,
 			strategyErrorIdentifier: 'azure_oidc',
-			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
+			strict: this.strict,
 		});
 	}
 }

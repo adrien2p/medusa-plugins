@@ -32,22 +32,10 @@ export type StrategyExport = {
 
 export type AuthOptions = ProviderOptions & {
 	/**
-	 * When no value is provided, the default is true.
-	 * It means that the default behaviour will be that a user can only login with one provider.
-	 * Set it to false if you want to allow a user to login with multiple providers.
+	 * When set, the domain will only allow the user to authenticate using the prodider
+	 * that has been used to create the account
 	 */
-	admin_strict?: boolean;
-	/**
-	 * When no value is provided, the default is true.
-	 * It means that the default behaviour will be that a user can only login with one provider.
-	 * Set it to false if you want to allow a user to login with multiple providers.
-	 */
-	store_strict?: boolean;
-	/**
-	 * It is a shortcut of the `admin_strict` and `store_strict` options. If you set
-	 * this option, both domain will be set to the same value.
-	 */
-	strict?: boolean;
+	strict?: 'admin' | 'store' | 'all';
 };
 
 export type ProviderOptions = {

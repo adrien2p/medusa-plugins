@@ -11,17 +11,11 @@ export * from './store';
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
 		if (options.google?.admin) {
-			new GoogleAdminStrategy(container, configModule, options.google, {
-				admin_strict: options.admin_strict,
-				strict: options.strict,
-			});
+			new GoogleAdminStrategy(container, configModule, options.google, options.strict);
 		}
 
 		if (options.google?.store) {
-			new GoogleStoreStrategy(container, configModule, options.google, {
-				store_strict: options.store_strict,
-				strict: options.strict,
-			});
+			new GoogleStoreStrategy(container, configModule, options.google, options.strict);
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {

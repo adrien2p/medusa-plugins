@@ -5,13 +5,14 @@ import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types'
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_ADMIN_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: GoogleAuthOptions,
-		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -40,7 +41,7 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 		return await validateAdminCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'google',
-			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
+			strict: this.strict,
 		});
 	}
 }

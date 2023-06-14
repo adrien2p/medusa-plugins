@@ -4,6 +4,7 @@ import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 import {
 	AUTH_PROVIDER_KEY,
+	AuthOptions,
 	CUSTOMER_METADATA_KEY,
 	EMAIL_VERIFIED_KEY,
 	StrategyErrorIdentifierType,
@@ -28,7 +29,11 @@ export async function validateAdminCallback<
 		container,
 		strategyErrorIdentifier,
 		strict,
-	}: { container: MedusaContainer; strategyErrorIdentifier: StrategyErrorIdentifierType; strict?: boolean }
+	}: {
+		container: MedusaContainer;
+		strategyErrorIdentifier: StrategyErrorIdentifierType;
+		strict?: AuthOptions['strict'];
+	}
 ): Promise<{ id: string } | never> {
 	const userService: UserService = container.resolve('userService');
 	const email = profile.emails?.[0]?.value;
@@ -43,9 +48,9 @@ export async function validateAdminCallback<
 	const user = await userService.retrieveByEmail(email).catch(() => void 0);
 
 	if (user) {
-		strict ??= true;
+		strict ??= 'all';
 		if (
-			strict &&
+			(strict === 'all' || strict === 'admin') &&
 			(!user.metadata || user.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].admin)
 		) {
 			throw new MedusaError(MedusaError.Types.INVALID_DATA, `Admin with email ${email} already exists`);
@@ -81,7 +86,11 @@ export async function validateStoreCallback<
 		container,
 		strategyErrorIdentifier,
 		strict,
-	}: { container: MedusaContainer; strategyErrorIdentifier: StrategyErrorIdentifierType; strict?: boolean }
+	}: {
+		container: MedusaContainer;
+		strategyErrorIdentifier: StrategyErrorIdentifierType;
+		strict?: AuthOptions['strict'];
+	}
 ): Promise<{ id: string } | never> {
 	const manager: EntityManager = container.resolve('manager');
 	const customerService: CustomerService = container.resolve('customerService');
@@ -127,9 +136,9 @@ export async function validateStoreCallback<
 				});
 			}
 
-			strict ??= true;
+			strict ??= 'all';
 			if (
-				strict &&
+				(strict === 'all' || strict === 'store') &&
 				(!customer.metadata ||
 					!customer.metadata[CUSTOMER_METADATA_KEY] ||
 					customer.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].store)

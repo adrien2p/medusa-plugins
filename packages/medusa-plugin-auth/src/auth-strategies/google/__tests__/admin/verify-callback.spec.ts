@@ -59,13 +59,13 @@ describe('Google admin strategy verify callback', function () {
 		} as MedusaContainer;
 	});
 
-	describe('when admin_strict is set to true', function () {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			googleAdminStrategy = new GoogleAdminStrategy(
 				container,
 				{} as ConfigModule,
 				{ clientID: 'fake', clientSecret: 'fake', admin: {} } as GoogleAuthOptions,
-				{ admin_strict: true }
+				'admin'
 			);
 		});
 
@@ -114,13 +114,13 @@ describe('Google admin strategy verify callback', function () {
 		});
 	});
 
-	describe('when admin_strict is set to false', function () {
+	describe('when strict is set for store only', function () {
 		beforeEach(() => {
 			googleAdminStrategy = new GoogleAdminStrategy(
 				container,
 				{} as ConfigModule,
 				{ clientID: 'fake', clientSecret: 'fake', admin: {} } as GoogleAuthOptions,
-				{ admin_strict: false }
+				'store'
 			);
 		});
 

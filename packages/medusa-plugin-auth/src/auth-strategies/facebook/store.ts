@@ -5,13 +5,14 @@ import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from './ty
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateStoreCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_STORE_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: FacebookAuthOptions,
-		protected readonly strictOptions?: { store_strict?: boolean; strict?: boolean }
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -41,7 +42,7 @@ export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FA
 		return await validateStoreCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'facebook',
-			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
+			strict: this.strict,
 		});
 	}
 }

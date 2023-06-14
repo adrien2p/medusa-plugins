@@ -6,13 +6,14 @@ import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { firebaseAuthRoutesBuilder } from './utils';
 import { auth } from 'firebase-admin';
+import { AuthOptions } from '../../types';
 
 export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FIREBASE_ADMIN_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: FirebaseAuthOptions,
-		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -30,7 +31,7 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 		return await validateAdminCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'firebase',
-			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
+			strict: this.strict,
 		});
 	}
 }

@@ -5,13 +5,14 @@ import { AUTH0_ADMIN_STRATEGY_NAME, Auth0Options, Profile, ExtraParams } from '.
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ADMIN_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: Auth0Options,
-		protected readonly strictOptions?: { admin_strict?: boolean; strict?: boolean }
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			domain: strategyOptions.auth0Domain,
@@ -48,7 +49,7 @@ export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_AD
 		const validateRes = await validateAdminCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'auth0',
-			strict: this.strictOptions.admin_strict ?? this.strictOptions.strict,
+			strict: this.strict,
 		});
 		return {
 			...validateRes,

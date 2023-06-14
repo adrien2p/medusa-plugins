@@ -5,13 +5,14 @@ import { PassportStrategy } from '../../core/passport/Strategy';
 import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 import { validateStoreCallback } from '../../core/validate-callback';
+import { AuthOptions } from '../../types';
 
 export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_STORE_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: GoogleAuthOptions,
-		protected readonly strictOptions?: { store_strict?: boolean; strict?: boolean }
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -40,7 +41,7 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 		return await validateStoreCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'google',
-			strict: this.strictOptions.store_strict ?? this.strictOptions.strict,
+			strict: this.strict,
 		});
 	}
 }
