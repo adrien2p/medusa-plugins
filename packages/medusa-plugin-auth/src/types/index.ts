@@ -32,10 +32,12 @@ export type StrategyExport = {
 
 export type AuthOptions = ProviderOptions & {
 	/**
-	 * When set, the domain will only allow the user to authenticate using the prodider
-	 * that has been used to create the account
+	 * When set to admin | store | all,  will only allow the user to authenticate using the provider
+	 * that has been used to create the account on the domain that strict is set to.
+	 *
+	 * @default 'all'
 	 */
-	strict?: 'admin' | 'store' | 'all';
+	strict?: 'admin' | 'store' | 'all' | 'none';
 };
 
 export type ProviderOptions = {

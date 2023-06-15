@@ -60,66 +60,140 @@ describe('Auth0 admin strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
-
-		auth0AdminStrategy = new Auth0AdminStrategy(
-			container,
-			{} as ConfigModule,
-			{
-				auth0Domain: 'fakeDomain',
-				clientID: 'fake',
-				clientSecret: 'fake',
-				admin: { callbackUrl: '/fakeCallbackUrl' },
-			} as Auth0Options
-		);
 	});
 
-	afterEach(() => {
-		jest.clearAllMocks();
+	describe('when strict is set to admin', function () {
+		beforeEach(() => {
+			auth0AdminStrategy = new Auth0AdminStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					auth0Domain: 'fakeDomain',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					admin: { callbackUrl: '/fakeCallbackUrl' },
+				} as Auth0Options,
+				'admin'
+			);
+		});
+
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
+
+		it('should succeed', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithProviderKey }],
+			};
+
+			const data = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+		});
+
+		it('should fail when a user exists without the auth provider metadata', async () => {
+			profile = {
+				emails: [{ value: existsEmail }],
+			};
+
+			const err = await auth0AdminStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+				.catch((err) => err);
+			expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
+		});
+
+		it('should fail when a user exists with the wrong auth provider key', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithWrongProviderKey }],
+			};
+
+			const err = await auth0AdminStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+				.catch((err) => err);
+			expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
+		});
+
+		it('should fail when the user does not exist', async () => {
+			profile = {
+				emails: [{ value: 'fake' }],
+			};
+
+			const err = await auth0AdminStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+				.catch((err) => err);
+			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+		});
 	});
 
-	it('should succeed', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithProviderKey }],
-		};
+	describe('when strict is set for store only', function () {
+		beforeEach(() => {
+			auth0AdminStrategy = new Auth0AdminStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					auth0Domain: 'fakeDomain',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					admin: { callbackUrl: '/fakeCallbackUrl' },
+				} as Auth0Options,
+				'store'
+			);
+		});
 
-		const data = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test2',
-			})
-		);
-	});
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
 
-	it('should fail when a user exists without the auth provider metadata', async () => {
-		profile = {
-			emails: [{ value: existsEmail }],
-		};
+		it('should succeed', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithProviderKey }],
+			};
 
-		const err = await auth0AdminStrategy
-			.validate(req, accessToken, refreshToken, extraParams, profile)
-			.catch((err) => err);
-		expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
-	});
+			const data = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+		});
 
-	it('should fail when a user exists with the wrong auth provider key', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithWrongProviderKey }],
-		};
+		it('should succeed when a user exists without the auth provider metadata', async () => {
+			profile = {
+				emails: [{ value: existsEmail }],
+			};
 
-		const err = await auth0AdminStrategy
-			.validate(req, accessToken, refreshToken, extraParams, profile)
-			.catch((err) => err);
-		expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
-	});
+			const data = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual({
+				accessToken: undefined,
+				id: 'test',
+			});
+		});
 
-	it('should fail when the user does not exist', async () => {
-		profile = {
-			emails: [{ value: 'fake' }],
-		};
+		it('should succeed when a user exists with the wrong auth provider key', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithWrongProviderKey }],
+			};
 
-		const err = await auth0AdminStrategy
-			.validate(req, accessToken, refreshToken, extraParams, profile)
-			.catch((err) => err);
-		expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+			const data = await auth0AdminStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+			expect(data).toEqual({
+				accessToken: undefined,
+				id: 'test3',
+			});
+		});
+
+		it('should fail when the user does not exist', async () => {
+			profile = {
+				emails: [{ value: 'fake' }],
+			};
+
+			const err = await auth0AdminStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+				.catch((err) => err);
+			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+		});
 	});
 });

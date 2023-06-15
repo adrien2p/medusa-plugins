@@ -55,65 +55,143 @@ describe('Azure AD admin strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
-
-		azureAdminStrategy = new AzureAdminStrategy(
-			container,
-			{} as ConfigModule,
-			{
-				admin: {
-					identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration',
-					clientID: 'fake',
-					clientSecret: 'fake',
-					successRedirect: '/admin/auth/azure',
-					failureRedirect: 'http://localhost:9000/app/login',
-					callbackUrl: 'http://localhost:9000/admin/auth/azure/cb',
-					allowHttpForRedirectUrl: true,
-				},
-			} as AzureAuthOptions
-		);
 	});
 
-	afterEach(() => {
-		jest.clearAllMocks();
+	describe('when strict is set to admin', function () {
+		beforeEach(() => {
+			azureAdminStrategy = new AzureAdminStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					admin: {
+						identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration',
+						clientID: 'fake',
+						clientSecret: 'fake',
+						successRedirect: '/admin/auth/azure',
+						failureRedirect: 'http://localhost:9000/app/login',
+						callbackUrl: 'http://localhost:9000/admin/auth/azure/cb',
+						allowHttpForRedirectUrl: true,
+					},
+				} as AzureAuthOptions,
+				'admin'
+			);
+		});
+
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
+
+		it('should succeed', async () => {
+			profile = {
+				upn: existsEmailWithProviderKey,
+			};
+
+			const data = await azureAdminStrategy.validate(req, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+		});
+
+		it('should fail when a user exists without the auth provider metadata', async () => {
+			profile = {
+				upn: existsEmail,
+			};
+
+			const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
+		});
+
+		it('should fail when a user exists with the wrong auth provider key', async () => {
+			profile = {
+				upn: existsEmailWithWrongProviderKey,
+			};
+
+			const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
+		});
+
+		it('should fail when the user does not exist', async () => {
+			profile = {
+				upn: 'fake',
+			};
+
+			const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+		});
 	});
 
-	it('should succeed', async () => {
-		profile = {
-			upn: existsEmailWithProviderKey,
-		};
+	describe('when strict is set to store', function () {
+		beforeEach(() => {
+			azureAdminStrategy = new AzureAdminStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					admin: {
+						identityMetadata: 'https://login.microsoftonline.com/common/.well-known/openid-configuration',
+						clientID: 'fake',
+						clientSecret: 'fake',
+						successRedirect: '/admin/auth/azure',
+						failureRedirect: 'http://localhost:9000/app/login',
+						callbackUrl: 'http://localhost:9000/admin/auth/azure/cb',
+						allowHttpForRedirectUrl: true,
+					},
+				} as AzureAuthOptions,
+				'store'
+			);
+		});
 
-		const data = await azureAdminStrategy.validate(req, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test2',
-			})
-		);
-	});
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
 
-	it('should fail when a user exists without the auth provider metadata', async () => {
-		profile = {
-			upn: existsEmail,
-		};
+		it('should succeed', async () => {
+			profile = {
+				upn: existsEmailWithProviderKey,
+			};
 
-		const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
-	});
+			const data = await azureAdminStrategy.validate(req, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+		});
 
-	it('should fail when a user exists with the wrong auth provider key', async () => {
-		profile = {
-			upn: existsEmailWithWrongProviderKey,
-		};
+		it('should succeed when a user exists without the auth provider metadata', async () => {
+			profile = {
+				upn: existsEmail,
+			};
 
-		const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
-	});
+			const data = await azureAdminStrategy.validate(req, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+		});
 
-	it('should fail when the user does not exist', async () => {
-		profile = {
-			upn: 'fake',
-		};
+		it('should succeed when a user exists with the wrong auth provider key', async () => {
+			profile = {
+				upn: existsEmailWithWrongProviderKey,
+			};
 
-		const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+			const data = await azureAdminStrategy.validate(req, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test3',
+				})
+			);
+		});
+
+		it('should fail when the user does not exist', async () => {
+			profile = {
+				upn: 'fake',
+			};
+
+			const err = await azureAdminStrategy.validate(req, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+		});
 	});
 });

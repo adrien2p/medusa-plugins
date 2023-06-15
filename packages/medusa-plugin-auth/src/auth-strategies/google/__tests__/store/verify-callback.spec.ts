@@ -229,10 +229,12 @@ describe('Google store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
 			};
 
-			const data = await googleStoreStrategy.validate(req, accessToken, refreshToken, profile)
-			expect(data).toEqual(expect.objectContaining({
-				id: 'test4',
-			}));
+			const data = await googleStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test4',
+				})
+			);
 		});
 
 		it('should succeed and create a new customer if it has not been found', async () => {
