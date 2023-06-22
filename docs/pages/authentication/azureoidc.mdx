@@ -37,6 +37,7 @@ newly added plugins. To do so here are the steps
         resolve: "medusa-plugin-auth",
         options: {
             azure_oidc: {
+                // strict: "all", // or "none" or "store" or "admin"
                 admin: {
 					identityMetadata: AzureIdentityMetadata,
 					clientID: AzureClientId,
@@ -115,7 +116,7 @@ It has only been tested with default options. As of now only ResponseType.Code a
 
 ### Default behaviour
 
-The default `verifyCallback` flow looks as follow,
+The default `verifyCallback` flow looks as follow (unless the `strict` option is changed to `none` or `store` or `admin` depending on the targeted domain)
 - for the `admin`
     - if the user trying to authenticate exists
         - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
