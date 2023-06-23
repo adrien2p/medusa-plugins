@@ -98,11 +98,11 @@ describe('Facebook store strategy verify callback', function () {
 				{
 					clientID: 'fake',
 					clientSecret: 'fake',
-					store: {}
+					store: {},
 				} as FacebookAuthOptions,
-				"store"
+				'store'
 			);
-		})
+		});
 
 		afterEach(() => {
 			jest.clearAllMocks();
@@ -110,7 +110,7 @@ describe('Facebook store strategy verify callback', function () {
 
 		it('should succeed', async () => {
 			profile = {
-				emails: [{value: existsEmailWithMetaAndProviderKey}],
+				emails: [{ value: existsEmailWithMetaAndProviderKey }],
 			};
 
 			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
@@ -123,16 +123,18 @@ describe('Facebook store strategy verify callback', function () {
 
 		it('should fail when the customer exists without the metadata', async () => {
 			profile = {
-				emails: [{value: existsEmail}],
+				emails: [{ value: existsEmail }],
 			};
 
-			const err = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			const err = await facebookStoreStrategy
+				.validate(req, accessToken, refreshToken, profile)
+				.catch((err) => err);
 			expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
 		});
 
 		it('should set AUTH_PROVIDER_KEY when CUSTOMER_METADATA_KEY exists but AUTH_PROVIDER_KEY does not', async () => {
 			profile = {
-				emails: [{value: existsEmailWithMeta}],
+				emails: [{ value: existsEmailWithMeta }],
 			};
 
 			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
@@ -146,16 +148,20 @@ describe('Facebook store strategy verify callback', function () {
 
 		it('should fail when the metadata exists but auth provider key is wrong', async () => {
 			profile = {
-				emails: [{value: existsEmailWithMetaButWrongProviderKey}],
+				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
 			};
 
-			const err = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-			expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`));
+			const err = await facebookStoreStrategy
+				.validate(req, accessToken, refreshToken, profile)
+				.catch((err) => err);
+			expect(err).toEqual(
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
+			);
 		});
 
 		it('should succeed and create a new customer if it has not been found', async () => {
 			profile = {
-				emails: [{value: 'fake'}],
+				emails: [{ value: 'fake' }],
 				name: {
 					givenName: 'test',
 					familyName: 'test',
@@ -180,11 +186,11 @@ describe('Facebook store strategy verify callback', function () {
 				{
 					clientID: 'fake',
 					clientSecret: 'fake',
-					store: {}
+					store: {},
 				} as FacebookAuthOptions,
-				"admin"
+				'admin'
 			);
-		})
+		});
 
 		afterEach(() => {
 			jest.clearAllMocks();
@@ -192,7 +198,7 @@ describe('Facebook store strategy verify callback', function () {
 
 		it('should succeed', async () => {
 			profile = {
-				emails: [{value: existsEmailWithMetaAndProviderKey}],
+				emails: [{ value: existsEmailWithMetaAndProviderKey }],
 			};
 
 			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
@@ -205,20 +211,20 @@ describe('Facebook store strategy verify callback', function () {
 
 		it('should fail when the customer exists without the metadata', async () => {
 			profile = {
-				emails: [{value: existsEmail}],
+				emails: [{ value: existsEmail }],
 			};
 
 			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
-					id: "test",
+					id: 'test',
 				})
 			);
 		});
 
 		it('should set AUTH_PROVIDER_KEY when CUSTOMER_METADATA_KEY exists but AUTH_PROVIDER_KEY does not', async () => {
 			profile = {
-				emails: [{value: existsEmailWithMeta}],
+				emails: [{ value: existsEmailWithMeta }],
 			};
 
 			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
@@ -232,20 +238,20 @@ describe('Facebook store strategy verify callback', function () {
 
 		it('should succeed when the metadata exists but auth provider key is wrong', async () => {
 			profile = {
-				emails: [{value: existsEmailWithMetaButWrongProviderKey}],
+				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
 			};
 
 			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
-					id: "test4",
+					id: 'test4',
 				})
 			);
 		});
 
 		it('should succeed and create a new customer if it has not been found', async () => {
 			profile = {
-				emails: [{value: 'fake'}],
+				emails: [{ value: 'fake' }],
 				name: {
 					givenName: 'test',
 					familyName: 'test',

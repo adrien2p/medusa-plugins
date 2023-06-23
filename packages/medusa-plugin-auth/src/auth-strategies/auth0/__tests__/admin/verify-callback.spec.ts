@@ -177,8 +177,7 @@ describe('Auth0 admin strategy verify callback', function () {
 				emails: [{ value: existsEmailWithWrongProviderKey }],
 			};
 
-			const data = await auth0AdminStrategy
-				.validate(req, accessToken, refreshToken, extraParams, profile)
+			const data = await auth0AdminStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
 			expect(data).toEqual({
 				accessToken: undefined,
 				id: 'test3',
