@@ -57,55 +57,131 @@ describe('Linkedin admin strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
-
-		linkedinAdminStrategy = new LinkedinAdminStrategy(
-			container,
-			{} as ConfigModule,
-			{ clientID: 'fake', clientSecret: 'fake', admin: {} } as LinkedinAuthOptions
-		);
 	});
 
-	afterEach(() => {
-		jest.clearAllMocks();
+	describe('when strict is set to admin', function () {
+		beforeEach(() => {
+			linkedinAdminStrategy = new LinkedinAdminStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					clientID: 'fake',
+					clientSecret: 'fake',
+					admin: {}
+				} as LinkedinAuthOptions,
+				"admin"
+			);
+		})
+
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
+
+		it('should succeed', async () => {
+			profile = {
+				emails: [{value: existsEmailWithProviderKey}],
+			};
+
+			const data = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+		});
+
+		it('should fail when a user exists without the auth provider metadata', async () => {
+			profile = {
+				emails: [{value: existsEmail}],
+			};
+
+			const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
+		});
+
+		it('should fail when a user exists with the wrong auth provider key', async () => {
+			profile = {
+				emails: [{value: existsEmailWithWrongProviderKey}],
+			};
+
+			const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
+		});
+
+		it('should fail when the user does not exist', async () => {
+			profile = {
+				emails: [{value: 'fake'}],
+			};
+
+			const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+		});
 	});
 
-	it('should succeed', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithProviderKey }],
-		};
+	describe('when strict is set to store', function () {
+		beforeEach(() => {
+			linkedinAdminStrategy = new LinkedinAdminStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					clientID: 'fake',
+					clientSecret: 'fake',
+					admin: {}
+				} as LinkedinAuthOptions,
+				"store"
+			);
+		})
 
-		const data = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test2',
-			})
-		);
-	});
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
 
-	it('should fail when a user exists without the auth provider metadata', async () => {
-		profile = {
-			emails: [{ value: existsEmail }],
-		};
+		it('should succeed', async () => {
+			profile = {
+				emails: [{value: existsEmailWithProviderKey}],
+			};
 
-		const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
-	});
+			const data = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+		});
 
-	it('should fail when a user exists with the wrong auth provider key', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithWrongProviderKey }],
-		};
+		it('should succeed when a user exists without the auth provider metadata', async () => {
+			profile = {
+				emails: [{value: existsEmail}],
+			};
 
-		const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
-	});
+			const data = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: "test",
+				})
+			);
+		});
 
-	it('should fail when the user does not exist', async () => {
-		profile = {
-			emails: [{ value: 'fake' }],
-		};
+		it('should succeed when a user exists with the wrong auth provider key', async () => {
+			profile = {
+				emails: [{value: existsEmailWithWrongProviderKey}],
+			};
 
-		const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+			const data = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: "test3",
+				})
+			);
+		});
+
+		it('should fail when the user does not exist', async () => {
+			profile = {
+				emails: [{value: 'fake'}],
+			};
+
+			const err = await linkedinAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
+		});
 	});
 });
