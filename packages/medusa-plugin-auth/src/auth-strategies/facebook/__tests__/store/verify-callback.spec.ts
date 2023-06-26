@@ -88,78 +88,183 @@ describe('Facebook store strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
-
-		facebookStoreStrategy = new FacebookStoreStrategy(
-			container,
-			{} as ConfigModule,
-			{ clientID: 'fake', clientSecret: 'fake', store: {} } as FacebookAuthOptions
-		);
 	});
 
-	afterEach(() => {
-		jest.clearAllMocks();
+	describe('when strict is set to store', function () {
+		beforeEach(() => {
+			facebookStoreStrategy = new FacebookStoreStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					clientID: 'fake',
+					clientSecret: 'fake',
+					store: {},
+				} as FacebookAuthOptions,
+				'store'
+			);
+		});
+
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
+
+		it('should succeed', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaAndProviderKey }],
+			};
+
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test3',
+				})
+			);
+		});
+
+		it('should fail when the customer exists without the metadata', async () => {
+			profile = {
+				emails: [{ value: existsEmail }],
+			};
+
+			const err = await facebookStoreStrategy
+				.validate(req, accessToken, refreshToken, profile)
+				.catch((err) => err);
+			expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
+		});
+
+		it('should set AUTH_PROVIDER_KEY when CUSTOMER_METADATA_KEY exists but AUTH_PROVIDER_KEY does not', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMeta }],
+			};
+
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+			expect(updateFn).toHaveBeenCalledTimes(1);
+		});
+
+		it('should fail when the metadata exists but auth provider key is wrong', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
+			};
+
+			const err = await facebookStoreStrategy
+				.validate(req, accessToken, refreshToken, profile)
+				.catch((err) => err);
+			expect(err).toEqual(
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
+			);
+		});
+
+		it('should succeed and create a new customer if it has not been found', async () => {
+			profile = {
+				emails: [{ value: 'fake' }],
+				name: {
+					givenName: 'test',
+					familyName: 'test',
+				},
+			};
+
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+			expect(createFn).toHaveBeenCalledTimes(1);
+		});
 	});
 
-	it('should succeed', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithMetaAndProviderKey }],
-		};
+	describe('when strict is set to admin', function () {
+		beforeEach(() => {
+			facebookStoreStrategy = new FacebookStoreStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					clientID: 'fake',
+					clientSecret: 'fake',
+					store: {},
+				} as FacebookAuthOptions,
+				'admin'
+			);
+		});
 
-		const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test3',
-			})
-		);
-	});
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
 
-	it('should fail when the customer exists without the metadata', async () => {
-		profile = {
-			emails: [{ value: existsEmail }],
-		};
+		it('should succeed', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaAndProviderKey }],
+			};
 
-		const err = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
-	});
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test3',
+				})
+			);
+		});
 
-	it('should set AUTH_PROVIDER_KEY when CUSTOMER_METADATA_KEY exists but AUTH_PROVIDER_KEY does not', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithMeta }],
-		};
+		it('should fail when the customer exists without the metadata', async () => {
+			profile = {
+				emails: [{ value: existsEmail }],
+			};
 
-		const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test2',
-			})
-		);
-		expect(updateFn).toHaveBeenCalledTimes(1);
-	});
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+		});
 
-	it('should fail when the metadata exists but auth provider key is wrong', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
-		};
+		it('should set AUTH_PROVIDER_KEY when CUSTOMER_METADATA_KEY exists but AUTH_PROVIDER_KEY does not', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMeta }],
+			};
 
-		const err = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
-		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`));
-	});
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+			expect(updateFn).toHaveBeenCalledTimes(1);
+		});
 
-	it('should succeed and create a new customer if it has not been found', async () => {
-		profile = {
-			emails: [{ value: 'fake' }],
-			name: {
-				givenName: 'test',
-				familyName: 'test',
-			},
-		};
+		it('should succeed when the metadata exists but auth provider key is wrong', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
+			};
 
-		const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test',
-			})
-		);
-		expect(createFn).toHaveBeenCalledTimes(1);
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test4',
+				})
+			);
+		});
+
+		it('should succeed and create a new customer if it has not been found', async () => {
+			profile = {
+				emails: [{ value: 'fake' }],
+				name: {
+					givenName: 'test',
+					familyName: 'test',
+				},
+			};
+
+			const data = await facebookStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+			expect(createFn).toHaveBeenCalledTimes(1);
+		});
 	});
 });

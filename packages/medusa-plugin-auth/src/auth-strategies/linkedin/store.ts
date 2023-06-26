@@ -5,12 +5,14 @@ import { PassportStrategy } from '../../core/passport/Strategy';
 import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
 import { validateStoreCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_STORE_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: LinkedinAuthOptions
+		protected readonly strategyOptions: LinkedinAuthOptions,
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -37,7 +39,12 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 				profile
 			);
 		}
-		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'linkedin' });
+
+		return await validateStoreCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'linkedin',
+			strict: this.strict,
+		});
 	}
 }
 

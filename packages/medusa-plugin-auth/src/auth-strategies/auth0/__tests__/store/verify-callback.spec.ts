@@ -90,87 +90,185 @@ describe('Auth0 store strategy verify callback', function () {
 				return container_[name];
 			},
 		} as MedusaContainer;
-
-		auth0StoreStrategy = new Auth0StoreStrategy(
-			container,
-			{} as ConfigModule,
-			{
-				auth0Domain: 'fakeDomain',
-				clientID: 'fake',
-				clientSecret: 'fake',
-				store: { callbackUrl: '/fakeCallbackUrl' },
-			} as Auth0Options
-		);
 	});
 
-	afterEach(() => {
-		jest.clearAllMocks();
+	describe('when strict is set to store', function () {
+		beforeEach(() => {
+			auth0StoreStrategy = new Auth0StoreStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					auth0Domain: 'fakeDomain',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					store: { callbackUrl: '/fakeCallbackUrl' },
+				} as Auth0Options,
+				'store'
+			);
+		});
+
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
+
+		it('should succeed', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaAndProviderKey }],
+			};
+
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test3',
+				})
+			);
+		});
+
+		it('should fail when the customer exists without the metadata', async () => {
+			profile = {
+				emails: [{ value: existsEmail }],
+			};
+
+			const err = await auth0StoreStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+				.catch((err) => err);
+			expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
+		});
+
+		it('should update customer metadata when the customer exsits with ONLY customer metadata key', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMeta }],
+			};
+
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+			expect(updateFn).toHaveBeenCalledTimes(1);
+		});
+
+		it('should fail when the metadata exists but auth provider key is wrong', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
+			};
+
+			const err = await auth0StoreStrategy
+				.validate(req, accessToken, refreshToken, extraParams, profile)
+				.catch((err) => err);
+			expect(err).toEqual(
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
+			);
+		});
+
+		it('should succeed and create a new customer if it has not been found', async () => {
+			profile = {
+				emails: [{ value: 'fake' }],
+				name: {
+					givenName: 'test',
+					familyName: 'test',
+				},
+			};
+
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+			expect(createFn).toHaveBeenCalledTimes(1);
+		});
 	});
 
-	it('should succeed', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithMetaAndProviderKey }],
-		};
+	describe('when strict is set to admin', function () {
+		beforeEach(() => {
+			auth0StoreStrategy = new Auth0StoreStrategy(
+				container,
+				{} as ConfigModule,
+				{
+					auth0Domain: 'fakeDomain',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					store: { callbackUrl: '/fakeCallbackUrl' },
+				} as Auth0Options,
+				'admin'
+			);
+		});
 
-		const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test3',
-			})
-		);
-	});
+		afterEach(() => {
+			jest.clearAllMocks();
+		});
 
-	it('should fail when the customer exists without the metadata', async () => {
-		profile = {
-			emails: [{ value: existsEmail }],
-		};
+		it('should succeed', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaAndProviderKey }],
+			};
 
-		const err = await auth0StoreStrategy
-			.validate(req, accessToken, refreshToken, extraParams, profile)
-			.catch((err) => err);
-		expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
-	});
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test3',
+				})
+			);
+		});
 
-	it('should update customer metadata when the customer exsits with ONLY customer metadata key', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithMeta }],
-		};
+		it('should succeed when the customer exists without the metadata', async () => {
+			profile = {
+				emails: [{ value: existsEmail }],
+			};
 
-		const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test2',
-			})
-		);
-		expect(updateFn).toHaveBeenCalledTimes(1);
-	});
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+		});
 
-	it('should fail when the metadata exists but auth provider key is wrong', async () => {
-		profile = {
-			emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
-		};
+		it('should update customer metadata when the customer exsits with ONLY customer metadata key', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMeta }],
+			};
 
-		const err = await auth0StoreStrategy
-			.validate(req, accessToken, refreshToken, extraParams, profile)
-			.catch((err) => err);
-		expect(err).toEqual(new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`));
-	});
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test2',
+				})
+			);
+			expect(updateFn).toHaveBeenCalledTimes(1);
+		});
 
-	it('should succeed and create a new customer if it has not been found', async () => {
-		profile = {
-			emails: [{ value: 'fake' }],
-			name: {
-				givenName: 'test',
-				familyName: 'test',
-			},
-		};
+		it('should succeed when the metadata exists but auth provider key is wrong', async () => {
+			profile = {
+				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
+			};
 
-		const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
-		expect(data).toEqual(
-			expect.objectContaining({
-				id: 'test',
-			})
-		);
-		expect(createFn).toHaveBeenCalledTimes(1);
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test4',
+				})
+			);
+		});
+
+		it('should succeed and create a new customer if it has not been found', async () => {
+			profile = {
+				emails: [{ value: 'fake' }],
+				name: {
+					givenName: 'test',
+					familyName: 'test',
+				},
+			};
+
+			const data = await auth0StoreStrategy.validate(req, accessToken, refreshToken, extraParams, profile);
+			expect(data).toEqual(
+				expect.objectContaining({
+					id: 'test',
+				})
+			);
+			expect(createFn).toHaveBeenCalledTimes(1);
+		});
 	});
 });

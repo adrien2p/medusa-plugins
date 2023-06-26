@@ -32,11 +32,11 @@ export default {
 		}
 
 		if (options.firebase?.admin) {
-			new FirebaseAdminStrategy(container, configModule, options.firebase);
+			new FirebaseAdminStrategy(container, configModule, options.firebase, options.strict);
 		}
 
 		if (options.firebase?.store) {
-			new FirebaseStoreStrategy(container, configModule, options.firebase);
+			new FirebaseStoreStrategy(container, configModule, options.firebase, options.strict);
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {

@@ -15,11 +15,11 @@ export * from './store';
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
 		if (options.linkedin?.admin) {
-			new LinkedinAdminStrategy(container, configModule, options.linkedin);
+			new LinkedinAdminStrategy(container, configModule, options.linkedin, options.strict);
 		}
 
 		if (options.linkedin?.store) {
-			new LinkedinStoreStrategy(container, configModule, options.linkedin);
+			new LinkedinStoreStrategy(container, configModule, options.linkedin, options.strict);
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {

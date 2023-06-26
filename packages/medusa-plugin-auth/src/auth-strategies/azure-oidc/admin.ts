@@ -5,12 +5,14 @@ import { AZURE_ADMIN_STRATEGY_NAME, AzureAuthOptions, Profile, ResponseType, Res
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_ADMIN_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: AzureAuthOptions
+		protected readonly strategyOptions: AzureAuthOptions,
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			identityMetadata: strategyOptions.admin.identityMetadata,
@@ -27,7 +29,7 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 		});
 	}
 
-	async validate(req: Request, profile: any, done?: Function): Promise<null | { id: string }> {
+	async validate(req: Request, profile: any): Promise<null | { id: string }> {
 		if (this.strategyOptions.admin.verifyCallback) {
 			return await this.strategyOptions.admin.verifyCallback(this.container, req, profile);
 		}
@@ -36,9 +38,11 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 			emails: [{ value: profile?.upn }],
 			name: { givenName: profile?.name?.givenName, familyName: profile?.name?.familyName },
 		};
+
 		return await validateAdminCallback(authprofile, {
 			container: this.container,
 			strategyErrorIdentifier: 'azure_oidc',
+			strict: this.strict,
 		});
 	}
 }

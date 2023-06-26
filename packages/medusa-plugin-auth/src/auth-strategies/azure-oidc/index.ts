@@ -11,11 +11,11 @@ export * from './store';
 export default {
 	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
 		if (options.azure_oidc?.admin) {
-			new AzureAdminStrategy(container, configModule, options.azure_oidc);
+			new AzureAdminStrategy(container, configModule, options.azure_oidc, options.strict);
 		}
 
 		if (options.azure_oidc?.store) {
-			new AzureStoreStrategy(container, configModule, options.azure_oidc);
+			new AzureStoreStrategy(container, configModule, options.azure_oidc, options.strict);
 		}
 	},
 	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {

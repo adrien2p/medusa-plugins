@@ -5,12 +5,14 @@ import { LINKEDIN_ADMIN_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './ty
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LINKEDIN_ADMIN_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: LinkedinAuthOptions
+		protected readonly strategyOptions: LinkedinAuthOptions,
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -38,7 +40,11 @@ export class LinkedinAdminStrategy extends PassportStrategy(LinkedinStrategy, LI
 			);
 		}
 
-		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'linkedin' });
+		return await validateAdminCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'linkedin',
+			strict: this.strict,
+		});
 	}
 }
 

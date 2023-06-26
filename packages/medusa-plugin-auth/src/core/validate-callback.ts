@@ -4,6 +4,7 @@ import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 import {
 	AUTH_PROVIDER_KEY,
+	AuthOptions,
 	CUSTOMER_METADATA_KEY,
 	EMAIL_VERIFIED_KEY,
 	StrategyErrorIdentifierType,
@@ -13,6 +14,10 @@ import {
 /**
  * Default validate callback used by an admin passport strategy
  *
+ * @param profile
+ * @param container
+ * @param strategyErrorIdentifier
+ * @param strict
  */
 export async function validateAdminCallback<
 	T extends { emails?: { value: string }[] } = {
@@ -23,7 +28,12 @@ export async function validateAdminCallback<
 	{
 		container,
 		strategyErrorIdentifier,
-	}: { container: MedusaContainer; strategyErrorIdentifier: StrategyErrorIdentifierType }
+		strict,
+	}: {
+		container: MedusaContainer;
+		strategyErrorIdentifier: StrategyErrorIdentifierType;
+		strict?: AuthOptions['strict'];
+	}
 ): Promise<{ id: string } | never> {
 	const userService: UserService = container.resolve('userService');
 	const email = profile.emails?.[0]?.value;
@@ -38,7 +48,11 @@ export async function validateAdminCallback<
 	const user = await userService.retrieveByEmail(email).catch(() => void 0);
 
 	if (user) {
-		if (!user.metadata || user.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].admin) {
+		strict ??= 'all';
+		if (
+			(strict === 'all' || strict === 'admin') &&
+			(!user.metadata || user.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].admin)
+		) {
 			throw new MedusaError(MedusaError.Types.INVALID_DATA, `Admin with email ${email} already exists`);
 		}
 	} else {
@@ -54,6 +68,7 @@ export async function validateAdminCallback<
  * @param profile
  * @param strategyErrorIdentifier It will be used to compose the error message in case of an error (e.g Google, Facebook)
  * @param container
+ * @param strict
  */
 export async function validateStoreCallback<
 	T extends {
@@ -70,7 +85,12 @@ export async function validateStoreCallback<
 	{
 		container,
 		strategyErrorIdentifier,
-	}: { container: MedusaContainer; strategyErrorIdentifier: StrategyErrorIdentifierType }
+		strict,
+	}: {
+		container: MedusaContainer;
+		strategyErrorIdentifier: StrategyErrorIdentifierType;
+		strict?: AuthOptions['strict'];
+	}
 ): Promise<{ id: string } | never> {
 	const manager: EntityManager = container.resolve('manager');
 	const customerService: CustomerService = container.resolve('customerService');
@@ -116,10 +136,12 @@ export async function validateStoreCallback<
 				});
 			}
 
+			strict ??= 'all';
 			if (
-				!customer.metadata ||
-				!customer.metadata[CUSTOMER_METADATA_KEY] ||
-				customer.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].store
+				(strict === 'all' || strict === 'store') &&
+				(!customer.metadata ||
+					!customer.metadata[CUSTOMER_METADATA_KEY] ||
+					customer.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].store)
 			) {
 				throw new MedusaError(MedusaError.Types.INVALID_DATA, `Customer with email ${email} already exists`);
 			} else {

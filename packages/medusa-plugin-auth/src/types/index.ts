@@ -30,7 +30,17 @@ export type StrategyExport = {
 	getRouter?: (configModule: ConfigModule, options: AuthOptions) => Router[];
 };
 
-export type AuthOptions = {
+export type AuthOptions = ProviderOptions & {
+	/**
+	 * When set to admin | store | all,  will only allow the user to authenticate using the provider
+	 * that has been used to create the account on the domain that strict is set to.
+	 *
+	 * @default 'all'
+	 */
+	strict?: 'admin' | 'store' | 'all' | 'none';
+};
+
+export type ProviderOptions = {
 	google?: GoogleAuthOptions;
 	facebook?: FacebookAuthOptions;
 	linkedin?: LinkedinAuthOptions;
@@ -39,7 +49,7 @@ export type AuthOptions = {
 	azure_oidc?: AzureAuthOptions;
 };
 
-export type StrategyErrorIdentifierType = keyof AuthOptions;
+export type StrategyErrorIdentifierType = keyof ProviderOptions;
 export type StrategyNames = {
 	[key in StrategyErrorIdentifierType]: {
 		admin: string;

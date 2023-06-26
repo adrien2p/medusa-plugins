@@ -5,12 +5,14 @@ import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from './ty
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FACEBOOK_ADMIN_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: FacebookAuthOptions
+		protected readonly strategyOptions: FacebookAuthOptions,
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			clientID: strategyOptions.clientID,
@@ -36,7 +38,12 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 				profile
 			);
 		}
-		return await validateAdminCallback(profile, { container: this.container, strategyErrorIdentifier: 'facebook' });
+
+		return await validateAdminCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'facebook',
+			strict: this.strict,
+		});
 	}
 }
 

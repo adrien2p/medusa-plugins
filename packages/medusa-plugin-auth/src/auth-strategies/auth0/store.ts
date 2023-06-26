@@ -5,12 +5,14 @@ import { Auth0Options, Profile, ExtraParams, AUTH0_STORE_STRATEGY_NAME } from '.
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateStoreCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { AuthOptions } from '../../types';
 
 export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_STORE_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: Auth0Options
+		protected readonly strategyOptions: Auth0Options,
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			domain: strategyOptions.auth0Domain,
@@ -44,9 +46,11 @@ export class Auth0StoreStrategy extends PassportStrategy(Auth0Strategy, AUTH0_ST
 				accessToken,
 			};
 		}
+
 		const validateRes = await validateStoreCallback(profile, {
 			container: this.container,
 			strategyErrorIdentifier: 'auth0',
+			strict: this.strict,
 		});
 		return {
 			...validateRes,

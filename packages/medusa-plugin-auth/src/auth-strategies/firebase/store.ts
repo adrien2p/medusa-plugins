@@ -6,12 +6,14 @@ import { validateStoreCallback } from '../../core/validate-callback';
 import { FIREBASE_STORE_STRATEGY_NAME, FirebaseAuthOptions, Profile } from './types';
 import { firebaseAuthRoutesBuilder } from './utils';
 import { auth } from 'firebase-admin';
+import { AuthOptions } from '../../types';
 
 export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FIREBASE_STORE_STRATEGY_NAME) {
 	constructor(
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: FirebaseAuthOptions
+		protected readonly strategyOptions: FirebaseAuthOptions,
+		protected readonly strict?: AuthOptions['strict']
 	) {
 		super({
 			jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -26,7 +28,11 @@ export class FirebaseStoreStrategy extends PassportStrategy(FirebaseStrategy, FI
 		}
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
-		return await validateStoreCallback(profile, { container: this.container, strategyErrorIdentifier: 'firebase' });
+		return await validateStoreCallback(profile, {
+			container: this.container,
+			strategyErrorIdentifier: 'firebase',
+			strict: this.strict,
+		});
 	}
 }
 
