@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.5...medusa-plugin-auth@1.5.0) (2023-06-26)
+
+
+### Features
+
+* add support for strict options ([6e34220](https://github.com/adrien2p/medusa-plugins/commit/6e342209d1bb10ee041ed08268e7084810fb0a60))
+* update strict values ([df7b40f](https://github.com/adrien2p/medusa-plugins/commit/df7b40f611ce3c24c0cff9c54c8a2956165e9b07))
+
+
+
+
+
 ## [1.4.5](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.4...medusa-plugin-auth@1.4.5) (2023-05-15)
 
 **Note:** Version bump only for package medusa-plugin-auth
