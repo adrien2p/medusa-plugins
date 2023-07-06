@@ -36,7 +36,8 @@ export class LinkedinStoreStrategy extends PassportStrategy(LinkedinStrategy, LI
 				req,
 				accessToken,
 				refreshToken,
-				profile
+				profile,
+				this.strict
 			);
 		}
 

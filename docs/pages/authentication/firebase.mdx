@@ -32,6 +32,7 @@ newly added plugins. To do so here are the steps
     ```js
     {
         resolve: "medusa-plugin-auth",
+        /** @type {import('medusa-plugin-auth').AuthOptions} */
         options: {
             // strict: "all", // or "none" or "store" or "admin"
             firebase: {
@@ -40,7 +41,7 @@ newly added plugins. To do so here are the steps
                 admin: {
                     // authPath: '/admin/auth/firebase',
                     // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, decodedToken) => {
+                    // verifyCallback: (container, decodedToken, strict) => {
                     //    // implement your custom verify callback here if you need it
                     // }
                 },
@@ -48,7 +49,7 @@ newly added plugins. To do so here are the steps
                 store: {
                     // authPath: '/store/auth/firebase',
                     // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, decodedToken) => {
+                    // verifyCallback: (container, decodedToken, strict) => {
                     //    // implement your custom verify callback here if you need it
                     // }
                 }

@@ -35,7 +35,8 @@ export class FacebookStoreStrategy extends PassportStrategy(FacebookStrategy, FA
 				req,
 				accessToken,
 				refreshToken,
-				profile
+				profile,
+				this.strict
 			);
 		}
 

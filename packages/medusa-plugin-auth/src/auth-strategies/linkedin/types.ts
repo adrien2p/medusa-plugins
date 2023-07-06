@@ -1,4 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import { AuthOptions } from '../../types';
 
 export const LINKEDIN_ADMIN_STRATEGY_NAME = 'linkedin.admin.medusa-auth-plugin';
 export const LINKEDIN_STORE_STRATEGY_NAME = 'linkedin.store.medusa-auth-plugin';
@@ -28,7 +29,8 @@ export type LinkedinAuthOptions = {
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: Profile
+			profile: Profile,
+			strict?: AuthOptions['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -53,7 +55,8 @@ export type LinkedinAuthOptions = {
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: Profile
+			profile: Profile,
+			strict?: AuthOptions['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

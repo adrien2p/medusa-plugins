@@ -1,4 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import { AuthOptions } from '../../types';
 
 export const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin';
 export const AUTH0_STORE_STRATEGY_NAME = 'auth0.store.medusa-auth-plugin';
@@ -35,7 +36,8 @@ export type Auth0Options = {
 			accessToken: string,
 			refreshToken: string,
 			extraParams: ExtraParams,
-			profile: Profile
+			profile: Profile,
+			strict?: AuthOptions['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -61,7 +63,8 @@ export type Auth0Options = {
 			accessToken: string,
 			refreshToken: string,
 			extraParams: ExtraParams,
-			profile: Profile
+			profile: Profile,
+			strict?: AuthOptions['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

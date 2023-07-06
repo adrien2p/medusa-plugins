@@ -31,7 +31,7 @@ export class AzureAdminStrategy extends PassportStrategy(AzureStrategy, AZURE_AD
 
 	async validate(req: Request, profile: any): Promise<null | { id: string }> {
 		if (this.strategyOptions.admin.verifyCallback) {
-			return await this.strategyOptions.admin.verifyCallback(this.container, req, profile);
+			return await this.strategyOptions.admin.verifyCallback(this.container, req, profile, this.strict);
 		}
 
 		const authprofile: Profile = {
