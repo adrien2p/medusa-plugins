@@ -34,6 +34,7 @@ newly added plugins. To do so here are the steps
     ```js
     {
         resolve: "medusa-plugin-auth",
+        /** @type {import('medusa-plugin-auth').AuthOptions} */
         options: {
             // strict: "all", // or "none" or "store" or "admin"
             auth0: {
@@ -52,7 +53,7 @@ newly added plugins. To do so here are the steps
                     // authPath: '/admin/auth/auth0',
                     // authCallbackPath: '/admin/auth/auth0/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile) => {
+                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile, strict) => {
                     //    // implement your custom verify callback here if you need it
                     // }
                 },
@@ -68,7 +69,7 @@ newly added plugins. To do so here are the steps
                     // authPath: '/store/auth/auth0',
                     // authCallbackPath: '/store/auth/auth0/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile) => {
+                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile, strict) => {
                     //    // implement your custom verify callback here if you need it
                     // }
                 }

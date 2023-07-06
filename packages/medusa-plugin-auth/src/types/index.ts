@@ -30,6 +30,9 @@ export type StrategyExport = {
 	getRouter?: (configModule: ConfigModule, options: AuthOptions) => Router[];
 };
 
+/**
+ * The options to set in the plugin configuration options property in the medusa-config.js file.
+ */
 export type AuthOptions = ProviderOptions & {
 	/**
 	 * When set to admin | store | all,  will only allow the user to authenticate using the provider

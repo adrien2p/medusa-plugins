@@ -38,7 +38,8 @@ export class Auth0AdminStrategy extends PassportStrategy(Auth0Strategy, AUTH0_AD
 				accessToken,
 				refreshToken,
 				extraParams,
-				profile
+				profile,
+				this.strict
 			);
 
 			return {

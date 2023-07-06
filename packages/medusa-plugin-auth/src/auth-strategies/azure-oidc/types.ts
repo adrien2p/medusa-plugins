@@ -1,4 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
+import {AuthOptions} from "../../types";
 
 export const AZURE_STORE_STRATEGY_NAME = 'azure-oidc.store.medusa-auth-plugin';
 export const AZURE_ADMIN_STRATEGY_NAME = 'azure-oidc.admin.medusa-auth-plugin';
@@ -87,7 +88,7 @@ export type AzureAuthOption = {
 	/**
 	 * The default verify callback function will be used if this configuration is not specified
 	 */
-	verifyCallback?: (container: MedusaContainer, req: Request, profile: any) => Promise<null | { id: string } | never>;
+	verifyCallback?: (container: MedusaContainer, req: Request, profile: any, strict?: AuthOptions['strict']) => Promise<null | { id: string } | never>;
 
 	expiresIn?: number;
 };

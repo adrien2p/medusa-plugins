@@ -34,7 +34,8 @@ export class GoogleStoreStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 				req,
 				accessToken,
 				refreshToken,
-				profile
+				profile,
+				this.strict
 			);
 		}
 

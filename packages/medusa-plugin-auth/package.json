@@ -36,6 +36,7 @@
     "loaders",
     "auth-strategies"
   ],
+  "types": "types/index.d.ts",
   "scripts": {
     "build": "run-s clean build:tsc",
     "build:tsc:watch": "tsc --build ./tsconfig.json --watch",

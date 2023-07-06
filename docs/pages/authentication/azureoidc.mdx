@@ -35,6 +35,7 @@ newly added plugins. To do so here are the steps
     ```js
     {
         resolve: "medusa-plugin-auth",
+        /** @type {import('medusa-plugin-auth').AuthOptions} */
         options: {
             azure_oidc: {
                 // strict: "all", // or "none" or "store" or "admin"
@@ -59,7 +60,7 @@ newly added plugins. To do so here are the steps
 					// authPath: '/admin/auth/azure',
 					// authCallbackPath: '/admin/auth/azure/cb',
 					// expiresIn: 24 * 60 * 60 * 1000,
-					// verifyCallback: (container, req, profile) => {
+					// verifyCallback: (container, req, profile, strict) => {
 					//    // implement your custom verify callback here if you need it
 					// }
 				},
@@ -85,7 +86,7 @@ newly added plugins. To do so here are the steps
 					// authPath: '/store/auth/azure',
 					// authCallbackPath: '/store/auth/azure/cb',
 					// expiresIn: 24 * 60 * 60 * 1000,
-					// verifyCallback: (container, req, profile) => {
+					// verifyCallback: (container, req, profile, strict) => {
 					//    // implement your custom verify callback here if you need it
 					// }
                 }

@@ -31,7 +31,7 @@ export class AzureStoreStrategy extends PassportStrategy(AzureStrategy, AZURE_ST
 
 	async validate(req: Request, profile: any): Promise<null | { id: string }> {
 		if (this.strategyOptions.store.verifyCallback) {
-			return await this.strategyOptions.store.verifyCallback(this.container, req, profile);
+			return await this.strategyOptions.store.verifyCallback(this.container, req, profile, this.strict);
 		}
 
 		const authprofile: Profile = {

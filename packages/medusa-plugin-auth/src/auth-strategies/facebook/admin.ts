@@ -35,7 +35,8 @@ export class FacebookAdminStrategy extends PassportStrategy(FacebookStrategy, FA
 				req,
 				accessToken,
 				refreshToken,
-				profile
+				profile,
+				this.strict
 			);
 		}
 

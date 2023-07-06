@@ -34,7 +34,8 @@ export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE
 				req,
 				accessToken,
 				refreshToken,
-				profile
+				profile,
+				this.strict
 			);
 		}
 

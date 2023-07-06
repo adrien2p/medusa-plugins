@@ -24,7 +24,7 @@ export class FirebaseAdminStrategy extends PassportStrategy(FirebaseStrategy, FI
 		const decodedToken = await auth().verifyIdToken(token);
 
 		if (this.strategyOptions.admin.verifyCallback) {
-			return await this.strategyOptions.admin.verifyCallback(this.container, decodedToken);
+			return await this.strategyOptions.admin.verifyCallback(this.container, decodedToken, this.strict);
 		}
 
 		const profile: Profile = { emails: [{ value: decodedToken.email }] };
