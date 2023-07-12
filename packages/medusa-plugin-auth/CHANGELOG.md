@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.5...medusa-plugin-auth@1.6.0) (2023-07-12)
+
+
+### Bug Fixes
+
+* strategy names are broken for google ([1230b80](https://github.com/adrien2p/medusa-plugins/commit/1230b80c24997dee0aa0d063301087e342983993))
+
+
+### Features
+
+* add support for strict options ([#84](https://github.com/adrien2p/medusa-plugins/issues/84)) ([3e18cb3](https://github.com/adrien2p/medusa-plugins/commit/3e18cb3734ebc875b4459a18531b76b1b621adee))
+
+
+
+
+
 # [1.5.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.5...medusa-plugin-auth@1.5.0) (2023-06-26)
 
 
