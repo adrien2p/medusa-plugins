@@ -5,7 +5,11 @@ import {
 	FIREBASE_ADMIN_STRATEGY_NAME,
 	FIREBASE_STORE_STRATEGY_NAME,
 } from '../auth-strategies/firebase/types';
-import { GoogleAuthOptions, GOOGLE_ADMIN_STRATEGY_NAME, GOOGLE_STORE_STRATEGY_NAME } from '../auth-strategies/google/types';
+import {
+	GoogleAuthOptions,
+	GOOGLE_ADMIN_STRATEGY_NAME,
+	GOOGLE_STORE_STRATEGY_NAME,
+} from '../auth-strategies/google/types';
 import {
 	FacebookAuthOptions,
 	FACEBOOK_ADMIN_STRATEGY_NAME,
@@ -17,7 +21,11 @@ import {
 	LINKEDIN_STORE_STRATEGY_NAME,
 } from '../auth-strategies/linkedin/types';
 import { Auth0Options, AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME } from '../auth-strategies/auth0/types';
-import { AzureAuthOptions, AZURE_ADMIN_STRATEGY_NAME, AZURE_STORE_STRATEGY_NAME } from '../auth-strategies/azure-oidc/types';
+import {
+	AzureAuthOptions,
+	AZURE_ADMIN_STRATEGY_NAME,
+	AZURE_STORE_STRATEGY_NAME,
+} from '../auth-strategies/azure-oidc/types';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 export const AUTH_PROVIDER_KEY = 'authProvider';
