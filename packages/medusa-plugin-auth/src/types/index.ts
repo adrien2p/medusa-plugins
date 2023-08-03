@@ -18,6 +18,7 @@ import {
 } from '../auth-strategies/linkedin';
 import { Auth0Options, AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME } from '../auth-strategies/auth0';
 import { AzureAuthOptions, AZURE_ADMIN_STRATEGY_NAME, AZURE_STORE_STRATEGY_NAME } from '../auth-strategies/azure-oidc';
+import { SupabaseAuthOptions, SUPABASE_AUTH_ADMIN_STRATEGY_NAME, SUPABASE_AUTH_STORE_STRATEGY_NAME } from '../auth-strategies/supaba';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 export const AUTH_PROVIDER_KEY = 'authProvider';
@@ -49,6 +50,7 @@ export type ProviderOptions = {
 	linkedin?: LinkedinAuthOptions;
 	firebase?: FirebaseAuthOptions;
 	auth0?: Auth0Options;
+	supabase?: SupabaseAuthOptions;
 	azure_oidc?: AzureAuthOptions;
 };
 
@@ -84,5 +86,9 @@ export const strategyNames: StrategyNames = {
 	azure_oidc: {
 		admin: AZURE_ADMIN_STRATEGY_NAME,
 		store: AZURE_STORE_STRATEGY_NAME,
+	},
+	supabase: {
+		admin: SUPABASE_AUTH_ADMIN_STRATEGY_NAME,
+		store: SUPABASE_AUTH_STORE_STRATEGY_NAME,
 	},
 };
