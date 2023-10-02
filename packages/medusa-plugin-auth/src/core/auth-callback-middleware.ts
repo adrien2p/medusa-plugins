@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken';
-
 /**
  * Return the handler of the auth callback for an auth strategy. Once the auth is successful this callback
  * will be called.
@@ -10,23 +8,19 @@ import jwt from 'jsonwebtoken';
  */
 export function authCallbackMiddleware(
 	domain: 'admin' | 'store',
-	secret: string,
-	expiresIn: number,
 	successRedirectGetter: () => string
 ) {
 	return (req, res) => {
-		const sendToken = sendTokenFactory(domain, secret, expiresIn);
+		const sendToken = authenticateSession(domain);
 		sendToken(req, res);
 		res.redirect(successRedirectGetter());
 	};
 }
 
-export function sendTokenFactory(domain: 'admin' | 'store', secret: string, expiresIn: number) {
+export function authenticateSession(domain: 'admin' | 'store') {
 	return (req, res) => {
-		const tokenData =
-			domain === 'admin' ? { userId: req.user.id, ...req.user } : { customer_id: req.user.id, ...req.user };
-		const token = jwt.sign(tokenData, secret, { expiresIn });
-		const sessionKey = domain === 'admin' ? 'jwt' : 'jwt_store';
-		req.session[sessionKey] = token;
+		const sessionKey = domain === 'admin' ? 'user_id': 'customer_id';
+
+		req.session[sessionKey] = req.user.id;
 	};
 }

@@ -2,12 +2,11 @@ import passport from 'passport';
 import cors from 'cors';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
-import { TWENTY_FOUR_HOURS_IN_MS } from '../../types';
-import { sendTokenFactory } from '../../core/auth-callback-middleware';
+import { authenticateSession } from '../../core/auth-callback-middleware';
 
-function firebaseCallbackMiddleware(domain: 'admin' | 'store', secret: string, expiresIn: number) {
+function firebaseCallbackMiddleware(domain: 'admin' | 'store') {
 	return (req, res) => {
-		const sendToken = sendTokenFactory(domain, secret, expiresIn);
+		const sendToken = authenticateSession(domain);
 		sendToken(req, res);
 		res.status(200).json({ result: 'OK' });
 	};
@@ -40,11 +39,7 @@ export function firebaseAuthRoutesBuilder({
 	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
 	router.options(authPath, cors(corsOptions));
 
-	const callbackHandler = firebaseCallbackMiddleware(
-		domain,
-		configModule.projectConfig.jwt_secret,
-		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS
-	);
+	const callbackHandler = firebaseCallbackMiddleware(domain);
 
 	router.get(
 		authPath,

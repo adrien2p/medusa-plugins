@@ -1,13 +1,12 @@
 import { Router } from 'express';
 import passport from 'passport';
 import cors from 'cors';
-import { TWENTY_FOUR_HOURS_IN_MS } from '../../../types';
 import { authCallbackMiddleware } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 
 type PassportAuthenticateMiddlewareOptions = {
 	[key: string]: unknown;
-	scope?: unknown;
+	scope?: string | string[];
 };
 
 type PassportCallbackAuthenticateMiddlewareOptions = {
@@ -78,8 +77,6 @@ export function passportAuthRoutesBuilder({
 
 	const callbackHandler = authCallbackMiddleware(
 		domain,
-		configModule.projectConfig.jwt_secret,
-		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
 		() => successRedirect
 	);
 
