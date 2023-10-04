@@ -79,6 +79,5 @@ export function getAuth0StoreAuthRouter(auth0: Auth0Options, configModule: Confi
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: auth0.store.failureRedirect,
 		},
-		expiresIn: auth0.store.expiresIn,
 	});
 }

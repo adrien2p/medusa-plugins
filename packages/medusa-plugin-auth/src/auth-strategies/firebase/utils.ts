@@ -1,14 +1,22 @@
 import passport from 'passport';
 import cors from 'cors';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
-import { Router } from 'express';
-import { authenticateSession } from '../../core/auth-callback-middleware';
+import { Router, Request, Response } from 'express';
+import { authenticateSessionFactory, signToken } from '../../core/auth-callback-middleware';
 
-function firebaseCallbackMiddleware(domain: 'admin' | 'store') {
-	return (req, res) => {
-		const sendToken = authenticateSession(domain);
-		sendToken(req, res);
-		res.status(200).json({ result: 'OK' });
+function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule) {
+	return (req: Request, res: Response) => {
+		console.log(req.query);
+		if(req.query.returnAccessToken == 'true') {
+			const token = signToken(domain, configModule, req.user);
+			res.json({ access_token: token });
+			return;
+		} else {
+			const authenticateSession = authenticateSessionFactory(domain);
+			authenticateSession(req, res);
+
+			res.status(200).json({ result: 'OK' });
+		}
 	};
 }
 
@@ -17,13 +25,11 @@ export function firebaseAuthRoutesBuilder({
 	configModule,
 	authPath,
 	strategyName,
-	expiresIn,
 }: {
 	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
 	strategyName: string;
-	expiresIn?: number;
 }): Router {
 	const router = Router();
 
@@ -39,7 +45,7 @@ export function firebaseAuthRoutesBuilder({
 	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
 	router.options(authPath, cors(corsOptions));
 
-	const callbackHandler = firebaseCallbackMiddleware(domain);
+	const callbackHandler = firebaseCallbackMiddleware(domain, configModule);
 
 	router.get(
 		authPath,

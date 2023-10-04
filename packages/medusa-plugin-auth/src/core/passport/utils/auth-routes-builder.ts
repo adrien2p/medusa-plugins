@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import passport from 'passport';
 import cors from 'cors';
-import { authCallbackMiddleware } from '../../auth-callback-middleware';
+import { authCallbackMiddleware, authenticateSessionFactory, signToken } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 
 type PassportAuthenticateMiddlewareOptions = {
@@ -33,7 +33,6 @@ export function passportAuthRoutesBuilder({
 	strategyName,
 	passportAuthenticateMiddlewareOptions,
 	passportCallbackAuthenticateMiddlewareOptions,
-	expiresIn,
 	successRedirect,
 	authCallbackPath,
 }: {
@@ -43,13 +42,13 @@ export function passportAuthRoutesBuilder({
 	strategyName: string;
 	passportAuthenticateMiddlewareOptions: PassportAuthenticateMiddlewareOptions;
 	passportCallbackAuthenticateMiddlewareOptions: PassportCallbackAuthenticateMiddlewareOptions;
-	expiresIn?: number;
 	successRedirect: string;
 	authCallbackPath: string;
 }): Router {
 	const router = Router();
 
-	const originalSuccessRedirect = successRedirect;
+	const defaultRedirect = successRedirect;
+	let successAction: (req: Request, res: Response) => void;
 
 	const corsOptions = {
 		origin:
@@ -66,7 +65,7 @@ export function passportAuthRoutesBuilder({
 		authPath,
 		(req, res, next) => {
 			// Allow to override the successRedirect by passing a query param `?redirectTo=your_url`
-			successRedirect = (req.query.redirectTo ? req.query.redirectTo : originalSuccessRedirect) as string;
+			successAction = successActionHandlerFactory(req, domain, configModule, defaultRedirect);
 			next();
 		},
 		passport.authenticate(strategyName, {
@@ -75,10 +74,7 @@ export function passportAuthRoutesBuilder({
 		})
 	);
 
-	const callbackHandler = authCallbackMiddleware(
-		domain,
-		() => successRedirect
-	);
+	const callbackHandler = authCallbackMiddleware((req, res) => successAction(req, res));
 
 	router.get(authCallbackPath, cors(corsOptions));
 	router.get(
@@ -98,4 +94,23 @@ export function passportAuthRoutesBuilder({
 	);
 
 	return router;
+}
+
+function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string) {
+	const returnAccessToken = req.query.returnAccessToken == 'true';
+	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
+
+	if(returnAccessToken) {
+		return (req: Request, res: Response) => {
+			const token = signToken(domain, configModule, req.user);
+			res.json({ access_token: token });
+		};
+	} else {
+		return (req: Request, res: Response) => {
+			const authenticateSession = authenticateSessionFactory(domain);
+			authenticateSession(req, res);
+			
+			res.redirect(redirectUrl);
+		};
+	}
 }

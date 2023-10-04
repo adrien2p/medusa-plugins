@@ -51,7 +51,7 @@
     "typeorm": "*"
   },
   "devDependencies": {
-    "@medusajs/medusa": "^1.9.0",
+    "@medusajs/medusa": "^1.17.0",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.1.2",
     "jest": "^29.1.2",

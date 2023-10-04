@@ -69,6 +69,5 @@ export function getGoogleStoreAuthRouter(google: GoogleAuthOptions, configModule
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: google.store.failureRedirect,
 		},
-		expiresIn: google.store.expiresIn,
 	});
 }

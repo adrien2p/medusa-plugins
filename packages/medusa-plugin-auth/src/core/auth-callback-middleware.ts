@@ -1,23 +1,41 @@
+import { Request, Response } from 'express';
+import { ConfigModule } from '@medusajs/medusa/dist/types/global';
+import jwt from 'jsonwebtoken';
+
 /**
  * Return the handler of the auth callback for an auth strategy. Once the auth is successful this callback
  * will be called.
- * @param domain
- * @param secret
- * @param expiresIn
- * @param successRedirectGetter
+ * @param successAction
  */
 export function authCallbackMiddleware(
-	domain: 'admin' | 'store',
-	successRedirectGetter: () => string
+	successAction: (req: Request, res: Response) => void
 ) {
 	return (req, res) => {
-		const sendToken = authenticateSession(domain);
-		sendToken(req, res);
-		res.redirect(successRedirectGetter());
+		successAction(req, res);
 	};
 }
 
-export function authenticateSession(domain: 'admin' | 'store') {
+export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any) {
+	if(domain === 'admin') {
+		return jwt.sign(
+			{ user_id: user.id, domain: 'admin' },
+			configModule.projectConfig.jwt_secret,
+			{
+			expiresIn: '24h',
+			}
+		);
+	} else {
+		return jwt.sign(
+			{ customer_id: user.id, domain: 'store' },
+			configModule.projectConfig.jwt_secret,
+			{
+			  expiresIn: '30d',
+			}
+		);
+	}
+}
+
+export function authenticateSessionFactory(domain: 'admin' | 'store') {
 	return (req, res) => {
 		const sessionKey = domain === 'admin' ? 'user_id': 'customer_id';
 

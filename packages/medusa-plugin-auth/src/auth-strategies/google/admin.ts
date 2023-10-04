@@ -69,6 +69,5 @@ export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: google.admin.failureRedirect,
 		},
-		expiresIn: google.admin.expiresIn,
 	});
 }
