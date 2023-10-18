@@ -101,10 +101,14 @@ export function passportAuthRoutesBuilder({
 					failureRedirect: false,
 				}),
 				(err, user, options) => {
-					if (options?.msg && passportCallbackAuthenticateMiddlewareOptions?.failureRedirect) {
-						return res.redirect(
-							passportCallbackAuthenticateMiddlewareOptions.failureRedirect + '?message=' + options.msg
-						);
+					if (options?.msg) {
+						if (passportCallbackAuthenticateMiddlewareOptions?.failureRedirect) {
+							return res.redirect(
+								passportCallbackAuthenticateMiddlewareOptions.failureRedirect + '?message=' + options.msg
+							);
+						} else {
+							return res.status(401).json({ message: options.msg });
+						}
 					}
 					return callbackHandler(req, res);
 				}
