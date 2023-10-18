@@ -19,7 +19,7 @@ export function PassportStrategy<T extends Type<any> = any>(
 					const validateResult = await this.validate(...params);
 					done(null, validateResult);
 				} catch (err) {
-					done(err, null);
+					done(null, null, { msg: err.message });
 				}
 			};
 

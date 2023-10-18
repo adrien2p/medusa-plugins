@@ -93,11 +93,23 @@ export function passportAuthRoutesBuilder({
 
 			next();
 		},
-		passport.authenticate(strategyName, {
-			...passportCallbackAuthenticateMiddlewareOptions,
-			session: false,
-		}),
-		callbackHandler
+		function (req, res, next) {
+			passport.authenticate(
+				strategyName,
+				Object.assign({}, passportCallbackAuthenticateMiddlewareOptions, {
+					session: false,
+					failureRedirect: false,
+				}),
+				(err, user, options) => {
+					if (options?.msg && passportCallbackAuthenticateMiddlewareOptions?.failureRedirect) {
+						return res.redirect(
+							passportCallbackAuthenticateMiddlewareOptions.failureRedirect + '?message=' + options.msg
+						);
+					}
+					return callbackHandler(req, res);
+				}
+			)(req, res, next);
+		}
 	);
 
 	return router;
