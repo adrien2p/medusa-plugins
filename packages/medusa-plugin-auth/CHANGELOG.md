@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.5...medusa-plugin-auth@1.7.0) (2023-10-24)
+
+
+### Bug Fixes
+
+* failure redirect not working properly ([21eccdc](https://github.com/adrien2p/medusa-plugins/commit/21eccdcd0ef3c188a8e19f1682d6984364a2ba3e))
+
+
+### Features
+
+* add support for strict options ([#84](https://github.com/adrien2p/medusa-plugins/issues/84)) ([3e18cb3](https://github.com/adrien2p/medusa-plugins/commit/3e18cb3734ebc875b4459a18531b76b1b621adee))
+
+
+
+
+
 # [1.5.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.4.5...medusa-plugin-auth@1.5.0) (2023-06-26)
 
 
