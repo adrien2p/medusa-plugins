@@ -37,7 +37,7 @@ export function signToken(domain: 'admin' | 'store', configModule: ConfigModule,
 
 export function authenticateSessionFactory(domain: 'admin' | 'store') {
 	return (req, res) => {
-		const sessionKey = domain === 'admin' ? 'user_id': 'customer_id';
+		const sessionKey = domain === 'admin' ? 'user_id' : 'customer_id';
 
 		req.session[sessionKey] = req.user.id;
 	};
