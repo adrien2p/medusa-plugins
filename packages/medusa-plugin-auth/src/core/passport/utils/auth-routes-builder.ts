@@ -35,6 +35,7 @@ export function passportAuthRoutesBuilder({
 	passportCallbackAuthenticateMiddlewareOptions,
 	successRedirect,
 	authCallbackPath,
+	expiresIn,
 }: {
 	domain: 'admin' | 'store';
 	configModule: ConfigModule;
@@ -44,6 +45,7 @@ export function passportAuthRoutesBuilder({
 	passportCallbackAuthenticateMiddlewareOptions: PassportCallbackAuthenticateMiddlewareOptions;
 	successRedirect: string;
 	authCallbackPath: string;
+	expiresIn?: number | string;
 }): Router {
 	const router = Router();
 
@@ -96,11 +98,11 @@ export function passportAuthRoutesBuilder({
 	return router;
 }
 
-function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string) {
+function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string, expiresIn?: string | number) {
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 
-	const token = signToken(domain, configModule, req.user);
+	const token = signToken(domain, configModule, req.user, expiresIn);
 
 	if(returnAccessToken) {
 		return (req: Request, res: Response) => {

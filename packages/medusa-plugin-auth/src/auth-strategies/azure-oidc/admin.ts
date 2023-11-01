@@ -66,5 +66,6 @@ export function getAzureAdminAuthRouter(azure: AzureAuthOptions, configModule: C
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: azure.admin.failureRedirect,
 		},
+		expiresIn: azure.admin.expiresIn,
 	});
 }

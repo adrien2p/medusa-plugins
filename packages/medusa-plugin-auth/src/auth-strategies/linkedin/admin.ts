@@ -71,5 +71,6 @@ export function getLinkedinAdminAuthRouter(linkedin: LinkedinAuthOptions, config
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: linkedin.admin.failureRedirect,
 		},
+		expiresIn: linkedin.store.expiresIn,
 	});
 }

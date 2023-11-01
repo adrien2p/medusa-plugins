@@ -47,5 +47,6 @@ export function getFirebaseStoreAuthRouter(firebase: FirebaseAuthOptions, config
 		configModule,
 		authPath: firebase.store.authPath ?? '/store/auth/firebase',
 		strategyName: FIREBASE_STORE_STRATEGY_NAME,
+		expiresIn: firebase.store.expiresIn,
 	});
 }

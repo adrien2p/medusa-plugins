@@ -15,13 +15,13 @@ export function authCallbackMiddleware(
 	};
 }
 
-export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any) {
+export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any, expiresIn?: string | number) {
 	if(domain === 'admin') {
 		return jwt.sign(
 			{ user_id: user.id, domain: 'admin' },
 			configModule.projectConfig.jwt_secret,
 			{
-			expiresIn: '24h',
+			expiresIn: expiresIn ?? '24h',
 			}
 		);
 	} else {
@@ -29,7 +29,7 @@ export function signToken(domain: 'admin' | 'store', configModule: ConfigModule,
 			{ customer_id: user.id, domain: 'store' },
 			configModule.projectConfig.jwt_secret,
 			{
-			  expiresIn: '30d',
+			  expiresIn: expiresIn ?? '30d',
 			}
 		);
 	}

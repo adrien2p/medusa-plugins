@@ -66,5 +66,6 @@ export function getAzureStoreAuthRouter(azure: AzureAuthOptions, configModule: C
 		passportCallbackAuthenticateMiddlewareOptions: {
 			failureRedirect: azure.store.failureRedirect,
 		},
+		expiresIn: azure.store.expiresIn,
 	});
 }
