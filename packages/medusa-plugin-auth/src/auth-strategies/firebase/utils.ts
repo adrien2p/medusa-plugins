@@ -4,7 +4,7 @@ import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 import { Router, Request, Response } from 'express';
 import { authenticateSessionFactory, signToken } from '../../core/auth-callback-middleware';
 
-function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule, expiresIn?: string | number) {
+function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule, expiresIn?: number) {
 	return (req: Request, res: Response) => {
 		console.log(req.query);
 		if(req.query.returnAccessToken == 'true') {
@@ -31,7 +31,7 @@ export function firebaseAuthRoutesBuilder({
 	configModule: ConfigModule;
 	authPath: string;
 	strategyName: string;
-	expiresIn?: string | number;
+	expiresIn?: number;
 }): Router {
 	const router = Router();
 

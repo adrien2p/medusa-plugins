@@ -15,7 +15,7 @@ export function authCallbackMiddleware(
 	};
 }
 
-export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any, expiresIn?: string | number) {
+export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any, expiresIn?: number) {
 	if(domain === 'admin') {
 		return jwt.sign(
 			{ user_id: user.id, domain: 'admin' },

@@ -45,7 +45,7 @@ export function passportAuthRoutesBuilder({
 	passportCallbackAuthenticateMiddlewareOptions: PassportCallbackAuthenticateMiddlewareOptions;
 	successRedirect: string;
 	authCallbackPath: string;
-	expiresIn?: number | string;
+	expiresIn?: number;
 }): Router {
 	const router = Router();
 
@@ -67,7 +67,7 @@ export function passportAuthRoutesBuilder({
 		authPath,
 		(req, res, next) => {
 			// Allow to override the successRedirect by passing a query param `?redirectTo=your_url`
-			successAction = successActionHandlerFactory(req, domain, configModule, defaultRedirect);
+			successAction = successActionHandlerFactory(req, domain, configModule, defaultRedirect, expiresIn);
 			next();
 		},
 		passport.authenticate(strategyName, {
@@ -98,20 +98,24 @@ export function passportAuthRoutesBuilder({
 	return router;
 }
 
-function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string, expiresIn?: string | number) {
+function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string, expiresIn?: number) {
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 
-	const token = signToken(domain, configModule, req.user, expiresIn);
+	console.log(expiresIn);
 
 	if(returnAccessToken) {
 		return (req: Request, res: Response) => {
+			const token =  signToken(domain, configModule, req.user, expiresIn);
 			res.json({ access_token: token });
 		};
 	} else {
 		return (req: Request, res: Response) => {
 			const authenticateSession = authenticateSessionFactory(domain);
 			authenticateSession(req, res);
+
+			const token =  signToken(domain, configModule, req.user, expiresIn);
+
 
 			// append token to redirect url as query param
 			const url = new URL(redirectUrl);
