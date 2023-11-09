@@ -110,6 +110,7 @@ export function passportAuthRoutesBuilder({
 							return res.status(401).json({ message: options.msg });
 						}
 					}
+					req.user ??= user;
 					return callbackHandler(req, res);
 				}
 			)(req, res, next);
