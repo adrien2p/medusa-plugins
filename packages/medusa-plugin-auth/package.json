@@ -1,6 +1,6 @@
 {
   "name": "medusa-plugin-auth",
-  "version": "1.5.1",
+  "version": "1.8.0",
   "description": "Social authentication plugin for medusajs",
   "keywords": [
     "social",
@@ -46,7 +46,7 @@
     "test:ci": "yarn add -D @medusajs/medusa@${MEDUSAJS_VERSION} && yarn run test"
   },
   "peerDependencies": {
-    "@medusajs/medusa": "^1.9.0",
+    "@medusajs/medusa": "<=1.16.x",
     "passport": "^0.6.0",
     "typeorm": "*"
   },

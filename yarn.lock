@@ -3261,6 +3261,11 @@
   resolved "https://registry.yarnpkg.com/@medusajs/types/-/types-1.11.2.tgz#a12de0b8df4b0c0e822e0935ee2dcf45347d67da"
   integrity sha512-4+k32og+dFd5Qe5dK9Wug1kX/IZefSWX0zZgOYxSFt4WAKQJ8D1vbUr8CslHB+EH9ZDBEgZurf0iPrTNjHdZ/g==
 
+"@medusajs/types@^1.11.4":
+  version "1.11.5"
+  resolved "https://registry.yarnpkg.com/@medusajs/types/-/types-1.11.5.tgz#83a697a8ced531ec2aecdd5d90b556fcb5833aa4"
+  integrity sha512-hoZ7FEFZqMiUItmMT2FmvG2tp1iygMqriepyIGMjoAWKJsNl3pfJDYgi4vvaVJjLuY5GCsiuXrvfAA/ngnw+dQ==
+
 "@medusajs/utils@1.8.2":
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/@medusajs/utils/-/utils-1.8.2.tgz#e398c5c7e99a7802a5340db4cb38ce513c46dae4"
@@ -3272,7 +3277,20 @@
     typeorm "^0.3.14"
     ulid "^2.3.0"
 
-"@medusajs/utils@^1.10.0", "@medusajs/utils@^1.10.1", "@medusajs/utils@^1.10.2":
+"@medusajs/utils@^1.10.0", "@medusajs/utils@^1.10.1":
+  version "1.10.4"
+  resolved "https://registry.yarnpkg.com/@medusajs/utils/-/utils-1.10.4.tgz#31a85b086aabcf0a6a19dfe7643f90415f788bc1"
+  integrity sha512-qNZQnd28mQ3xh48qXq3xtokZSKsOI2D3YK7Z3GDib3NwHKyDP0YBEY1+5VZAlj3Nte+92bLHrvSTBD0wAawghQ==
+  dependencies:
+    "@medusajs/types" "^1.11.4"
+    "@mikro-orm/core" "5.7.12"
+    "@mikro-orm/migrations" "5.7.12"
+    "@mikro-orm/postgresql" "5.7.12"
+    awilix "^8.0.1"
+    knex "2.4.2"
+    ulid "^2.3.0"
+
+"@medusajs/utils@^1.10.2":
   version "1.10.2"
   resolved "https://registry.yarnpkg.com/@medusajs/utils/-/utils-1.10.2.tgz#86b52ca7a9be4450dc5365c5bc6871d03313190d"
   integrity sha512-2n9xiKL285FJEhd/YqC+GHxNjPbRqofKlgdCCAm8bdDQV+r57cZecrQo991WXw3fH1zcczoQrASyLBX0jv+X1A==
@@ -4443,9 +4461,9 @@
     picomatch "^2.3.1"
 
 "@rushstack/ts-command-line@^4.12.2":
-  version "4.16.1"
-  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.16.1.tgz#3537bbc323f77c8646646465c579b992d39feb16"
-  integrity sha512-+OCsD553GYVLEmz12yiFjMOzuPeCiZ3f8wTiFHL30ZVXexTyPmgjwXEhg2K2P0a2lVf+8YBy7WtPoflB2Fp8/A==
+  version "4.17.1"
+  resolved "https://registry.yarnpkg.com/@rushstack/ts-command-line/-/ts-command-line-4.17.1.tgz#c78db928ce5b93f2e98fd9e14c24f3f3876e57f1"
+  integrity sha512-2jweO1O57BYP5qdBGl6apJLB+aRIn5ccIRTPDyULh0KMwVzFqWtw6IZWt1qtUoZD/pD2RNkIOosH6Cq45rIYeg==
   dependencies:
     "@types/argparse" "1.0.38"
     argparse "~1.0.9"

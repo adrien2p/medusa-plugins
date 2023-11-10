@@ -20,7 +20,7 @@ Once the plugin is installed, you have to add it to your project configuration. 
             uriPath: "/monitoring",
             authentication: true,
             onAuthenticate: (req, username, password) => {
-              return username === process.env.PROM_USER_NAME && password = process.env.PROM_USER_PASS
+              return username === process.env.PROM_USER_NAME && password === process.env.PROM_USER_PASS
             },
         },
     },
