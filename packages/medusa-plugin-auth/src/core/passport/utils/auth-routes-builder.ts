@@ -119,24 +119,24 @@ function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', co
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 
-	if(returnAccessToken) {
+	if (returnAccessToken) {
 		return (req: Request, res: Response) => {
-			const token =  signToken(domain, configModule, req.user, expiresIn);
+			const token = signToken(domain, configModule, req.user, expiresIn);
 			res.json({ access_token: token });
 		};
-	} else {
-		return (req: Request, res: Response) => {
-			const authenticateSession = authenticateSessionFactory(domain);
-			authenticateSession(req, res);
-
-			const token =  signToken(domain, configModule, req.user, expiresIn);
-
-
-			// append token to redirect url as query param
-			const url = new URL(redirectUrl);
-			url.searchParams.append('access_token', token);
-			
-			res.redirect(url.toString());
-		};
 	}
+
+	return (req: Request, res: Response) => {
+		const authenticateSession = authenticateSessionFactory(domain);
+		authenticateSession(req, res);
+
+		const token = signToken(domain, configModule, req.user, expiresIn);
+
+
+		// append token to redirect url as query param
+		const url = new URL(redirectUrl);
+		url.searchParams.append('access_token', token);
+
+		res.redirect(url.toString());
+	};
 }
