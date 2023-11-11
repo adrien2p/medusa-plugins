@@ -119,8 +119,6 @@ function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', co
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 
-	console.log(expiresIn);
-
 	if(returnAccessToken) {
 		return (req: Request, res: Response) => {
 			const token =  signToken(domain, configModule, req.user, expiresIn);
