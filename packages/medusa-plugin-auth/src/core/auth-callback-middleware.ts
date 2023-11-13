@@ -1,32 +1,44 @@
+import { Request, Response } from 'express';
+import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 import jwt from 'jsonwebtoken';
 
 /**
  * Return the handler of the auth callback for an auth strategy. Once the auth is successful this callback
  * will be called.
- * @param domain
- * @param secret
- * @param expiresIn
- * @param successRedirectGetter
+ * @param successAction
  */
 export function authCallbackMiddleware(
-	domain: 'admin' | 'store',
-	secret: string,
-	expiresIn: number,
-	successRedirectGetter: () => string
+	successAction: (req: Request, res: Response) => void
 ) {
 	return (req, res) => {
-		const sendToken = sendTokenFactory(domain, secret, expiresIn);
-		sendToken(req, res);
-		res.redirect(successRedirectGetter());
+		successAction(req, res);
 	};
 }
 
-export function sendTokenFactory(domain: 'admin' | 'store', secret: string, expiresIn: number) {
+export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any, expiresIn?: number) {
+	if(domain === 'admin') {
+		return jwt.sign(
+			{ user_id: user.id, domain: 'admin' },
+			configModule.projectConfig.jwt_secret,
+			{
+			expiresIn: expiresIn ?? '24h',
+			}
+		);
+	} else {
+		return jwt.sign(
+			{ customer_id: user.id, domain: 'store' },
+			configModule.projectConfig.jwt_secret,
+			{
+			  expiresIn: expiresIn ?? '30d',
+			}
+		);
+	}
+}
+
+export function authenticateSessionFactory(domain: 'admin' | 'store') {
 	return (req, res) => {
-		const tokenData =
-			domain === 'admin' ? { userId: req.user.id, ...req.user } : { customer_id: req.user.id, ...req.user };
-		const token = jwt.sign(tokenData, secret, { expiresIn });
-		const sessionKey = domain === 'admin' ? 'jwt' : 'jwt_store';
-		req.session[sessionKey] = token;
+		const sessionKey = domain === 'admin' ? 'user_id' : 'customer_id';
+
+		req.session[sessionKey] = req.user.id;
 	};
 }

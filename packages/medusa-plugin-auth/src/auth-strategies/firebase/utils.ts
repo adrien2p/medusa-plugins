@@ -1,15 +1,20 @@
 import passport from 'passport';
 import cors from 'cors';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
-import { Router } from 'express';
-import { TWENTY_FOUR_HOURS_IN_MS } from '../../types';
-import { sendTokenFactory } from '../../core/auth-callback-middleware';
+import { Router, Request, Response } from 'express';
+import { authenticateSessionFactory, signToken } from '../../core/auth-callback-middleware';
 
-function firebaseCallbackMiddleware(domain: 'admin' | 'store', secret: string, expiresIn: number) {
-	return (req, res) => {
-		const sendToken = sendTokenFactory(domain, secret, expiresIn);
-		sendToken(req, res);
-		res.status(200).json({ result: 'OK' });
+function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule, expiresIn?: number) {
+	return (req: Request, res: Response) => {
+		if(req.query.returnAccessToken == 'true') {
+			const token = signToken(domain, configModule, req.user, expiresIn);
+			res.json({ access_token: token });
+			return;
+		} else {
+			authenticateSessionFactory(domain)(req, res);
+
+			res.status(200).json({ result: 'OK' });
+		}
 	};
 }
 
@@ -40,11 +45,7 @@ export function firebaseAuthRoutesBuilder({
 	/*necessary if you are using non medusajs client such as a pure axios call, axios initially requests options and then get*/
 	router.options(authPath, cors(corsOptions));
 
-	const callbackHandler = firebaseCallbackMiddleware(
-		domain,
-		configModule.projectConfig.jwt_secret,
-		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS
-	);
+	const callbackHandler = firebaseCallbackMiddleware(domain, configModule, expiresIn);
 
 	router.get(
 		authPath,

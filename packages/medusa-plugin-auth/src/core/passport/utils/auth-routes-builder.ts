@@ -1,13 +1,12 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
 import passport from 'passport';
 import cors from 'cors';
-import { TWENTY_FOUR_HOURS_IN_MS } from '../../../types';
-import { authCallbackMiddleware } from '../../auth-callback-middleware';
+import { authCallbackMiddleware, authenticateSessionFactory, signToken } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 
 type PassportAuthenticateMiddlewareOptions = {
 	[key: string]: unknown;
-	scope?: unknown;
+	scope?: string | string[];
 };
 
 type PassportCallbackAuthenticateMiddlewareOptions = {
@@ -34,9 +33,9 @@ export function passportAuthRoutesBuilder({
 	strategyName,
 	passportAuthenticateMiddlewareOptions,
 	passportCallbackAuthenticateMiddlewareOptions,
-	expiresIn,
 	successRedirect,
 	authCallbackPath,
+	expiresIn,
 }: {
 	domain: 'admin' | 'store';
 	configModule: ConfigModule;
@@ -44,13 +43,14 @@ export function passportAuthRoutesBuilder({
 	strategyName: string;
 	passportAuthenticateMiddlewareOptions: PassportAuthenticateMiddlewareOptions;
 	passportCallbackAuthenticateMiddlewareOptions: PassportCallbackAuthenticateMiddlewareOptions;
-	expiresIn?: number;
 	successRedirect: string;
 	authCallbackPath: string;
+	expiresIn?: number;
 }): Router {
 	const router = Router();
 
-	const originalSuccessRedirect = successRedirect;
+	const defaultRedirect = successRedirect;
+	let successAction: (req: Request, res: Response) => void;
 
 	const corsOptions = {
 		origin:
@@ -67,7 +67,7 @@ export function passportAuthRoutesBuilder({
 		authPath,
 		(req, res, next) => {
 			// Allow to override the successRedirect by passing a query param `?redirectTo=your_url`
-			successRedirect = (req.query.redirectTo ? req.query.redirectTo : originalSuccessRedirect) as string;
+			successAction = successActionHandlerFactory(req, domain, configModule, defaultRedirect, expiresIn);
 			next();
 		},
 		passport.authenticate(strategyName, {
@@ -76,12 +76,7 @@ export function passportAuthRoutesBuilder({
 		})
 	);
 
-	const callbackHandler = authCallbackMiddleware(
-		domain,
-		configModule.projectConfig.jwt_secret,
-		expiresIn ?? TWENTY_FOUR_HOURS_IN_MS,
-		() => successRedirect
-	);
+	const callbackHandler = authCallbackMiddleware((req, res) => successAction(req, res));
 
 	router.get(authCallbackPath, cors(corsOptions));
 	router.get(
@@ -118,4 +113,30 @@ export function passportAuthRoutesBuilder({
 	);
 
 	return router;
+}
+
+function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string, expiresIn?: number) {
+	const returnAccessToken = req.query.returnAccessToken == 'true';
+	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
+
+	if (returnAccessToken) {
+		return (req: Request, res: Response) => {
+			const token = signToken(domain, configModule, req.user, expiresIn);
+			res.json({ access_token: token });
+		};
+	}
+
+	return (req: Request, res: Response) => {
+		const authenticateSession = authenticateSessionFactory(domain);
+		authenticateSession(req, res);
+
+		const token = signToken(domain, configModule, req.user, expiresIn);
+
+
+		// append token to redirect url as query param
+		const url = new URL(redirectUrl);
+		url.searchParams.append('access_token', token);
+
+		res.redirect(url.toString());
+	};
 }
