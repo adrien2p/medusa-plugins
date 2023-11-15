@@ -83,7 +83,7 @@ newly added plugins. To do so here are the steps
 <CircleStep index={4}>
     Update your client to add the authentication action
 
-    After authentication is successfull, the user will be redirected to the `successRedirect` url with a `?access_token=your_token` query param and a session cookie will be set. Session will automatically be authenticated. The access token is a JWT that can be used with Authorization: Bearer <token> header to authenticate requests to the backend instead of using a session cookie.
+    After authentication is successfull, the user will be redirected to the `successRedirect` url with a `?access_token=your_token` query param and a session cookie will be set. Session will automatically be authenticated. The access token is a JWT that can be used with Authorization: Bearer `<token>` header to authenticate requests to the backend instead of using a session cookie.
 </CircleStep>
 
 ### Default behaviour
@@ -108,7 +108,7 @@ The default `verifyCallback` flow looks as follow (unless the `strict` option is
 
 If you are using your Medusa application with a SPA or mobile frontend, you can request opt to receive the access token in a JSON response instead of a redirect.
 
-To do this, you have to add ?returnAccessToken=true query parameter to your authentication call. Your authentication URL will then look like this: ${medusa_url}/${authPath}?returnAccessToken=true
+To do this, you have to add ?returnAccessToken=true query parameter to your authentication call. Your authentication URL will then look like this: `${medusa_url}/${authPath}?returnAccessToken=true`
 
 The response will look like this:
 ```json
