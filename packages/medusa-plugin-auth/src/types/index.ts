@@ -1,23 +1,24 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
 import {
-	FirebaseAuthOptions,
 	FIREBASE_ADMIN_STRATEGY_NAME,
 	FIREBASE_STORE_STRATEGY_NAME,
+	FirebaseAuthOptions,
 } from '../auth-strategies/firebase';
-import { GoogleAuthOptions, GOOGLE_ADMIN_STRATEGY_NAME, GOOGLE_STORE_STRATEGY_NAME } from '../auth-strategies/google';
+import { GOOGLE_ADMIN_STRATEGY_NAME, GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions } from '../auth-strategies/google';
 import {
-	FacebookAuthOptions,
 	FACEBOOK_ADMIN_STRATEGY_NAME,
 	FACEBOOK_STORE_STRATEGY_NAME,
+	FacebookAuthOptions,
 } from '../auth-strategies/facebook';
 import {
-	LinkedinAuthOptions,
 	LINKEDIN_ADMIN_STRATEGY_NAME,
 	LINKEDIN_STORE_STRATEGY_NAME,
+	LinkedinAuthOptions,
 } from '../auth-strategies/linkedin';
-import { Auth0Options, AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME } from '../auth-strategies/auth0';
-import { AzureAuthOptions, AZURE_ADMIN_STRATEGY_NAME, AZURE_STORE_STRATEGY_NAME } from '../auth-strategies/azure-oidc';
+import { AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME, Auth0Options } from '../auth-strategies/auth0';
+import { AZURE_ADMIN_STRATEGY_NAME, AZURE_STORE_STRATEGY_NAME, AzureAuthOptions } from '../auth-strategies/azure-oidc';
+import { OAUTH2_ADMIN_STRATEGY_NAME, OAUTH2_STORE_STRATEGY_NAME, OAuth2AuthOptions } from '../auth-strategies/oauth2';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 export const AUTH_PROVIDER_KEY = 'authProvider';
@@ -50,6 +51,7 @@ export type ProviderOptions = {
 	firebase?: FirebaseAuthOptions;
 	auth0?: Auth0Options;
 	azure_oidc?: AzureAuthOptions;
+	oauth2?: OAuth2AuthOptions;
 };
 
 export type StrategyErrorIdentifierType = keyof ProviderOptions;
@@ -84,5 +86,9 @@ export const strategyNames: StrategyNames = {
 	azure_oidc: {
 		admin: AZURE_ADMIN_STRATEGY_NAME,
 		store: AZURE_STORE_STRATEGY_NAME,
+	},
+	oauth2: {
+		admin: OAUTH2_ADMIN_STRATEGY_NAME,
+		store: OAUTH2_STORE_STRATEGY_NAME,
 	},
 };
