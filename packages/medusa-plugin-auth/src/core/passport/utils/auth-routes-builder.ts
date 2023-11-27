@@ -99,7 +99,9 @@ export function passportAuthRoutesBuilder({
 					if (options?.msg) {
 						if (passportCallbackAuthenticateMiddlewareOptions?.failureRedirect) {
 							return res.redirect(
-								passportCallbackAuthenticateMiddlewareOptions.failureRedirect + '?message=' + options.msg
+								passportCallbackAuthenticateMiddlewareOptions.failureRedirect +
+									'?message=' +
+									options.msg
 							);
 						} else {
 							return res.status(401).json({ message: options.msg });
@@ -115,7 +117,13 @@ export function passportAuthRoutesBuilder({
 	return router;
 }
 
-function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', configModule: ConfigModule, defaultRedirect: string, expiresIn?: number) {
+function successActionHandlerFactory(
+	req: Request,
+	domain: 'admin' | 'store',
+	configModule: ConfigModule,
+	defaultRedirect: string,
+	expiresIn?: number
+) {
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 
@@ -131,7 +139,6 @@ function successActionHandlerFactory(req: Request, domain: 'admin' | 'store', co
 		authenticateSession(req, res);
 
 		const token = signToken(domain, configModule, req.user, expiresIn);
-
 
 		// append token to redirect url as query param
 		const url = new URL(redirectUrl);

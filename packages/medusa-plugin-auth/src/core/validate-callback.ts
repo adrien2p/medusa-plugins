@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { CustomerService, UserService } from '@medusajs/medusa';
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { MedusaError } from 'medusa-core-utils';
@@ -149,6 +150,13 @@ export async function validateStoreCallback<
 			}
 		}
 
+		const generatePassword = () => {
+			const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$';
+			return Array.from(crypto.randomFillSync(new Uint32Array(20)))
+				.map((x) => characters[x % characters.length])
+				.join('');
+		};
+
 		customer = await customerService.withTransaction(transactionManager).create({
 			email,
 			metadata: {
@@ -159,6 +167,7 @@ export async function validateStoreCallback<
 			first_name: profile.name?.givenName ?? '',
 			last_name: profile.name?.familyName ?? '',
 			has_account: true,
+			password: generatePassword(),
 		});
 
 		return { id: customer.id };
