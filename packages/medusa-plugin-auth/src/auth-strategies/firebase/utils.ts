@@ -6,7 +6,7 @@ import { authenticateSessionFactory, signToken } from '../../core/auth-callback-
 
 function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule, expiresIn?: number) {
 	return (req: Request, res: Response) => {
-		if(req.query.returnAccessToken == 'true') {
+		if (req.query.returnAccessToken == 'true') {
 			const token = signToken(domain, configModule, req.user, expiresIn);
 			res.json({ access_token: token });
 			return;

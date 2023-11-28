@@ -1,5 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import {AuthOptions} from "../../types";
+import { AuthOptions } from '../../types';
 
 export const FACEBOOK_ADMIN_STRATEGY_NAME = 'facebook.admin.medusa-auth-plugin';
 export const FACEBOOK_STORE_STRATEGY_NAME = 'facebook.store.medusa-auth-plugin';

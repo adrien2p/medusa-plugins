@@ -7,31 +7,21 @@ import jwt from 'jsonwebtoken';
  * will be called.
  * @param successAction
  */
-export function authCallbackMiddleware(
-	successAction: (req: Request, res: Response) => void
-) {
+export function authCallbackMiddleware(successAction: (req: Request, res: Response) => void) {
 	return (req, res) => {
 		successAction(req, res);
 	};
 }
 
 export function signToken(domain: 'admin' | 'store', configModule: ConfigModule, user: any, expiresIn?: number) {
-	if(domain === 'admin') {
-		return jwt.sign(
-			{ user_id: user.id, domain: 'admin' },
-			configModule.projectConfig.jwt_secret,
-			{
+	if (domain === 'admin') {
+		return jwt.sign({ user_id: user.id, domain: 'admin' }, configModule.projectConfig.jwt_secret, {
 			expiresIn: expiresIn ?? '24h',
-			}
-		);
+		});
 	} else {
-		return jwt.sign(
-			{ customer_id: user.id, domain: 'store' },
-			configModule.projectConfig.jwt_secret,
-			{
-			  expiresIn: expiresIn ?? '30d',
-			}
-		);
+		return jwt.sign({ customer_id: user.id, domain: 'store' }, configModule.projectConfig.jwt_secret, {
+			expiresIn: expiresIn ?? '30d',
+		});
 	}
 }
 
