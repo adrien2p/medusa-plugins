@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.8.1...medusa-plugin-auth@1.8.2) (2023-11-28)
+
+
+### Bug Fixes
+
+* generate random password the first time ([#115](https://github.com/adrien2p/medusa-plugins/issues/115)) ([5f5f269](https://github.com/adrien2p/medusa-plugins/commit/5f5f269955c0ddff5ed785a8f2f450da561c4fee))
+
+
+
+
+
 ## [1.8.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.8.0...medusa-plugin-auth@1.8.1) (2023-11-14)
 
 **Note:** Version bump only for package medusa-plugin-auth
