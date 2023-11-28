@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 import loadConfig from '@medusajs/medusa/dist/loaders/config';
+import OAuth2Strategy from '../auth-strategies/oauth2';
 import GoogleStrategy from '../auth-strategies/google';
 import FacebookStrategy from '../auth-strategies/facebook';
 import LinkedinStrategy from '../auth-strategies/linkedin';
@@ -18,6 +19,7 @@ export default function (rootDirectory, pluginOptions: AuthOptions): Router[] {
 function loadRouters(configModule: ConfigModule, options: AuthOptions): Router[] {
 	const routers: Router[] = [];
 
+	routers.push(...OAuth2Strategy.getRouter(configModule, options));
 	routers.push(...GoogleStrategy.getRouter(configModule, options));
 	routers.push(...FacebookStrategy.getRouter(configModule, options));
 	routers.push(...LinkedinStrategy.getRouter(configModule, options));
