@@ -4,7 +4,24 @@ import { AuthOptions } from '../../types';
 export const STEAM_STORE_STRATEGY_NAME = 'steam.store.medusa-auth-plugin';
 export const STEAM_ADMIN_STRATEGY_NAME = 'steam.admin.medusa-auth-plugin';
 
-export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
+/**
+ * The profile returned from the steam strategy
+ *
+ * @see https://github.com/liamcurry/passport-steam/blob/master/lib/passport-steam/strategy.js#L30
+ *
+ * @param provider - The provider name
+ * @param id - The steam id
+ * @param _json - The raw json returned from steam
+ * @param displayName - The display name of the user
+ * @param photos - The photos of the user
+ */
+export type Profile = {
+	provider: 'steam';
+	id: string;
+	_json: any,
+	displayName?: string;
+	photos?: { value: string }[];
+};
 
 export type SteamAuthOptions = {
 	realm: string;
@@ -27,10 +44,9 @@ export type SteamAuthOptions = {
 		verifyCallback?: (
 			container: MedusaContainer,
 			req: Request,
-			accessToken: string,
-			refreshToken: string,
+			identifier: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthOptions['strict'],
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -53,10 +69,9 @@ export type SteamAuthOptions = {
 		verifyCallback?: (
 			container: MedusaContainer,
 			req: Request,
-			accessToken: string,
-			refreshToken: string,
+			identifier: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthOptions['strict'],
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

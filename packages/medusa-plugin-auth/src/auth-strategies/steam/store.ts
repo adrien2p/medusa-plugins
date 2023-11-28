@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import {Strategy as SteamStrategy} from 'passport-steam';
+import { Strategy as SteamStrategy } from 'passport-steam';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { STEAM_STORE_STRATEGY_NAME, SteamAuthOptions, Profile } from './types';
+import { Profile, STEAM_STORE_STRATEGY_NAME, SteamAuthOptions } from './types';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 import { validateStoreCallback } from '../../core/validate-callback';
 import { AuthOptions } from '../../types';
@@ -12,7 +12,7 @@ export class SteamStoreStrategy extends PassportStrategy(SteamStrategy, STEAM_ST
 		protected readonly container: MedusaContainer,
 		protected readonly configModule: ConfigModule,
 		protected readonly strategyOptions: SteamAuthOptions,
-		protected readonly strict?: AuthOptions['strict']
+		protected readonly strict?: AuthOptions['strict'],
 	) {
 		super({
 			returnURL: strategyOptions.store.callbackUrl,
@@ -24,18 +24,16 @@ export class SteamStoreStrategy extends PassportStrategy(SteamStrategy, STEAM_ST
 
 	async validate(
 		req: Request,
-		accessToken: string,
-		refreshToken: string,
-		profile: Profile
+		identifier: string,
+		profile: Profile,
 	): Promise<null | { id: string }> {
 		if (this.strategyOptions.store.verifyCallback) {
 			return await this.strategyOptions.store.verifyCallback(
 				this.container,
 				req,
-				accessToken,
-				refreshToken,
+				identifier,
 				profile,
-				this.strict
+				this.strict,
 			);
 		}
 
