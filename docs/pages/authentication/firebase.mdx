@@ -93,5 +93,5 @@ The default `verifyCallback` flow looks as follow (unless the `strict` option is
           - If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
           - In the case another external authentication method have been used in the past, then an unauthorized
           will be returned.
-   - if the customer trying to authenticate does not exist, a new customer will be created and the authentication
+   - if the customer trying to authenticate does not exist, a new customer will be created with a randomly generated password and the authentication
      flow follow the previous point
