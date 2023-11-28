@@ -63,3 +63,7 @@ First of all, you need to install the plugin as follow `yarn add medusa-plugin-a
 ### Azure AD OIDC
 
 [Documentation here](https://medusa-plugins.vercel.app/authentication/azureoidc)
+
+### OAuth2
+
+[Documentation here](https://medusa-plugins.vercel.app/authentication/oauth2)

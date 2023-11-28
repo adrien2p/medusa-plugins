@@ -1,0 +1,130 @@
+<div style={{display: "flex", marginTop: "1rem"}}>
+    <a style={{display: "inline"}} href="https://www.npmjs.com/package/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/npm/v/medusa-plugin-auth.svg" height="20"/></a>
+    <a style={{display: "inline", marginLeft: "0.5rem"}} href="https://github.com/adrien2p/medusa-plugins/tree/main/packages/medusa-plugin-auth"><img alt="NPM Version" src="https://img.shields.io/badge/github-%23121011.svg?style=Flat-square&logo=github&logoColor=white" height="20"/></a>
+</div>
+
+### Configuration
+
+In order to be able to use the **oauth2** authentication provider, you have to add the configuration to your
+newly added plugins. To do so here are the steps
+
+<CircleStep index={1}>
+    Configure your **oauth2 developer console**
+</CircleStep>
+
+<CircleStep index={2}>
+    Go to your `medusa-config.js`
+</CircleStep>
+
+<CircleStep index={3}>
+    Check that the variables are set with the appropriate values
+
+    ```js
+    const BACKEND_URL = process.env.BACKEND_URL || "localhost:9000"
+    const ADMIN_URL = process.env.ADMIN_URL || "localhost:7000"
+    const STORE_URL = process.env.STORE_URL || "localhost:8000"
+
+    const OAuth2AuthorizationURL = process.env.OAUTH2_CLIENT_ID || ""
+    const OAuth2TokenURL = process.env.tokenURL || ""
+    const OAuth2ClientId = process.env.OAUTH2_CLIENT_ID || ""
+    const OAuth2ClientSecret = process.env.OAUTH2_CLIENT_SECRET || ""
+    const OAuth2Scope = process.env.OAUTH2_SCOPE || ""
+    ```
+
+    Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
+    just add the `oauth2` options to your auth plugin options
+    ```js
+    {
+        resolve: "medusa-plugin-auth",
+        /** @type {import('medusa-plugin-auth').AuthOptions} */
+        options: {
+            strict: "all", // or "none" or "store" or "admin"
+            oauth2: {
+				authorizationURL: OAuth2AuthorizationURL,
+				tokenURL: OAuth2TokenURL,
+                clientID: OAuth2ClientId,
+                clientSecret: OAuth2ClientSecret,
+				scope: OAuth2Scope.split(","),
+
+                admin: {
+                    callbackUrl:`${BACKEND_URL}/admin/auth/oauth2/cb`,
+                    failureRedirect: `${ADMIN_URL}/login`,
+
+					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+					// This query param will have the priority over this configuration
+                    successRedirect: `${ADMIN_URL}/`,
+
+                    // authPath: '/admin/auth/oauth2',
+                    // authCallbackPath: '/admin/auth/oauth2/cb',
+                    // expiresIn: 24 * 60 * 60 * 1000,
+                    // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+                    //    // implement your custom verify callback here if you need it
+                    // }
+                },
+
+                store: {
+                    callbackUrl:`${BACKEND_URL}/store/auth/oauth2/cb`,
+                    failureRedirect: `${STORE_URL}/login`,
+
+					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+					// This query param will have the priority over this configuration
+                    successRedirect: `${STORE_URL}/`,
+
+                    // authPath: '/store/auth/oauth2',
+                    // authCallbackPath: '/store/auth/oauth2/cb',
+                    // expiresIn: 24 * 60 * 60 * 1000,
+                    // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+                    //    // implement your custom verify callback here if you need it
+                    // }
+                }
+            }
+        }
+    }
+    ```
+    The options that are commented are `optional` and the value that you see are the default values
+</CircleStep>
+
+<CircleStep index={4}>
+    Update your client to add the authentication action
+    ```html
+    <a href="${medusa_url}/${authPath}" type="button" class="text-white bg-[#2663eb] hover:bg-[#2663eb]/90 focus:ring-4 focus:outline-none focus:ring-[#2663eb]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:focus:ring-[#2663eb]/55 mr-2 mb-2">
+		<svg class="mr-2 -ml-1 w-4 h-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="oauth2" role="img" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="512" cy="512" r="512" style="fill:#008aaa"></circle> <path d="M786.2 395.5h-80.6c-1.5 0-3-.8-3.7-2.1l-64.7-112.2c-.8-1.3-2.2-2.1-3.8-2.1h-264c-1.5 0-3 .8-3.7 2.1l-67.3 116.4-64.8 112.2c-.7 1.3-.7 2.9 0 4.3l64.8 112.2 67.2 116.5c.7 1.3 2.2 2.2 3.7 2.1h264.1c1.5 0 3-.8 3.8-2.1L702 630.6c.7-1.3 2.2-2.2 3.7-2.1h80.6c2.7 0 4.8-2.2 4.8-4.8V400.4c-.1-2.7-2.3-4.9-4.9-4.9zM477.5 630.6l-20.3 35c-.3.5-.8 1-1.3 1.3-.6.3-1.2.5-1.9.5h-40.3c-1.4 0-2.7-.7-3.3-2l-60.1-104.3-5.9-10.3-21.6-36.9c-.3-.5-.5-1.1-.4-1.8 0-.6.2-1.3.5-1.8l21.7-37.6 65.9-114c.7-1.2 2-2 3.3-2H454c.7 0 1.4.2 2.1.5.5.3 1 .7 1.3 1.3l20.3 35.2c.6 1.2.5 2.7-.2 3.8l-65.1 112.8c-.3.5-.4 1.1-.4 1.6 0 .6.2 1.1.4 1.6l65.1 112.7c.9 1.5.8 3.1 0 4.4zm202.1-116.7L658 550.8l-5.9 10.3L592 665.4c-.7 1.2-1.9 2-3.3 2h-40.3c-.7 0-1.3-.2-1.9-.5-.5-.3-1-.7-1.3-1.3l-20.3-35c-.9-1.3-.9-2.9-.1-4.2l65.1-112.7c.3-.5.4-1.1.4-1.6 0-.6-.2-1.1-.4-1.6l-65.1-112.8c-.7-1.2-.8-2.6-.2-3.8l20.3-35.2c.3-.5.8-1 1.3-1.3.6-.4 1.3-.5 2.1-.5h40.4c1.4 0 2.7.7 3.3 2l65.9 114 21.7 37.6c.3.6.5 1.2.5 1.8 0 .4-.2 1-.5 1.6z" style="fill:#fff"></path> </g></svg>
+      	Sign in with OAuth2
+    </a>
+    ```
+    - `medusa_url` correspond to your backend server url (e.g `http://localhost:9000`)
+    - `authPath` correspond to `authPath` configuration in your plugin (e.g `admin/auth/oauth2`)
+
+    After authentication is successfull, the user will be redirected to the `successRedirect` url with a `?access_token=your_token` query param and a session cookie will be set. Session will automatically be authenticated. The access token is a JWT that can be used with Authorization: Bearer `<token>` header to authenticate requests to the backend instead of using a session cookie.
+</CircleStep>
+
+### Default behaviour
+
+The default `verifyCallback` flow looks as follow (unless the `strict` option is changed to `none` or `store` or `admin` depending on the targeted domain)
+- for the `admin`
+    - if the user trying to authenticate exists
+        - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
+          - If it is not, the user authentication gets rejected.
+          - In the case it is present, then the user authentication gets authorized.
+   - if the user trying to authenticate does not exist, an unauthorized error will be returned
+- for the `store`
+    - if the customer trying to authenticate exists
+        - then we are looking in the metadata to find if the strategy identifier is present in `authProvider`.
+          - If none are found, then the customer gets authenticated and can proceed and the metadata gets updated.
+          - In the case another external authentication method have been used in the past, then an unauthorized
+          will be returned.
+   - if the customer trying to authenticate does not exist, a new customer will be created with a randomly generated password and the authentication
+     flow follow the previous point
+
+### Request only access token in a JSON response
+
+If you are using your Medusa application with a SPA or mobile frontend, you can request opt to receive the access token in a JSON response instead of a redirect.
+
+To do this, you have to add ?returnAccessToken=true query parameter to your authentication call. Your authentication URL will then look like this: `${medusa_url}/${authPath}?returnAccessToken=true`
+
+The response will look like this:
+```json
+{
+    access_token: "<your-jwt-token>"
+}
+```
