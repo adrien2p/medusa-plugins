@@ -19,6 +19,7 @@ import {
 import { AUTH0_ADMIN_STRATEGY_NAME, AUTH0_STORE_STRATEGY_NAME, Auth0Options } from '../auth-strategies/auth0';
 import { AZURE_ADMIN_STRATEGY_NAME, AZURE_STORE_STRATEGY_NAME, AzureAuthOptions } from '../auth-strategies/azure-oidc';
 import { OAUTH2_ADMIN_STRATEGY_NAME, OAUTH2_STORE_STRATEGY_NAME, OAuth2AuthOptions } from '../auth-strategies/oauth2';
+import { STEAM_ADMIN_STRATEGY_NAME, STEAM_STORE_STRATEGY_NAME, SteamAuthOptions } from '../auth-strategies/steam';
 
 export const CUSTOMER_METADATA_KEY = 'useSocialAuth';
 export const AUTH_PROVIDER_KEY = 'authProvider';
@@ -52,6 +53,7 @@ export type ProviderOptions = {
 	auth0?: Auth0Options;
 	azure_oidc?: AzureAuthOptions;
 	oauth2?: OAuth2AuthOptions;
+	steam?: SteamAuthOptions;
 };
 
 export type StrategyErrorIdentifierType = keyof ProviderOptions;
@@ -90,5 +92,9 @@ export const strategyNames: StrategyNames = {
 	oauth2: {
 		admin: OAUTH2_ADMIN_STRATEGY_NAME,
 		store: OAUTH2_STORE_STRATEGY_NAME,
+	},
+	steam: {
+		admin: STEAM_ADMIN_STRATEGY_NAME,
+		store: STEAM_STORE_STRATEGY_NAME,
 	},
 };

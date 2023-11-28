@@ -55,6 +55,7 @@
     "@types/express": "^4.17.17",
     "@types/jest": "^29.1.2",
     "@types/passport-oauth2": "^1.4.15",
+    "@types/passport-steam": "^1.0.4",
     "jest": "^29.1.2",
     "passport": "^0.6.0",
     "ts-jest": "^29.0.3",
@@ -74,7 +75,8 @@
     "passport-firebase-jwt": "^1.2.1",
     "passport-google-oauth2": "^0.2.0",
     "passport-linkedin-oauth2": "^2.0.0",
-    "passport-oauth2": "^1.7.0"
+    "passport-oauth2": "^1.7.0",
+    "passport-steam": "^1.0.18"
   },
   "jest": {
     "preset": "ts-jest",
