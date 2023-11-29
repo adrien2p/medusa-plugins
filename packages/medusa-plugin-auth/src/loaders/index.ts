@@ -8,6 +8,7 @@ import LinkedinStrategy from '../auth-strategies/linkedin';
 import FireaseStrategy from '../auth-strategies/firebase';
 import Auth0Strategy from '../auth-strategies/auth0';
 import AzureStrategy from '../auth-strategies/azure-oidc';
+import SteamStrategy from '../auth-strategies/steam';
 
 export default async function authStrategiesLoader(container: MedusaContainer, authOptions: AuthOptions) {
 	const configModule = container.resolve('configModule') as ConfigModule;
@@ -19,4 +20,5 @@ export default async function authStrategiesLoader(container: MedusaContainer, a
 	FireaseStrategy.load(container, configModule, authOptions);
 	Auth0Strategy.load(container, configModule, authOptions);
 	AzureStrategy.load(container, configModule, authOptions);
+	SteamStrategy.load(container, configModule, authOptions);
 }
