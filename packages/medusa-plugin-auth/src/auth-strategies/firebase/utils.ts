@@ -1,7 +1,7 @@
 import passport from 'passport';
 import cors from 'cors';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
-import { Router, Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { authenticateSessionFactory, signToken } from '../../core/auth-callback-middleware';
 
 function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule, expiresIn?: number) {
@@ -19,12 +19,12 @@ function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: Con
 }
 
 export function firebaseAuthRoutesBuilder({
-	domain,
-	configModule,
-	authPath,
-	strategyName,
-	expiresIn,
-}: {
+											  domain,
+											  configModule,
+											  authPath,
+											  strategyName,
+											  expiresIn,
+										  }: {
 	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
@@ -52,7 +52,7 @@ export function firebaseAuthRoutesBuilder({
 		passport.authenticate(strategyName, {
 			session: false,
 		}),
-		callbackHandler
+		callbackHandler,
 	);
 
 	return router;

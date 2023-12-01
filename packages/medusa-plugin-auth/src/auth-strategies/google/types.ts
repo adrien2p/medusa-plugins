@@ -1,5 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions } from '../../types';
+import { AuthProvider } from '../../types';
 
 export const GOOGLE_STORE_STRATEGY_NAME = 'google.store.medusa-auth-plugin';
 export const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin.medusa-auth-plugin';
@@ -7,6 +7,7 @@ export const GOOGLE_ADMIN_STRATEGY_NAME = 'google.admin.medusa-auth-plugin';
 export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
 
 export type GoogleAuthOptions = {
+	type: 'google';
 	clientID: string;
 	clientSecret: string;
 	admin?: {
@@ -30,7 +31,7 @@ export type GoogleAuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict'],
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -56,7 +57,7 @@ export type GoogleAuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict'],
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

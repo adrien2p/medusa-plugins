@@ -1,9 +1,9 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AzureAdminStrategy } from '../../admin';
-import { AUTH_PROVIDER_KEY } from '../../../../types';
-import { AzureAuthOptions, AZURE_ADMIN_STRATEGY_NAME } from '../../types';
+import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
+import { AZURE_ADMIN_STRATEGY_NAME, AzureAuthOptions } from '../../types';
+import { getAzureAdminStrategy } from '../../admin';
 
-describe('Azure AD admin strategy verify callback', function () {
+describe('Azure AD admin strategy verify callback', function() {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -11,7 +11,7 @@ describe('Azure AD admin strategy verify callback', function () {
 	let container: MedusaContainer;
 	let req: Request;
 	let profile: { upn: string; name?: { givenName?: string; familyName?: string } };
-	let azureAdminStrategy: AzureAdminStrategy;
+	let azureAdminStrategy: IStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -33,7 +33,7 @@ describe('Azure AD admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: AZURE_ADMIN_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: AZURE_ADMIN_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -57,8 +57,9 @@ describe('Azure AD admin strategy verify callback', function () {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to admin', function () {
+	describe('when strict is set to admin', function() {
 		beforeEach(() => {
+			const AzureAdminStrategy = getAzureAdminStrategy('test');
 			azureAdminStrategy = new AzureAdminStrategy(
 				container,
 				{} as ConfigModule,
@@ -73,7 +74,7 @@ describe('Azure AD admin strategy verify callback', function () {
 						allowHttpForRedirectUrl: true,
 					},
 				} as AzureAuthOptions,
-				'admin'
+				'admin',
 			);
 		});
 
@@ -90,7 +91,7 @@ describe('Azure AD admin strategy verify callback', function () {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				})
+				}),
 			);
 		});
 
@@ -122,8 +123,9 @@ describe('Azure AD admin strategy verify callback', function () {
 		});
 	});
 
-	describe('when strict is set to store', function () {
+	describe('when strict is set to store', function() {
 		beforeEach(() => {
+			const AzureAdminStrategy = getAzureAdminStrategy('test');
 			azureAdminStrategy = new AzureAdminStrategy(
 				container,
 				{} as ConfigModule,
@@ -138,7 +140,7 @@ describe('Azure AD admin strategy verify callback', function () {
 						allowHttpForRedirectUrl: true,
 					},
 				} as AzureAuthOptions,
-				'store'
+				'store',
 			);
 		});
 
@@ -155,7 +157,7 @@ describe('Azure AD admin strategy verify callback', function () {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				})
+				}),
 			);
 		});
 
@@ -168,7 +170,7 @@ describe('Azure AD admin strategy verify callback', function () {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				})
+				}),
 			);
 		});
 
@@ -181,7 +183,7 @@ describe('Azure AD admin strategy verify callback', function () {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				})
+				}),
 			);
 		});
 

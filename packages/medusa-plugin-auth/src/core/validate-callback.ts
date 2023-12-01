@@ -5,20 +5,20 @@ import { MedusaError } from 'medusa-core-utils';
 import { EntityManager } from 'typeorm';
 import {
 	AUTH_PROVIDER_KEY,
-	AuthOptions,
+	AuthProvider,
 	CUSTOMER_METADATA_KEY,
 	EMAIL_VERIFIED_KEY,
 	StrategyErrorIdentifierType,
-	strategyNames,
 } from '../types';
 
 /**
  * Default validate callback used by an admin passport strategy
  *
- * @param profile
- * @param container
- * @param strategyErrorIdentifier
- * @param strict
+ * @param profile The profile returned by the passport strategy
+ * @param container The medusa container
+ * @param strategyErrorIdentifier It will be used to compose the error message in case of an error (e.g Google, Facebook)
+ * @param strict If strict is set to true, it will check if the user already exists in the database
+ * @param strategyName The name of the strategy
  */
 export async function validateAdminCallback<
 	T extends { emails?: { value: string }[] } = {
@@ -30,11 +30,13 @@ export async function validateAdminCallback<
 		container,
 		strategyErrorIdentifier,
 		strict,
+		strategyName,
 	}: {
 		container: MedusaContainer;
 		strategyErrorIdentifier: StrategyErrorIdentifierType;
-		strict?: AuthOptions['strict'];
-	}
+		strict?: AuthProvider['strict'];
+		strategyName: string;
+	},
 ): Promise<{ id: string } | never> {
 	const userService: UserService = container.resolve('userService');
 	const email = profile.emails?.[0]?.value;
@@ -42,7 +44,7 @@ export async function validateAdminCallback<
 	if (!email) {
 		throw new MedusaError(
 			MedusaError.Types.NOT_ALLOWED,
-			`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`
+			`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`,
 		);
 	}
 
@@ -52,7 +54,7 @@ export async function validateAdminCallback<
 		strict ??= 'all';
 		if (
 			(strict === 'all' || strict === 'admin') &&
-			(!user.metadata || user.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].admin)
+			(!user.metadata || user.metadata[AUTH_PROVIDER_KEY] !== strategyName)
 		) {
 			throw new MedusaError(MedusaError.Types.INVALID_DATA, `Admin with email ${email} already exists`);
 		}
@@ -70,6 +72,7 @@ export async function validateAdminCallback<
  * @param strategyErrorIdentifier It will be used to compose the error message in case of an error (e.g Google, Facebook)
  * @param container
  * @param strict
+ * @param strategyName
  */
 export async function validateStoreCallback<
 	T extends {
@@ -87,11 +90,13 @@ export async function validateStoreCallback<
 		container,
 		strategyErrorIdentifier,
 		strict,
+		strategyName,
 	}: {
 		container: MedusaContainer;
 		strategyErrorIdentifier: StrategyErrorIdentifierType;
-		strict?: AuthOptions['strict'];
-	}
+		strategyName: string;
+		strict?: AuthProvider['strict'];
+	},
 ): Promise<{ id: string } | never> {
 	const manager: EntityManager = container.resolve('manager');
 	const customerService: CustomerService = container.resolve('customerService');
@@ -103,7 +108,7 @@ export async function validateStoreCallback<
 		if (!email) {
 			throw new MedusaError(
 				MedusaError.Types.NOT_ALLOWED,
-				`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`
+				`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`,
 			);
 		}
 
@@ -119,7 +124,7 @@ export async function validateStoreCallback<
 				customer.metadata[CUSTOMER_METADATA_KEY] &&
 				!customer.metadata[AUTH_PROVIDER_KEY]
 			) {
-				customer.metadata[AUTH_PROVIDER_KEY] = strategyNames[strategyErrorIdentifier].store;
+				customer.metadata[AUTH_PROVIDER_KEY] = strategyName;
 				await customerService.withTransaction(transactionManager).update(customer.id, {
 					metadata: customer.metadata,
 				});
@@ -142,7 +147,7 @@ export async function validateStoreCallback<
 				(strict === 'all' || strict === 'store') &&
 				(!customer.metadata ||
 					!customer.metadata[CUSTOMER_METADATA_KEY] ||
-					customer.metadata[AUTH_PROVIDER_KEY] !== strategyNames[strategyErrorIdentifier].store)
+					customer.metadata[AUTH_PROVIDER_KEY] !== strategyName)
 			) {
 				throw new MedusaError(MedusaError.Types.INVALID_DATA, `Customer with email ${email} already exists`);
 			} else {
@@ -161,7 +166,7 @@ export async function validateStoreCallback<
 			email,
 			metadata: {
 				[CUSTOMER_METADATA_KEY]: true,
-				[AUTH_PROVIDER_KEY]: strategyNames[strategyErrorIdentifier].store,
+				[AUTH_PROVIDER_KEY]: strategyName,
 				[EMAIL_VERIFIED_KEY]: hasEmailVerifiedField ? profile._json.email_verified : false,
 			},
 			first_name: profile.name?.givenName ?? '',

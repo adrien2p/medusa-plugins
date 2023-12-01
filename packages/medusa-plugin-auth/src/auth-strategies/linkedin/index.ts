@@ -1,11 +1,11 @@
-import { AuthOptions, StrategyExport } from '../../types';
+import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import {
 	getLinkedinAdminAuthRouter,
+	getLinkedinAdminStrategy,
 	getLinkedinStoreAuthRouter,
-	LinkedinAdminStrategy,
-	LinkedinStoreStrategy,
+	getLinkedinStoreStrategy,
+	LinkedinAuthOptions,
 } from '../linkedin';
 
 export * from './types';
@@ -13,26 +13,30 @@ export * from './admin';
 export * from './store';
 
 export default {
-	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.linkedin?.admin) {
-			new LinkedinAdminStrategy(container, configModule, options.linkedin, options.strict);
+	load: (container, configModule, options): void => {
+		const id = options.identifier ?? options.type;
+		if (options.admin) {
+			const Clazz = getLinkedinAdminStrategy(id);
+			new Clazz(container, configModule, options, options.strict);
 		}
 
-		if (options.linkedin?.store) {
-			new LinkedinStoreStrategy(container, configModule, options.linkedin, options.strict);
+		if (options.store) {
+			const Clazz = getLinkedinStoreStrategy(id);
+			new Clazz(container, configModule, options, options.strict);
 		}
 	},
-	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+	getRouter: (configModule, options): Router[] => {
+		const id = options.identifier ?? options.type;
 		const routers = [];
 
-		if (options.linkedin?.admin) {
-			routers.push(getLinkedinAdminAuthRouter(options.linkedin, configModule));
+		if (options.admin) {
+			routers.push(getLinkedinAdminAuthRouter(id, options, configModule));
 		}
 
-		if (options.linkedin?.store) {
-			routers.push(getLinkedinStoreAuthRouter(options.linkedin, configModule));
+		if (options.store) {
+			routers.push(getLinkedinStoreAuthRouter(id, options, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport;
+} as StrategyExport<LinkedinAuthOptions>;

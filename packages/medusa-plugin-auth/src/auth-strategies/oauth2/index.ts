@@ -1,34 +1,38 @@
-import { AuthOptions, StrategyExport } from '../../types';
+import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getOAuth2AdminAuthRouter, OAuth2AdminStrategy } from './admin';
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { getOAuth2StoreAuthRouter, OAuth2StoreStrategy } from './store';
+import { getOAuth2AdminAuthRouter, getOAuth2AdminStrategy } from './admin';
+import { getOAuth2StoreAuthRouter, getOAuth2StoreStrategy } from './store';
+import { OAuth2AuthOptions } from './types';
 
 export * from './types';
 export * from './admin';
 export * from './store';
 
 export default {
-	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.oauth2?.admin) {
-			new OAuth2AdminStrategy(container, configModule, options.oauth2, options.strict);
+	load: (container, configModule, options): void => {
+		const id = options.identifier ?? options.type;
+		if (options.admin) {
+			const Clazz = getOAuth2AdminStrategy(id);
+			new Clazz(container, configModule, options, options.strict);
 		}
 
-		if (options.oauth2?.store) {
-			new OAuth2StoreStrategy(container, configModule, options.oauth2, options.strict);
+		if (options.store) {
+			const Clazz = getOAuth2StoreStrategy(id);
+			new Clazz(container, configModule, options, options.strict);
 		}
 	},
-	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+	getRouter: (configModule, options): Router[] => {
+		const id = options.identifier ?? options.type;
 		const routers = [];
 
-		if (options.oauth2?.admin) {
-			routers.push(getOAuth2AdminAuthRouter(options.oauth2, configModule));
+		if (options.admin) {
+			routers.push(getOAuth2AdminAuthRouter(id, options, configModule));
 		}
 
-		if (options.oauth2?.store) {
-			routers.push(getOAuth2StoreAuthRouter(options.oauth2, configModule));
+		if (options.store) {
+			routers.push(getOAuth2StoreAuthRouter(id, options, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport;
+} as StrategyExport<OAuth2AuthOptions>;

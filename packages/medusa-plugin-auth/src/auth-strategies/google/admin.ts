@@ -1,65 +1,71 @@
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
+import { Strategy as GoogleStrategy, StrategyOptionsWithRequest } from 'passport-google-oauth2';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
 import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
-import { AuthOptions } from '../../types';
+import { AuthProvider, StrategyFactory } from '../../types';
 
-export class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, GOOGLE_ADMIN_STRATEGY_NAME) {
-	constructor(
-		protected readonly container: MedusaContainer,
-		protected readonly configModule: ConfigModule,
-		protected readonly strategyOptions: GoogleAuthOptions,
-		protected readonly strict?: AuthOptions['strict']
-	) {
-		super({
-			clientID: strategyOptions.clientID,
-			clientSecret: strategyOptions.clientSecret,
-			callbackURL: strategyOptions.admin.callbackUrl,
-			passReqToCallback: true,
-		});
-	}
-
-	async validate(
-		req: Request,
-		accessToken: string,
-		refreshToken: string,
-		profile: Profile
-	): Promise<null | { id: string }> {
-		if (this.strategyOptions.admin.verifyCallback) {
-			return await this.strategyOptions.admin.verifyCallback(
-				this.container,
-				req,
-				accessToken,
-				refreshToken,
-				profile,
-				this.strict
-			);
+export function getGoogleAdminStrategy(id: string): StrategyFactory<GoogleAuthOptions> {
+	const strategyName = `${GOOGLE_ADMIN_STRATEGY_NAME}_${id}`;
+	return class GoogleAdminStrategy extends PassportStrategy(GoogleStrategy, strategyName) {
+		constructor(
+			protected readonly container: MedusaContainer,
+			protected readonly configModule: ConfigModule,
+			protected readonly strategyOptions: GoogleAuthOptions,
+			protected readonly strict?: AuthProvider['strict'],
+		) {
+			super({
+				clientID: strategyOptions.clientID,
+				clientSecret: strategyOptions.clientSecret,
+				callbackURL: strategyOptions.admin.callbackUrl,
+				passReqToCallback: true,
+			} as StrategyOptionsWithRequest);
 		}
 
-		return await validateAdminCallback(profile, {
-			container: this.container,
-			strategyErrorIdentifier: 'google',
-			strict: this.strict,
-		});
-	}
+		async validate(
+			req: Request,
+			accessToken: string,
+			refreshToken: string,
+			profile: Profile,
+		): Promise<null | { id: string }> {
+			if (this.strategyOptions.admin.verifyCallback) {
+				return await this.strategyOptions.admin.verifyCallback(
+					this.container,
+					req,
+					accessToken,
+					refreshToken,
+					profile,
+					this.strict,
+				);
+			}
+
+			return await validateAdminCallback(profile, {
+				container: this.container,
+				strategyErrorIdentifier: 'google',
+				strict: this.strict,
+				strategyName,
+			});
+		}
+	};
 }
 
 /**
  * Return the router that hold the google admin authentication routes
+ * @param id
  * @param google
  * @param configModule
  */
-export function getGoogleAdminAuthRouter(google: GoogleAuthOptions, configModule: ConfigModule): Router {
+export function getGoogleAdminAuthRouter(id: string, google: GoogleAuthOptions, configModule: ConfigModule): Router {
+	const strategyName = `${GOOGLE_ADMIN_STRATEGY_NAME}_${id}`;
 	return passportAuthRoutesBuilder({
 		domain: 'admin',
 		configModule,
 		authPath: google.admin.authPath ?? '/admin/auth/google',
 		authCallbackPath: google.admin.authCallbackPath ?? '/admin/auth/google/cb',
 		successRedirect: google.admin.successRedirect,
-		strategyName: GOOGLE_ADMIN_STRATEGY_NAME,
+		strategyName,
 		passportAuthenticateMiddlewareOptions: {
 			scope: [
 				'https://www.googleapis.com/auth/userinfo.email',

@@ -1,7 +1,7 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { OAuth2AdminStrategy } from '../../admin';
-import { AUTH_PROVIDER_KEY } from '../../../../types';
+import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
 import { OAUTH2_ADMIN_STRATEGY_NAME, OAuth2AuthOptions } from '../../types';
+import { getOAuth2AdminStrategy } from '../../admin';
 
 describe('OAuth2 admin strategy verify callback', function() {
 	const existsEmail = 'exists@test.fr';
@@ -13,7 +13,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
-	let oauth2AdminStrategy: OAuth2AdminStrategy;
+	let oauth2AdminStrategy: IStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -35,7 +35,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: OAUTH2_ADMIN_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: OAUTH2_ADMIN_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -61,6 +61,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 
 	describe('when strict is set to admin', function() {
 		beforeEach(() => {
+			const OAuth2AdminStrategy = getOAuth2AdminStrategy('test');
 			oauth2AdminStrategy = new OAuth2AdminStrategy(
 				container,
 				{} as ConfigModule,
@@ -122,6 +123,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 
 	describe('when strict is set for store only', function() {
 		beforeEach(() => {
+			const OAuth2AdminStrategy = getOAuth2AdminStrategy('test');
 			oauth2AdminStrategy = new OAuth2AdminStrategy(
 				container,
 				{} as ConfigModule,

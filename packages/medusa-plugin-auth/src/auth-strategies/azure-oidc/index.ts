@@ -1,34 +1,38 @@
-import { AuthOptions, StrategyExport } from '../../types';
+import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getAzureAdminAuthRouter, AzureAdminStrategy } from './admin';
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { getAzureStoreAuthRouter, AzureStoreStrategy } from './store';
+import { getAzureAdminAuthRouter, getAzureAdminStrategy } from './admin';
+import { getAzureStoreAuthRouter, getAzureStoreStrategy } from './store';
+import { AzureAuthOptions } from './types';
 
 export * from './types';
 export * from './admin';
 export * from './store';
 
 export default {
-	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.azure_oidc?.admin) {
-			new AzureAdminStrategy(container, configModule, options.azure_oidc, options.strict);
+	load: (container, configModule, option): void => {
+		const id = option.identifier ?? option.type;
+		if (option?.admin) {
+			const Clazz = getAzureAdminStrategy(id);
+			new Clazz(container, configModule, option, option.strict);
 		}
 
-		if (options.azure_oidc?.store) {
-			new AzureStoreStrategy(container, configModule, options.azure_oidc, options.strict);
+		if (option?.store) {
+			const Clazz = getAzureStoreStrategy(id);
+			new Clazz(container, configModule, option, option.strict);
 		}
 	},
-	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
-		const routers = [];
+	getRouter: (configModule, option) => {
+		const id = option.identifier ?? option.type;
+		const routers: Router[] = [];
 
-		if (options.azure_oidc?.admin) {
-			routers.push(getAzureAdminAuthRouter(options.azure_oidc, configModule));
+		if (option?.admin) {
+			routers.push(getAzureAdminAuthRouter(id, option, configModule));
 		}
 
-		if (options.azure_oidc?.store) {
-			routers.push(getAzureStoreAuthRouter(options.azure_oidc, configModule));
+		if (option?.store) {
+			routers.push(getAzureStoreAuthRouter(id, option, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport;
+} as StrategyExport<AzureAuthOptions>;

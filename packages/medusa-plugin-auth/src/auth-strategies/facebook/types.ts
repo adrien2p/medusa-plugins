@@ -1,5 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions } from '../../types';
+import { AuthProvider } from '../../types';
 
 export const FACEBOOK_ADMIN_STRATEGY_NAME = 'facebook.admin.medusa-auth-plugin';
 export const FACEBOOK_STORE_STRATEGY_NAME = 'facebook.store.medusa-auth-plugin';
@@ -7,6 +7,7 @@ export const FACEBOOK_STORE_STRATEGY_NAME = 'facebook.store.medusa-auth-plugin';
 export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
 
 export type FacebookAuthOptions = {
+	type: 'facebook';
 	clientID: string;
 	clientSecret: string;
 	admin?: {
@@ -30,7 +31,7 @@ export type FacebookAuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict'],
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -56,7 +57,7 @@ export type FacebookAuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict'],
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

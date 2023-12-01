@@ -4,13 +4,11 @@ type Type<T> = new (...args: any[]) => T;
 
 export function PassportStrategy<T extends Type<any> = any>(
 	Strategy: T,
-	name?: string | undefined
+	name?: string | undefined,
 ): {
-	new (...args): InstanceType<T>;
+	new(...args): InstanceType<T>;
 } {
 	abstract class MixinStrategy extends Strategy {
-		abstract validate(...args: any[]): any;
-
 		protected constructor(...args: any[]) {
 			const callback = async (...params: any[]) => {
 				const done = params.pop();
@@ -33,9 +31,12 @@ export function PassportStrategy<T extends Type<any> = any>(
 			}
 		}
 
+		abstract validate(...args: any[]): any;
+
 		getPassportInstance() {
 			return passport;
 		}
 	}
+
 	return MixinStrategy;
 }

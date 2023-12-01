@@ -27,16 +27,16 @@ type PassportCallbackAuthenticateMiddlewareOptions = {
  * @param successRedirect
  */
 export function passportAuthRoutesBuilder({
-	domain,
-	configModule,
-	authPath,
-	strategyName,
-	passportAuthenticateMiddlewareOptions,
-	passportCallbackAuthenticateMiddlewareOptions,
-	successRedirect,
-	authCallbackPath,
-	expiresIn,
-}: {
+											  domain,
+											  configModule,
+											  authPath,
+											  strategyName,
+											  passportAuthenticateMiddlewareOptions,
+											  passportCallbackAuthenticateMiddlewareOptions,
+											  successRedirect,
+											  authCallbackPath,
+											  expiresIn,
+										  }: {
 	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
@@ -73,7 +73,7 @@ export function passportAuthRoutesBuilder({
 		passport.authenticate(strategyName, {
 			...passportAuthenticateMiddlewareOptions,
 			session: false,
-		})
+		}),
 	);
 
 	const callbackHandler = authCallbackMiddleware((req, res) => successAction(req, res));
@@ -88,7 +88,7 @@ export function passportAuthRoutesBuilder({
 
 			next();
 		},
-		function (req, res, next) {
+		function(req, res, next) {
 			passport.authenticate(
 				strategyName,
 				Object.assign({}, passportCallbackAuthenticateMiddlewareOptions, {
@@ -100,8 +100,8 @@ export function passportAuthRoutesBuilder({
 						if (passportCallbackAuthenticateMiddlewareOptions?.failureRedirect) {
 							return res.redirect(
 								passportCallbackAuthenticateMiddlewareOptions.failureRedirect +
-									'?message=' +
-									options.msg
+								'?message=' +
+								options.msg,
 							);
 						} else {
 							return res.status(401).json({ message: options.msg });
@@ -109,9 +109,9 @@ export function passportAuthRoutesBuilder({
 					}
 					req.user ??= user;
 					return callbackHandler(req, res);
-				}
+				},
 			)(req, res, next);
-		}
+		},
 	);
 
 	return router;
@@ -122,7 +122,7 @@ function successActionHandlerFactory(
 	domain: 'admin' | 'store',
 	configModule: ConfigModule,
 	defaultRedirect: string,
-	expiresIn?: number
+	expiresIn?: number,
 ) {
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
