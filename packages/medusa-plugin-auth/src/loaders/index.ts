@@ -15,7 +15,7 @@ export default async function authStrategiesLoader(
 ) {
 	const configModule = container.resolve('configModule') as ConfigModule;
 	const authOptions_ = Array.isArray(authOptions) ? authOptions : [authOptions];
-	for (const opt of authOptions) {
+	for (const opt of authOptions_) {
 		await handleStrategyLoading(opt, configModule, container);
 	}
 }
