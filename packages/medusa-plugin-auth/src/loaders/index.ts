@@ -14,13 +14,10 @@ export default async function authStrategiesLoader(
 	authOptions: AuthOptionsWrapper | AuthOptionsWrapper[],
 ) {
 	const configModule = container.resolve('configModule') as ConfigModule;
-	if (Array.isArray(authOptions)) {
-		for (const opt of authOptions) {
-			await handleStrategyLoading(opt, configModule, container);
-		}
-	} else {
-		await handleStrategyLoading(authOptions, configModule, container);
-	}
+    const authOptions_ = Array.isArray(authOptions) ? authOptions : [authOptions]
+	for (const opt of authOptions) {
+	  await handleStrategyLoading(opt, configModule, container);
+    }
 }
 
 async function handleStrategyLoading(opt: AuthOptionsWrapper, configModule: ConfigModule, container: MedusaContainer) {
