@@ -24,7 +24,7 @@ export type FirebaseAuthOptions = {
 		verifyCallback?: (
 			container: MedusaContainer,
 			decodedToken: any,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -44,7 +44,7 @@ export type FirebaseAuthOptions = {
 		verifyCallback?: (
 			container: MedusaContainer,
 			decodedToken: any,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

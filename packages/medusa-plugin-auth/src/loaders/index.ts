@@ -11,13 +11,13 @@ import AzureStrategy from '../auth-strategies/azure-oidc';
 
 export default async function authStrategiesLoader(
 	container: MedusaContainer,
-	authOptions: AuthOptionsWrapper | AuthOptionsWrapper[],
+	authOptions: AuthOptionsWrapper | AuthOptionsWrapper[]
 ) {
 	const configModule = container.resolve('configModule') as ConfigModule;
-    const authOptions_ = Array.isArray(authOptions) ? authOptions : [authOptions]
+	const authOptions_ = Array.isArray(authOptions) ? authOptions : [authOptions];
 	for (const opt of authOptions) {
-	  await handleStrategyLoading(opt, configModule, container);
-    }
+		await handleStrategyLoading(opt, configModule, container);
+	}
 }
 
 async function handleStrategyLoading(opt: AuthOptionsWrapper, configModule: ConfigModule, container: MedusaContainer) {

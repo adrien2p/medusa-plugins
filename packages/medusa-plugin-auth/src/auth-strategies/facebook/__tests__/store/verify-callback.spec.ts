@@ -3,7 +3,7 @@ import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../..
 import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from '../../types';
 import { getFacebookStoreStrategy } from '../../store';
 
-describe('Facebook store strategy verify callback', function() {
+describe('Facebook store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithMeta = 'exist2s@test.fr';
 	const existsEmailWithMetaAndProviderKey = 'exist3s@test.fr';
@@ -34,12 +34,12 @@ describe('Facebook store strategy verify callback', function() {
 			resolve: <T>(name: string): T => {
 				const container_ = {
 					manager: {
-						transaction: function(cb) {
+						transaction: function (cb) {
 							return cb();
 						},
 					},
 					customerService: {
-						withTransaction: function() {
+						withTransaction: function () {
 							return this;
 						},
 						update: updateFn,
@@ -90,7 +90,7 @@ describe('Facebook store strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to store', function() {
+	describe('when strict is set to store', function () {
 		beforeEach(() => {
 			const FacebookStoreStrategy = getFacebookStoreStrategy('test');
 			facebookStoreStrategy = new FacebookStoreStrategy(
@@ -101,7 +101,7 @@ describe('Facebook store strategy verify callback', function() {
 					clientSecret: 'fake',
 					store: {},
 				} as FacebookAuthOptions,
-				'store',
+				'store'
 			);
 		});
 
@@ -118,7 +118,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -142,7 +142,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -156,7 +156,7 @@ describe('Facebook store strategy verify callback', function() {
 				.validate(req, accessToken, refreshToken, profile)
 				.catch((err) => err);
 			expect(err).toEqual(
-				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`),
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
 			);
 		});
 
@@ -173,13 +173,13 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});
 	});
 
-	describe('when strict is set to admin', function() {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			const FacebookStoreStrategy = getFacebookStoreStrategy('test');
 			facebookStoreStrategy = new FacebookStoreStrategy(
@@ -190,7 +190,7 @@ describe('Facebook store strategy verify callback', function() {
 					clientSecret: 'fake',
 					store: {},
 				} as FacebookAuthOptions,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -207,7 +207,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -220,7 +220,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -233,7 +233,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -247,7 +247,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test4',
-				}),
+				})
 			);
 		});
 
@@ -264,7 +264,7 @@ describe('Facebook store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});

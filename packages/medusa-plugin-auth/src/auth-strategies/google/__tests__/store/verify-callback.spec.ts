@@ -3,7 +3,7 @@ import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../..
 import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from '../../types';
 import { getGoogleStoreStrategy } from '../../store';
 
-describe('Google store strategy verify callback', function() {
+describe('Google store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithMeta = 'exist2s@test.fr';
 	const existsEmailWithMetaAndProviderKey = 'exist3s@test.fr';
@@ -34,12 +34,12 @@ describe('Google store strategy verify callback', function() {
 			resolve: <T>(name: string): T => {
 				const container_ = {
 					manager: {
-						transaction: function(cb) {
+						transaction: function (cb) {
 							return cb();
 						},
 					},
 					customerService: {
-						withTransaction: function() {
+						withTransaction: function () {
 							return this;
 						},
 						update: updateFn,
@@ -90,14 +90,14 @@ describe('Google store strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to store', function() {
+	describe('when strict is set to store', function () {
 		beforeEach(() => {
 			const GoogleStoreStrategy = getGoogleStoreStrategy('test');
 			googleStoreStrategy = new GoogleStoreStrategy(
 				container,
 				{} as ConfigModule,
 				{ clientID: 'fake', clientSecret: 'fake', store: {} } as GoogleAuthOptions,
-				'store',
+				'store'
 			);
 		});
 
@@ -114,7 +114,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -136,7 +136,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -148,7 +148,7 @@ describe('Google store strategy verify callback', function() {
 
 			const err = await googleStoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(
-				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`),
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
 			);
 		});
 
@@ -165,20 +165,20 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});
 	});
 
-	describe('when strict is set to admin only', function() {
+	describe('when strict is set to admin only', function () {
 		beforeEach(() => {
 			const GoogleStoreStrategy = getGoogleStoreStrategy('test');
 			googleStoreStrategy = new GoogleStoreStrategy(
 				container,
 				{} as ConfigModule,
 				{ clientID: 'fake', clientSecret: 'fake', store: {} } as GoogleAuthOptions,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -195,7 +195,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -208,7 +208,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -221,7 +221,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -235,7 +235,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test4',
-				}),
+				})
 			);
 		});
 
@@ -252,7 +252,7 @@ describe('Google store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});

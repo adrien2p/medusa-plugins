@@ -9,5 +9,5 @@ export type StrategyFactory<T> = new (
 	container: MedusaContainer,
 	configModule: ConfigModule,
 	strategyOptions: T,
-	strict?: AuthProvider['strict'],
+	strict?: AuthProvider['strict']
 ) => IStrategy;

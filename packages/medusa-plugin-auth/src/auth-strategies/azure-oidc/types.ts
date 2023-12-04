@@ -92,7 +92,7 @@ export type AzureAuthOption = {
 		container: MedusaContainer,
 		req: Request,
 		profile: any,
-		strict?: AuthProvider['strict'],
+		strict?: AuthProvider['strict']
 	) => Promise<null | { id: string } | never>;
 
 	expiresIn?: number;

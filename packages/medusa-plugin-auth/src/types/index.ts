@@ -60,7 +60,7 @@ export type AuthProvider = {
 export function handleOption(
 	opt: AuthOptionsWrapper,
 	configModule?: ConfigModule,
-	container?: MedusaContainer,
+	container?: MedusaContainer
 ): PromiseLike<AuthOptions> {
 	if (typeof opt === 'function') {
 		return handleOption(opt(configModule, container), configModule, container);

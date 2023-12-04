@@ -4,7 +4,7 @@ import { AUTH0_ADMIN_STRATEGY_NAME, Auth0Options, ExtraParams } from '../../type
 import { Profile } from 'passport-auth0';
 import { getAuth0AdminStrategy } from '../../admin';
 
-describe('Auth0 admin strategy verify callback', function() {
+describe('Auth0 admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -63,7 +63,7 @@ describe('Auth0 admin strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to admin', function() {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			const Auth0AdminStrategy = getAuth0AdminStrategy('test');
 			auth0AdminStrategy = new Auth0AdminStrategy(
@@ -75,7 +75,7 @@ describe('Auth0 admin strategy verify callback', function() {
 					clientSecret: 'fake',
 					admin: { callbackUrl: '/fakeCallbackUrl' },
 				} as Auth0Options,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -92,7 +92,7 @@ describe('Auth0 admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -130,7 +130,7 @@ describe('Auth0 admin strategy verify callback', function() {
 		});
 	});
 
-	describe('when strict is set for store only', function() {
+	describe('when strict is set for store only', function () {
 		beforeEach(() => {
 			const Auth0AdminStrategy = getAuth0AdminStrategy('test');
 			auth0AdminStrategy = new Auth0AdminStrategy(
@@ -142,7 +142,7 @@ describe('Auth0 admin strategy verify callback', function() {
 					clientSecret: 'fake',
 					admin: { callbackUrl: '/fakeCallbackUrl' },
 				} as Auth0Options,
-				'store',
+				'store'
 			);
 		});
 
@@ -159,7 +159,7 @@ describe('Auth0 admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 

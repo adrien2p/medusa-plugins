@@ -14,7 +14,7 @@ export function getAuth0AdminStrategy(id: string): StrategyFactory<Auth0Options>
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: Auth0Options,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				domain: strategyOptions.auth0Domain,
@@ -31,7 +31,7 @@ export function getAuth0AdminStrategy(id: string): StrategyFactory<Auth0Options>
 			accessToken: string,
 			refreshToken: string,
 			extraParams: ExtraParams,
-			profile: Profile,
+			profile: Profile
 		): Promise<null | { id: string; accessToken: string }> {
 			if (this.strategyOptions.admin.verifyCallback) {
 				const validateRes = await this.strategyOptions.admin.verifyCallback(
@@ -41,7 +41,7 @@ export function getAuth0AdminStrategy(id: string): StrategyFactory<Auth0Options>
 					refreshToken,
 					extraParams,
 					profile,
-					this.strict,
+					this.strict
 				);
 
 				return {
@@ -77,7 +77,7 @@ export function getAuth0AdminAuthRouter(id: string, auth0: Auth0Options, configM
 		authPath: auth0.admin.authPath ?? '/admin/auth/auth0',
 		authCallbackPath: auth0.admin.authCallbackPath ?? '/admin/auth/auth0/cb',
 		successRedirect: auth0.admin.successRedirect,
-		strategyName: AUTH0_ADMIN_STRATEGY_NAME,
+		strategyName,
 		passportAuthenticateMiddlewareOptions: {
 			scope: 'openid email profile',
 		},

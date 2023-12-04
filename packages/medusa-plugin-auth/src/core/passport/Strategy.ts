@@ -4,9 +4,9 @@ type Type<T> = new (...args: any[]) => T;
 
 export function PassportStrategy<T extends Type<any> = any>(
 	Strategy: T,
-	name?: string | undefined,
+	name?: string | undefined
 ): {
-	new(...args): InstanceType<T>;
+	new (...args): InstanceType<T>;
 } {
 	abstract class MixinStrategy extends Strategy {
 		protected constructor(...args: any[]) {

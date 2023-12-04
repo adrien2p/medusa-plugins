@@ -3,7 +3,7 @@ import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
 import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions } from '../../types';
 import { getGoogleAdminStrategy } from '../../admin';
 
-describe('Google admin strategy verify callback', function() {
+describe('Google admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -35,7 +35,7 @@ describe('Google admin strategy verify callback', function() {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: GOOGLE_ADMIN_STRATEGY_NAME + '_test'
+										[AUTH_PROVIDER_KEY]: GOOGLE_ADMIN_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -59,14 +59,14 @@ describe('Google admin strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to admin', function() {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			const GoogleAdminStrategy = getGoogleAdminStrategy('test');
 			googleAdminStrategy = new GoogleAdminStrategy(
 				container,
 				{} as ConfigModule,
 				{ clientID: 'fake', clientSecret: 'fake', admin: {} } as GoogleAuthOptions,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -83,7 +83,7 @@ describe('Google admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -115,14 +115,14 @@ describe('Google admin strategy verify callback', function() {
 		});
 	});
 
-	describe('when strict is set for store only', function() {
+	describe('when strict is set for store only', function () {
 		beforeEach(() => {
 			const GoogleAdminStrategy = getGoogleAdminStrategy('test');
 			googleAdminStrategy = new GoogleAdminStrategy(
 				container,
 				{} as ConfigModule,
 				{ clientID: 'fake', clientSecret: 'fake', admin: {} } as GoogleAuthOptions,
-				'store',
+				'store'
 			);
 		});
 
@@ -139,7 +139,7 @@ describe('Google admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -152,7 +152,7 @@ describe('Google admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -165,7 +165,7 @@ describe('Google admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 

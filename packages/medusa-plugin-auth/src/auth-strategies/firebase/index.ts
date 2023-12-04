@@ -25,7 +25,7 @@ export default {
 			});
 		} catch (error) {
 			throw new Error(
-				'Firebase authentication failed to initialize. Please check your credentialJsonPath and JSON file.',
+				'Firebase authentication failed to initialize. Please check your credentialJsonPath and JSON file.'
 			);
 		}
 

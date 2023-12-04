@@ -11,7 +11,7 @@ import AzureStrategy from '../auth-strategies/azure-oidc';
 
 import { AuthOptions, AuthOptionsWrapper, handleOption } from '../types';
 
-export default async function(rootDirectory, pluginOptions: AuthOptions[]): Promise<Router[]> {
+export default async function (rootDirectory, pluginOptions: AuthOptions[]): Promise<Router[]> {
 	const configModule = loadConfig(rootDirectory);
 	return loadRouters(configModule, pluginOptions);
 }

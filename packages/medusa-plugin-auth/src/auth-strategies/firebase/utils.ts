@@ -19,12 +19,12 @@ function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: Con
 }
 
 export function firebaseAuthRoutesBuilder({
-											  domain,
-											  configModule,
-											  authPath,
-											  strategyName,
-											  expiresIn,
-										  }: {
+	domain,
+	configModule,
+	authPath,
+	strategyName,
+	expiresIn,
+}: {
 	domain: 'admin' | 'store';
 	configModule: ConfigModule;
 	authPath: string;
@@ -52,7 +52,7 @@ export function firebaseAuthRoutesBuilder({
 		passport.authenticate(strategyName, {
 			session: false,
 		}),
-		callbackHandler,
+		callbackHandler
 	);
 
 	return router;

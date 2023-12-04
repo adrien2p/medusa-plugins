@@ -15,7 +15,7 @@ export function getFirebaseAdminStrategy(id: string): StrategyFactory<FirebaseAu
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: FirebaseAuthOptions,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				jwtFromRequest: strategyOptions.store.jwtFromRequest ?? ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -49,7 +49,7 @@ export function getFirebaseAdminStrategy(id: string): StrategyFactory<FirebaseAu
 export function getFirebaseAdminAuthRouter(
 	id: string,
 	firebase: FirebaseAuthOptions,
-	configModule: ConfigModule,
+	configModule: ConfigModule
 ): Router {
 	const strategyName = `${FIREBASE_ADMIN_STRATEGY_NAME}_${id}`;
 	return firebaseAuthRoutesBuilder({

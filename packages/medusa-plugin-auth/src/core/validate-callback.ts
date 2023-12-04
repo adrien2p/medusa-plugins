@@ -36,7 +36,7 @@ export async function validateAdminCallback<
 		strategyErrorIdentifier: StrategyErrorIdentifierType;
 		strict?: AuthProvider['strict'];
 		strategyName: string;
-	},
+	}
 ): Promise<{ id: string } | never> {
 	const userService: UserService = container.resolve('userService');
 	const email = profile.emails?.[0]?.value;
@@ -44,7 +44,7 @@ export async function validateAdminCallback<
 	if (!email) {
 		throw new MedusaError(
 			MedusaError.Types.NOT_ALLOWED,
-			`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`,
+			`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`
 		);
 	}
 
@@ -96,7 +96,7 @@ export async function validateStoreCallback<
 		strategyErrorIdentifier: StrategyErrorIdentifierType;
 		strategyName: string;
 		strict?: AuthProvider['strict'];
-	},
+	}
 ): Promise<{ id: string } | never> {
 	const manager: EntityManager = container.resolve('manager');
 	const customerService: CustomerService = container.resolve('customerService');
@@ -108,7 +108,7 @@ export async function validateStoreCallback<
 		if (!email) {
 			throw new MedusaError(
 				MedusaError.Types.NOT_ALLOWED,
-				`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`,
+				`Your ${capitalize(strategyErrorIdentifier)} account does not contains any email and cannot be used`
 			);
 		}
 

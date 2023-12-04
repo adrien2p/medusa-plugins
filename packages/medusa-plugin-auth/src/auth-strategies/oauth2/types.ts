@@ -33,7 +33,7 @@ export type OAuth2AuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -59,7 +59,7 @@ export type OAuth2AuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

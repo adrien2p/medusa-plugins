@@ -14,7 +14,7 @@ export function getOAuth2StoreStrategy(id: string): StrategyFactory<OAuth2AuthOp
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: OAuth2AuthOptions,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				authorizationURL: strategyOptions.authorizationURL,
@@ -31,7 +31,7 @@ export function getOAuth2StoreStrategy(id: string): StrategyFactory<OAuth2AuthOp
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: Profile,
+			profile: Profile
 		): Promise<null | { id: string }> {
 			if (this.strategyOptions.store.verifyCallback) {
 				return await this.strategyOptions.store.verifyCallback(
@@ -40,7 +40,7 @@ export function getOAuth2StoreStrategy(id: string): StrategyFactory<OAuth2AuthOp
 					accessToken,
 					refreshToken,
 					profile,
-					this.strict,
+					this.strict
 				);
 			}
 

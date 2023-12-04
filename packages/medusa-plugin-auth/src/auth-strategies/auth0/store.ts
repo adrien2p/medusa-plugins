@@ -14,7 +14,7 @@ export function getAuth0StoreStrategy(id: string): StrategyFactory<Auth0Options>
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: Auth0Options,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				domain: strategyOptions.auth0Domain,
@@ -31,7 +31,7 @@ export function getAuth0StoreStrategy(id: string): StrategyFactory<Auth0Options>
 			accessToken: string,
 			refreshToken: string,
 			extraParams: ExtraParams,
-			profile: Profile,
+			profile: Profile
 		): Promise<null | { id: string; accessToken: string }> {
 			if (this.strategyOptions.store.verifyCallback) {
 				const validateRes = await this.strategyOptions.store.verifyCallback(
@@ -41,7 +41,7 @@ export function getAuth0StoreStrategy(id: string): StrategyFactory<Auth0Options>
 					refreshToken,
 					extraParams,
 					profile,
-					this.strict,
+					this.strict
 				);
 
 				return {

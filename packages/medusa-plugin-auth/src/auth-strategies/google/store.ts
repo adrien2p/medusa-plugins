@@ -14,7 +14,7 @@ export function getGoogleStoreStrategy(id: string): StrategyFactory<GoogleAuthOp
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: GoogleAuthOptions,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				clientID: strategyOptions.clientID,
@@ -28,7 +28,7 @@ export function getGoogleStoreStrategy(id: string): StrategyFactory<GoogleAuthOp
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: Profile,
+			profile: Profile
 		): Promise<null | { id: string }> {
 			if (this.strategyOptions.store.verifyCallback) {
 				return await this.strategyOptions.store.verifyCallback(
@@ -37,7 +37,7 @@ export function getGoogleStoreStrategy(id: string): StrategyFactory<GoogleAuthOp
 					accessToken,
 					refreshToken,
 					profile,
-					this.strict,
+					this.strict
 				);
 			}
 

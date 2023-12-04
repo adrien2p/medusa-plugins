@@ -3,7 +3,7 @@ import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
 import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from '../../types';
 import { getFacebookAdminStrategy } from '../../admin';
 
-describe('Facebook admin strategy verify callback', function() {
+describe('Facebook admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -59,7 +59,7 @@ describe('Facebook admin strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to admin', function() {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			const FacebookAdminStrategy = getFacebookAdminStrategy('test');
 			facebookAdminStrategy = new FacebookAdminStrategy(
@@ -70,7 +70,7 @@ describe('Facebook admin strategy verify callback', function() {
 					clientSecret: 'fake',
 					admin: {},
 				} as FacebookAuthOptions,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -87,7 +87,7 @@ describe('Facebook admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -125,7 +125,7 @@ describe('Facebook admin strategy verify callback', function() {
 		});
 	});
 
-	describe('when strict is set to store', function() {
+	describe('when strict is set to store', function () {
 		beforeEach(() => {
 			const FacebookAdminStrategy = getFacebookAdminStrategy('test');
 			facebookAdminStrategy = new FacebookAdminStrategy(
@@ -136,7 +136,7 @@ describe('Facebook admin strategy verify callback', function() {
 					clientSecret: 'fake',
 					admin: {},
 				} as FacebookAuthOptions,
-				'store',
+				'store'
 			);
 		});
 
@@ -153,7 +153,7 @@ describe('Facebook admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -166,7 +166,7 @@ describe('Facebook admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -179,7 +179,7 @@ describe('Facebook admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 

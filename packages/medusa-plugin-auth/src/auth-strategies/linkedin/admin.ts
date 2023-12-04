@@ -14,7 +14,7 @@ export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAu
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: LinkedinAuthOptions,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				clientID: strategyOptions.clientID,
@@ -30,7 +30,7 @@ export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAu
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: Profile,
+			profile: Profile
 		): Promise<null | { id: string }> {
 			if (this.strategyOptions.admin.verifyCallback) {
 				return await this.strategyOptions.admin.verifyCallback(
@@ -39,7 +39,7 @@ export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAu
 					accessToken,
 					refreshToken,
 					profile,
-					this.strict,
+					this.strict
 				);
 			}
 
@@ -62,7 +62,7 @@ export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAu
 export function getLinkedinAdminAuthRouter(
 	id: string,
 	linkedin: LinkedinAuthOptions,
-	configModule: ConfigModule,
+	configModule: ConfigModule
 ): Router {
 	const strategyName = `${LINKEDIN_ADMIN_STRATEGY_NAME}_${id}`;
 	return passportAuthRoutesBuilder({

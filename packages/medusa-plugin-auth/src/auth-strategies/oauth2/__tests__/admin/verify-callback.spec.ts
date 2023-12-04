@@ -3,7 +3,7 @@ import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
 import { OAUTH2_ADMIN_STRATEGY_NAME, OAuth2AuthOptions } from '../../types';
 import { getOAuth2AdminStrategy } from '../../admin';
 
-describe('OAuth2 admin strategy verify callback', function() {
+describe('OAuth2 admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -59,7 +59,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to admin', function() {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			const OAuth2AdminStrategy = getOAuth2AdminStrategy('test');
 			oauth2AdminStrategy = new OAuth2AdminStrategy(
@@ -72,7 +72,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 					clientSecret: 'fake',
 					admin: {},
 				} as OAuth2AuthOptions,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -89,7 +89,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -121,7 +121,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 		});
 	});
 
-	describe('when strict is set for store only', function() {
+	describe('when strict is set for store only', function () {
 		beforeEach(() => {
 			const OAuth2AdminStrategy = getOAuth2AdminStrategy('test');
 			oauth2AdminStrategy = new OAuth2AdminStrategy(
@@ -134,7 +134,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 					clientSecret: 'fake',
 					admin: {},
 				} as OAuth2AuthOptions,
-				'store',
+				'store'
 			);
 		});
 
@@ -151,7 +151,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 		});
 
@@ -164,7 +164,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -177,7 +177,7 @@ describe('OAuth2 admin strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 

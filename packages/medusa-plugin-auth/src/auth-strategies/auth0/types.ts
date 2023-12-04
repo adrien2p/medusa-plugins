@@ -38,7 +38,7 @@ export type Auth0Options = {
 			refreshToken: string,
 			extraParams: ExtraParams,
 			profile: Profile,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -65,7 +65,7 @@ export type Auth0Options = {
 			refreshToken: string,
 			extraParams: ExtraParams,
 			profile: Profile,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

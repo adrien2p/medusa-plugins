@@ -14,7 +14,7 @@ export function getFacebookAdminStrategy(id: string): StrategyFactory<FacebookAu
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: FacebookAuthOptions,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				clientID: strategyOptions.clientID,
@@ -29,7 +29,7 @@ export function getFacebookAdminStrategy(id: string): StrategyFactory<FacebookAu
 			req: Request,
 			accessToken: string,
 			refreshToken: string,
-			profile: Profile,
+			profile: Profile
 		): Promise<null | { id: string }> {
 			if (this.strategyOptions.admin.verifyCallback) {
 				return await this.strategyOptions.admin.verifyCallback(
@@ -38,7 +38,7 @@ export function getFacebookAdminStrategy(id: string): StrategyFactory<FacebookAu
 					accessToken,
 					refreshToken,
 					profile,
-					this.strict,
+					this.strict
 				);
 			}
 
@@ -61,7 +61,7 @@ export function getFacebookAdminStrategy(id: string): StrategyFactory<FacebookAu
 export function getFacebookAdminAuthRouter(
 	id: string,
 	facebook: FacebookAuthOptions,
-	configModule: ConfigModule,
+	configModule: ConfigModule
 ): Router {
 	const strategyName = `${FACEBOOK_ADMIN_STRATEGY_NAME}_${id}`;
 	return passportAuthRoutesBuilder({

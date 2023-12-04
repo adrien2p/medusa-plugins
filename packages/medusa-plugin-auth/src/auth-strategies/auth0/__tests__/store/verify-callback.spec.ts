@@ -4,7 +4,7 @@ import { AUTH0_STORE_STRATEGY_NAME, Auth0Options, ExtraParams } from '../../type
 import { Profile } from 'passport-auth0';
 import { getAuth0StoreStrategy } from '../../store';
 
-describe('Auth0 store strategy verify callback', function() {
+describe('Auth0 store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithMeta = 'exist2s@test.fr';
 	const existsEmailWithMetaAndProviderKey = 'exist3s@test.fr';
@@ -37,12 +37,12 @@ describe('Auth0 store strategy verify callback', function() {
 			resolve: <T>(name: string): T => {
 				const container_ = {
 					manager: {
-						transaction: function(cb) {
+						transaction: function (cb) {
 							return cb();
 						},
 					},
 					customerService: {
-						withTransaction: function() {
+						withTransaction: function () {
 							return this;
 						},
 						create: createFn,
@@ -93,7 +93,7 @@ describe('Auth0 store strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to store', function() {
+	describe('when strict is set to store', function () {
 		beforeEach(() => {
 			const Auth0StoreStrategy = getAuth0StoreStrategy('test');
 			auth0StoreStrategy = new Auth0StoreStrategy(
@@ -105,7 +105,7 @@ describe('Auth0 store strategy verify callback', function() {
 					clientSecret: 'fake',
 					store: { callbackUrl: '/fakeCallbackUrl' },
 				} as Auth0Options,
-				'store',
+				'store'
 			);
 		});
 
@@ -122,7 +122,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -146,7 +146,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -160,7 +160,7 @@ describe('Auth0 store strategy verify callback', function() {
 				.validate(req, accessToken, refreshToken, extraParams, profile)
 				.catch((err) => err);
 			expect(err).toEqual(
-				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`),
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
 			);
 		});
 
@@ -177,13 +177,13 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});
 	});
 
-	describe('when strict is set to admin', function() {
+	describe('when strict is set to admin', function () {
 		beforeEach(() => {
 			const Auth0StoreStrategy = getAuth0StoreStrategy('test');
 			auth0StoreStrategy = new Auth0StoreStrategy(
@@ -195,7 +195,7 @@ describe('Auth0 store strategy verify callback', function() {
 					clientSecret: 'fake',
 					store: { callbackUrl: '/fakeCallbackUrl' },
 				} as Auth0Options,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -212,7 +212,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -225,7 +225,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -238,7 +238,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -252,7 +252,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test4',
-				}),
+				})
 			);
 		});
 
@@ -269,7 +269,7 @@ describe('Auth0 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});

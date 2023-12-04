@@ -19,7 +19,7 @@ export function getAzureStoreStrategy(id: string): StrategyFactory<AzureAuthOpti
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
 			protected readonly strategyOptions: AzureAuthOptions,
-			protected readonly strict?: AuthProvider['strict'],
+			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
 				identityMetadata: strategyOptions.store.identityMetadata,
@@ -70,7 +70,7 @@ export function getAzureStoreAuthRouter(id: string, azure: AzureAuthOptions, con
 		authPath: azure.store.authPath ?? '/store/auth/azure',
 		authCallbackPath: azure.store.authCallbackPath ?? '/store/auth/azure/cb',
 		successRedirect: azure.store.successRedirect,
-		strategyName: strategyName,
+		strategyName,
 		passportAuthenticateMiddlewareOptions: {
 			scope: azure.store.scope ?? [],
 		},

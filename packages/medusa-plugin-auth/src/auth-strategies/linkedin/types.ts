@@ -31,7 +31,7 @@ export type LinkedinAuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -57,7 +57,7 @@ export type LinkedinAuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthProvider['strict'],
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
