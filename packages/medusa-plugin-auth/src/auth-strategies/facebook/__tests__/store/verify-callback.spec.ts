@@ -1,7 +1,7 @@
-import { FacebookStoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
-import { FacebookAuthOptions, FACEBOOK_STORE_STRATEGY_NAME, Profile } from '../../types';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
+import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from '../../types';
+import { getFacebookStoreStrategy } from '../../store';
 
 describe('Facebook store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -14,7 +14,7 @@ describe('Facebook store strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let facebookStoreStrategy: FacebookStoreStrategy;
+	let facebookStoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -65,7 +65,7 @@ describe('Facebook store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: FACEBOOK_STORE_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: FACEBOOK_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -92,6 +92,7 @@ describe('Facebook store strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
+			const FacebookStoreStrategy = getFacebookStoreStrategy('test');
 			facebookStoreStrategy = new FacebookStoreStrategy(
 				container,
 				{} as ConfigModule,
@@ -180,6 +181,7 @@ describe('Facebook store strategy verify callback', function () {
 
 	describe('when strict is set to admin', function () {
 		beforeEach(() => {
+			const FacebookStoreStrategy = getFacebookStoreStrategy('test');
 			facebookStoreStrategy = new FacebookStoreStrategy(
 				container,
 				{} as ConfigModule,

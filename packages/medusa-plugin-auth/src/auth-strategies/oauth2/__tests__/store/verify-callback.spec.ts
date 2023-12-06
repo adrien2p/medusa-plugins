@@ -1,9 +1,9 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
-import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from '../../types';
-import { getLinkedinStoreStrategy } from '../../store';
+import { OAUTH2_STORE_STRATEGY_NAME, OAuth2AuthOptions, Profile } from '../../types';
+import { getOAuth2StoreStrategy } from '../../store';
 
-describe('Linkedin store strategy verify callback', function () {
+describe('OAuth2 store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithMeta = 'exist2s@test.fr';
 	const existsEmailWithMetaAndProviderKey = 'exist3s@test.fr';
@@ -14,7 +14,7 @@ describe('Linkedin store strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let linkedinStoreStrategy: IStrategy;
+	let oauth2StoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -65,7 +65,7 @@ describe('Linkedin store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: LINKEDIN_STORE_STRATEGY_NAME + '_test',
+										[AUTH_PROVIDER_KEY]: OAUTH2_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -92,15 +92,17 @@ describe('Linkedin store strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
-			const LinkedinStoreStrategy = getLinkedinStoreStrategy('test');
-			linkedinStoreStrategy = new LinkedinStoreStrategy(
+			const OAuth2StoreStrategy = getOAuth2StoreStrategy('test');
+			oauth2StoreStrategy = new OAuth2StoreStrategy(
 				container,
 				{} as ConfigModule,
 				{
+					authorizationURL: 'http://localhost',
+					tokenURL: 'http://localhost',
 					clientID: 'fake',
 					clientSecret: 'fake',
 					store: {},
-				} as LinkedinAuthOptions,
+				} as OAuth2AuthOptions,
 				'store'
 			);
 		});
@@ -114,7 +116,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMetaAndProviderKey }],
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
@@ -127,9 +129,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmail }],
 			};
 
-			const err = await linkedinStoreStrategy
-				.validate(req, accessToken, refreshToken, profile)
-				.catch((err) => err);
+			const err = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(new Error(`Customer with email ${existsEmail} already exists`));
 		});
 
@@ -138,7 +138,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMeta }],
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
@@ -152,9 +152,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
 			};
 
-			const err = await linkedinStoreStrategy
-				.validate(req, accessToken, refreshToken, profile)
-				.catch((err) => err);
+			const err = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(
 				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
 			);
@@ -169,7 +167,7 @@ describe('Linkedin store strategy verify callback', function () {
 				},
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
@@ -179,17 +177,19 @@ describe('Linkedin store strategy verify callback', function () {
 		});
 	});
 
-	describe('when strict is set to admn', function () {
+	describe('when strict is set to admin only', function () {
 		beforeEach(() => {
-			const LinkedinStoreStrategy = getLinkedinStoreStrategy('test');
-			linkedinStoreStrategy = new LinkedinStoreStrategy(
+			const OAuth2StoreStrategy = getOAuth2StoreStrategy('test');
+			oauth2StoreStrategy = new OAuth2StoreStrategy(
 				container,
 				{} as ConfigModule,
 				{
+					authorizationURL: 'http://localhost',
+					tokenURL: 'http://localhost',
 					clientID: 'fake',
 					clientSecret: 'fake',
 					store: {},
-				} as LinkedinAuthOptions,
+				} as OAuth2AuthOptions,
 				'admin'
 			);
 		});
@@ -203,7 +203,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMetaAndProviderKey }],
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
@@ -216,7 +216,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmail }],
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
@@ -229,7 +229,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMeta }],
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
@@ -243,7 +243,7 @@ describe('Linkedin store strategy verify callback', function () {
 				emails: [{ value: existsEmailWithMetaButWrongProviderKey }],
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test4',
@@ -260,7 +260,7 @@ describe('Linkedin store strategy verify callback', function () {
 				},
 			};
 
-			const data = await linkedinStoreStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',

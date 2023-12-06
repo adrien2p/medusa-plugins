@@ -1,5 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions } from '../../types';
+import { AuthProvider } from '../../types';
 
 export const AZURE_STORE_STRATEGY_NAME = 'azure-oidc.store.medusa-auth-plugin';
 export const AZURE_ADMIN_STRATEGY_NAME = 'azure-oidc.admin.medusa-auth-plugin';
@@ -92,13 +92,14 @@ export type AzureAuthOption = {
 		container: MedusaContainer,
 		req: Request,
 		profile: any,
-		strict?: AuthOptions['strict']
+		strict?: AuthProvider['strict']
 	) => Promise<null | { id: string } | never>;
 
 	expiresIn?: number;
 };
 
 export type AzureAuthOptions = {
+	type: 'azure_oidc';
 	admin?: AzureAuthOption;
 	store?: AzureAuthOption;
 };

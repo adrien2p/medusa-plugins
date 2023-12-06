@@ -1,27 +1,29 @@
 import { Router } from 'express';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { Strategy as FacebookStrategy, StrategyOptionsWithRequest } from 'passport-facebook';
-import { FACEBOOK_STORE_STRATEGY_NAME, FacebookAuthOptions, Profile } from './types';
+import { Strategy as OAuth2Strategy, StrategyOptionsWithRequest } from 'passport-oauth2';
 import { PassportStrategy } from '../../core/passport/Strategy';
-import { validateStoreCallback } from '../../core/validate-callback';
+import { OAUTH2_STORE_STRATEGY_NAME, OAuth2AuthOptions, Profile } from './types';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
+import { validateStoreCallback } from '../../core/validate-callback';
 import { AuthProvider, StrategyFactory } from '../../types';
 
-export function getFacebookStoreStrategy(id: string): StrategyFactory<FacebookAuthOptions> {
-	const strategyName = `${FACEBOOK_STORE_STRATEGY_NAME}_${id}`;
-	return class extends PassportStrategy(FacebookStrategy, strategyName) {
+export function getOAuth2StoreStrategy(id: string): StrategyFactory<OAuth2AuthOptions> {
+	const strategyName = `${OAUTH2_STORE_STRATEGY_NAME}_${id}`;
+	return class extends PassportStrategy(OAuth2Strategy, strategyName) {
 		constructor(
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
-			protected readonly strategyOptions: FacebookAuthOptions,
+			protected readonly strategyOptions: OAuth2AuthOptions,
 			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
+				authorizationURL: strategyOptions.authorizationURL,
+				tokenURL: strategyOptions.tokenURL,
 				clientID: strategyOptions.clientID,
 				clientSecret: strategyOptions.clientSecret,
 				callbackURL: strategyOptions.store.callbackUrl,
 				passReqToCallback: true,
-				profileFields: ['id', 'displayName', 'email', 'gender', 'name'],
+				scope: strategyOptions.scope,
 			} as StrategyOptionsWithRequest);
 		}
 
@@ -44,7 +46,7 @@ export function getFacebookStoreStrategy(id: string): StrategyFactory<FacebookAu
 
 			return await validateStoreCallback(profile, {
 				container: this.container,
-				strategyErrorIdentifier: 'facebook',
+				strategyErrorIdentifier: 'oauth2',
 				strict: this.strict,
 				strategyName,
 			});
@@ -53,30 +55,24 @@ export function getFacebookStoreStrategy(id: string): StrategyFactory<FacebookAu
 }
 
 /**
- * Return the router that hold the facebook store authentication routes
+ * Return the router that hold the oauth2 store authentication routes
  * @param id
- * @param facebook
+ * @param oauth2
  * @param configModule
  */
-export function getFacebookStoreAuthRouter(
-	id: string,
-	facebook: FacebookAuthOptions,
-	configModule: ConfigModule
-): Router {
-	const strategyName = `${FACEBOOK_STORE_STRATEGY_NAME}_${id}`;
+export function getOAuth2StoreAuthRouter(id: string, oauth2: OAuth2AuthOptions, configModule: ConfigModule): Router {
+	const strategyName = `${OAUTH2_STORE_STRATEGY_NAME}_${id}`;
 	return passportAuthRoutesBuilder({
 		domain: 'store',
 		configModule,
-		authPath: facebook.store.authPath ?? '/store/auth/facebook',
-		authCallbackPath: facebook.store.authCallbackPath ?? '/store/auth/facebook/cb',
-		successRedirect: facebook.store.successRedirect,
+		authPath: oauth2.store.authPath ?? '/store/auth/oauth2',
+		authCallbackPath: oauth2.store.authCallbackPath ?? '/store/auth/oauth2/cb',
+		successRedirect: oauth2.store.successRedirect,
 		strategyName,
-		passportAuthenticateMiddlewareOptions: {
-			scope: ['email'],
-		},
+		passportAuthenticateMiddlewareOptions: {},
 		passportCallbackAuthenticateMiddlewareOptions: {
-			failureRedirect: facebook.store.failureRedirect,
+			failureRedirect: oauth2.store.failureRedirect,
 		},
-		expiresIn: facebook.store.expiresIn,
+		expiresIn: oauth2.store.expiresIn,
 	});
 }

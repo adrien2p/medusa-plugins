@@ -1,7 +1,7 @@
-import { GoogleStoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
-import { GoogleAuthOptions, GOOGLE_STORE_STRATEGY_NAME, Profile } from '../../types';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
+import { GOOGLE_STORE_STRATEGY_NAME, GoogleAuthOptions, Profile } from '../../types';
+import { getGoogleStoreStrategy } from '../../store';
 
 describe('Google store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -14,7 +14,7 @@ describe('Google store strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let googleStoreStrategy: GoogleStoreStrategy;
+	let googleStoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -65,7 +65,7 @@ describe('Google store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: GOOGLE_STORE_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: GOOGLE_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -92,6 +92,7 @@ describe('Google store strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
+			const GoogleStoreStrategy = getGoogleStoreStrategy('test');
 			googleStoreStrategy = new GoogleStoreStrategy(
 				container,
 				{} as ConfigModule,
@@ -172,6 +173,7 @@ describe('Google store strategy verify callback', function () {
 
 	describe('when strict is set to admin only', function () {
 		beforeEach(() => {
+			const GoogleStoreStrategy = getGoogleStoreStrategy('test');
 			googleStoreStrategy = new GoogleStoreStrategy(
 				container,
 				{} as ConfigModule,

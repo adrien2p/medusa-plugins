@@ -1,29 +1,30 @@
-import { Strategy as LinkedinStrategy, StrategyOptionWithRequest } from 'passport-linkedin-oauth2';
+import { Strategy as OAuth2Strategy, StrategyOptionsWithRequest } from 'passport-oauth2';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { Router } from 'express';
-import { LINKEDIN_ADMIN_STRATEGY_NAME, LinkedinAuthOptions, Profile } from './types';
+import { OAUTH2_ADMIN_STRATEGY_NAME, OAuth2AuthOptions, Profile } from './types';
 import { PassportStrategy } from '../../core/passport/Strategy';
 import { validateAdminCallback } from '../../core/validate-callback';
 import { passportAuthRoutesBuilder } from '../../core/passport/utils/auth-routes-builder';
 import { AuthProvider, StrategyFactory } from '../../types';
 
-export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAuthOptions> {
-	const strategyName = `${LINKEDIN_ADMIN_STRATEGY_NAME}_${id}`;
-	return class extends PassportStrategy(LinkedinStrategy, strategyName) {
+export function getOAuth2AdminStrategy(id: string): StrategyFactory<OAuth2AuthOptions> {
+	const strategyName = `${OAUTH2_ADMIN_STRATEGY_NAME}_${id}`;
+	return class extends PassportStrategy(OAuth2Strategy, strategyName) {
 		constructor(
 			protected readonly container: MedusaContainer,
 			protected readonly configModule: ConfigModule,
-			protected readonly strategyOptions: LinkedinAuthOptions,
+			protected readonly strategyOptions: OAuth2AuthOptions,
 			protected readonly strict?: AuthProvider['strict']
 		) {
 			super({
+				authorizationURL: strategyOptions.authorizationURL,
+				tokenURL: strategyOptions.tokenURL,
 				clientID: strategyOptions.clientID,
 				clientSecret: strategyOptions.clientSecret,
 				callbackURL: strategyOptions.admin.callbackUrl,
 				passReqToCallback: true,
-				scope: ['r_emailaddress'],
-				state: true,
-			} as StrategyOptionWithRequest);
+				scope: strategyOptions.scope,
+			} as StrategyOptionsWithRequest);
 		}
 
 		async validate(
@@ -45,7 +46,7 @@ export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAu
 
 			return await validateAdminCallback(profile, {
 				container: this.container,
-				strategyErrorIdentifier: 'linkedin',
+				strategyErrorIdentifier: 'oauth2',
 				strict: this.strict,
 				strategyName,
 			});
@@ -54,33 +55,24 @@ export function getLinkedinAdminStrategy(id: string): StrategyFactory<LinkedinAu
 }
 
 /**
- * Return the router that hold the linkedin admin authentication routes
+ * Return the router that hold the oauth2 admin authentication routes
  * @param id
- * @param linkedin
+ * @param oauth2
  * @param configModule
  */
-export function getLinkedinAdminAuthRouter(
-	id: string,
-	linkedin: LinkedinAuthOptions,
-	configModule: ConfigModule
-): Router {
-	const strategyName = `${LINKEDIN_ADMIN_STRATEGY_NAME}_${id}`;
+export function getOAuth2AdminAuthRouter(id: string, oauth2: OAuth2AuthOptions, configModule: ConfigModule): Router {
+	const strategyName = `${OAUTH2_ADMIN_STRATEGY_NAME}_${id}`;
 	return passportAuthRoutesBuilder({
 		domain: 'admin',
 		configModule,
-		authPath: linkedin.admin.authPath ?? '/admin/auth/linkedin',
-		authCallbackPath: linkedin.admin.authCallbackPath ?? '/admin/auth/linkedin/cb',
-		successRedirect: linkedin.admin.successRedirect,
+		authPath: oauth2.admin.authPath ?? '/admin/auth/oauth2',
+		authCallbackPath: oauth2.admin.authCallbackPath ?? '/admin/auth/oauth2/cb',
+		successRedirect: oauth2.admin.successRedirect,
 		strategyName,
-		passportAuthenticateMiddlewareOptions: {
-			scope: [
-				'https://www.linkedinapis.com/auth/userinfo.email',
-				'https://www.linkedinapis.com/auth/userinfo.profile',
-			],
-		},
+		passportAuthenticateMiddlewareOptions: {},
 		passportCallbackAuthenticateMiddlewareOptions: {
-			failureRedirect: linkedin.admin.failureRedirect,
+			failureRedirect: oauth2.admin.failureRedirect,
 		},
-		expiresIn: linkedin.admin.expiresIn,
+		expiresIn: oauth2.admin.expiresIn,
 	});
 }

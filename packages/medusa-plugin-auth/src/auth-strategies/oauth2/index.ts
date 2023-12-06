@@ -1,8 +1,8 @@
 import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getGoogleAdminAuthRouter, getGoogleAdminStrategy } from './admin';
-import { getGoogleStoreAuthRouter, getGoogleStoreStrategy } from './store';
-import { GoogleAuthOptions } from './types';
+import { getOAuth2AdminAuthRouter, getOAuth2AdminStrategy } from './admin';
+import { getOAuth2StoreAuthRouter, getOAuth2StoreStrategy } from './store';
+import { OAuth2AuthOptions } from './types';
 
 export * from './types';
 export * from './admin';
@@ -12,12 +12,12 @@ export default {
 	load: (container, configModule, options): void => {
 		const id = options.identifier ?? options.type;
 		if (options.admin) {
-			const Clazz = getGoogleAdminStrategy(id);
+			const Clazz = getOAuth2AdminStrategy(id);
 			new Clazz(container, configModule, options, options.strict);
 		}
 
 		if (options.store) {
-			const Clazz = getGoogleStoreStrategy(id);
+			const Clazz = getOAuth2StoreStrategy(id);
 			new Clazz(container, configModule, options, options.strict);
 		}
 	},
@@ -26,13 +26,13 @@ export default {
 		const routers = [];
 
 		if (options.admin) {
-			routers.push(getGoogleAdminAuthRouter(id, options, configModule));
+			routers.push(getOAuth2AdminAuthRouter(id, options, configModule));
 		}
 
 		if (options.store) {
-			routers.push(getGoogleStoreAuthRouter(id, options, configModule));
+			routers.push(getOAuth2StoreAuthRouter(id, options, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport<GoogleAuthOptions>;
+} as StrategyExport<OAuth2AuthOptions>;

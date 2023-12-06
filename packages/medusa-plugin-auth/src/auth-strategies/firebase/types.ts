@@ -1,5 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions } from '../../types';
+import { AuthProvider } from '../../types';
 
 export const FIREBASE_STORE_STRATEGY_NAME = 'firebase.store.medusa-auth-plugin';
 export const FIREBASE_ADMIN_STRATEGY_NAME = 'firebase.admin.medusa-auth-plugin';
@@ -7,6 +7,7 @@ export const FIREBASE_ADMIN_STRATEGY_NAME = 'firebase.admin.medusa-auth-plugin';
 export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
 
 export type FirebaseAuthOptions = {
+	type: 'firebase';
 	credentialJsonPath: string;
 	admin?: {
 		/**
@@ -23,7 +24,7 @@ export type FirebaseAuthOptions = {
 		verifyCallback?: (
 			container: MedusaContainer,
 			decodedToken: any,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -43,7 +44,7 @@ export type FirebaseAuthOptions = {
 		verifyCallback?: (
 			container: MedusaContainer,
 			decodedToken: any,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

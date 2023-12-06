@@ -1,10 +1,10 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions } from '../../types';
+import { AuthProvider } from '../../types';
+import { Profile } from 'passport-auth0';
 
 export const AUTH0_ADMIN_STRATEGY_NAME = 'auth0.admin.medusa-auth-plugin';
 export const AUTH0_STORE_STRATEGY_NAME = 'auth0.store.medusa-auth-plugin';
 
-export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
 export type ExtraParams = {
 	audience?: string | undefined;
 	connection?: string | undefined;
@@ -12,6 +12,7 @@ export type ExtraParams = {
 };
 
 export type Auth0Options = {
+	type: 'auth0';
 	clientID: string;
 	clientSecret: string;
 	auth0Domain: string;
@@ -37,7 +38,7 @@ export type Auth0Options = {
 			refreshToken: string,
 			extraParams: ExtraParams,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -64,7 +65,7 @@ export type Auth0Options = {
 			refreshToken: string,
 			extraParams: ExtraParams,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

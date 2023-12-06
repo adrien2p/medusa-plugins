@@ -4,5 +4,6 @@
   "linkedin": "Linkedin",
   "auth0": "Auth0",
   "firebase": "Firebase",
-  "azureoidc": "Azure AD"
+  "azureoidc": "Azure AD",
+  "oauth2": "OAuth2"
 }

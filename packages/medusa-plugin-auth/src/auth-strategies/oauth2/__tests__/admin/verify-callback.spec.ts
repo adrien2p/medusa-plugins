@@ -1,9 +1,9 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
 import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
-import { GOOGLE_ADMIN_STRATEGY_NAME, GoogleAuthOptions } from '../../types';
-import { getGoogleAdminStrategy } from '../../admin';
+import { OAUTH2_ADMIN_STRATEGY_NAME, OAuth2AuthOptions } from '../../types';
+import { getOAuth2AdminStrategy } from '../../admin';
 
-describe('Google admin strategy verify callback', function () {
+describe('OAuth2 admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithProviderKey = 'exist3s@test.fr';
 	const existsEmailWithWrongProviderKey = 'exist4s@test.fr';
@@ -13,7 +13,7 @@ describe('Google admin strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
-	let googleAdminStrategy: IStrategy;
+	let oauth2AdminStrategy: IStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -35,7 +35,7 @@ describe('Google admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: GOOGLE_ADMIN_STRATEGY_NAME + '_test',
+										[AUTH_PROVIDER_KEY]: OAUTH2_ADMIN_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -61,11 +61,17 @@ describe('Google admin strategy verify callback', function () {
 
 	describe('when strict is set to admin', function () {
 		beforeEach(() => {
-			const GoogleAdminStrategy = getGoogleAdminStrategy('test');
-			googleAdminStrategy = new GoogleAdminStrategy(
+			const OAuth2AdminStrategy = getOAuth2AdminStrategy('test');
+			oauth2AdminStrategy = new OAuth2AdminStrategy(
 				container,
 				{} as ConfigModule,
-				{ clientID: 'fake', clientSecret: 'fake', admin: {} } as GoogleAuthOptions,
+				{
+					authorizationURL: 'http://localhost',
+					tokenURL: 'http://localhost',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					admin: {},
+				} as OAuth2AuthOptions,
 				'admin'
 			);
 		});
@@ -79,7 +85,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: existsEmailWithProviderKey }],
 			};
 
-			const data = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
@@ -92,7 +98,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: existsEmail }],
 			};
 
-			const err = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			const err = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(new Error(`Admin with email ${existsEmail} already exists`));
 		});
 
@@ -101,7 +107,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: existsEmailWithWrongProviderKey }],
 			};
 
-			const err = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			const err = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(new Error(`Admin with email ${existsEmailWithWrongProviderKey} already exists`));
 		});
 
@@ -110,18 +116,24 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: 'fake' }],
 			};
 
-			const err = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			const err = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
 		});
 	});
 
 	describe('when strict is set for store only', function () {
 		beforeEach(() => {
-			const GoogleAdminStrategy = getGoogleAdminStrategy('test');
-			googleAdminStrategy = new GoogleAdminStrategy(
+			const OAuth2AdminStrategy = getOAuth2AdminStrategy('test');
+			oauth2AdminStrategy = new OAuth2AdminStrategy(
 				container,
 				{} as ConfigModule,
-				{ clientID: 'fake', clientSecret: 'fake', admin: {} } as GoogleAuthOptions,
+				{
+					authorizationURL: 'http://localhost',
+					tokenURL: 'http://localhost',
+					clientID: 'fake',
+					clientSecret: 'fake',
+					admin: {},
+				} as OAuth2AuthOptions,
 				'store'
 			);
 		});
@@ -135,7 +147,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: existsEmailWithProviderKey }],
 			};
 
-			const data = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
@@ -148,7 +160,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: existsEmail }],
 			};
 
-			const data = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
@@ -161,7 +173,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: existsEmailWithWrongProviderKey }],
 			};
 
-			const data = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile);
+			const data = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile);
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
@@ -174,7 +186,7 @@ describe('Google admin strategy verify callback', function () {
 				emails: [{ value: 'fake' }],
 			};
 
-			const err = await googleAdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
+			const err = await oauth2AdminStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(new Error(`Unable to authenticate the user with the email fake`));
 		});
 	});

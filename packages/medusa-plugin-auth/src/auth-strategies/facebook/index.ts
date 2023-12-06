@@ -1,34 +1,38 @@
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions, StrategyExport } from '../../types';
+import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { FacebookAdminStrategy, getFacebookAdminAuthRouter } from './admin';
-import { FacebookStoreStrategy, getFacebookStoreAuthRouter } from './store';
+import { getFacebookAdminAuthRouter, getFacebookAdminStrategy } from './admin';
+import { getFacebookStoreAuthRouter, getFacebookStoreStrategy } from './store';
+import { FacebookAuthOptions } from './types';
 
 export * from './admin';
 export * from './store';
 export * from './types';
 
 export default {
-	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.facebook?.admin) {
-			new FacebookAdminStrategy(container, configModule, options.facebook, options.strict);
+	load: (container, configModule, options): void => {
+		const id = options.identifier ?? options.type;
+		if (options.admin) {
+			const FacebookAdminStrategy = getFacebookAdminStrategy(id);
+			new FacebookAdminStrategy(container, configModule, options, options.strict);
 		}
 
-		if (options.facebook?.store) {
-			new FacebookStoreStrategy(container, configModule, options.facebook, options.strict);
+		if (options.store) {
+			const FacebookStoreStrategy = getFacebookStoreStrategy(id);
+			new FacebookStoreStrategy(container, configModule, options, options.strict);
 		}
 	},
-	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+	getRouter: (configModule, options): Router[] => {
+		const id = options.identifier ?? options.type;
 		const routers = [];
 
-		if (options.facebook?.admin) {
-			routers.push(getFacebookAdminAuthRouter(options.facebook, configModule));
+		if (options.admin) {
+			routers.push(getFacebookAdminAuthRouter(id, options, configModule));
 		}
 
-		if (options.facebook?.store) {
-			routers.push(getFacebookStoreAuthRouter(options.facebook, configModule));
+		if (options.store) {
+			routers.push(getFacebookStoreAuthRouter(id, options, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport;
+} as StrategyExport<FacebookAuthOptions>;

@@ -1,7 +1,8 @@
-import { Auth0StoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
-import { Auth0Options, AUTH0_STORE_STRATEGY_NAME, Profile, ExtraParams } from '../../types';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
+import { AUTH0_STORE_STRATEGY_NAME, Auth0Options, ExtraParams } from '../../types';
+import { Profile } from 'passport-auth0';
+import { getAuth0StoreStrategy } from '../../store';
 
 describe('Auth0 store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -13,9 +14,9 @@ describe('Auth0 store strategy verify callback', function () {
 	let req: Request;
 	let accessToken: string;
 	let refreshToken: string;
-	let profile: Profile;
+	let profile: Partial<Profile>;
 	let extraParams: ExtraParams;
-	let auth0StoreStrategy: Auth0StoreStrategy;
+	let auth0StoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -67,7 +68,7 @@ describe('Auth0 store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: AUTH0_STORE_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: AUTH0_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -94,6 +95,7 @@ describe('Auth0 store strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
+			const Auth0StoreStrategy = getAuth0StoreStrategy('test');
 			auth0StoreStrategy = new Auth0StoreStrategy(
 				container,
 				{} as ConfigModule,
@@ -183,6 +185,7 @@ describe('Auth0 store strategy verify callback', function () {
 
 	describe('when strict is set to admin', function () {
 		beforeEach(() => {
+			const Auth0StoreStrategy = getAuth0StoreStrategy('test');
 			auth0StoreStrategy = new Auth0StoreStrategy(
 				container,
 				{} as ConfigModule,
