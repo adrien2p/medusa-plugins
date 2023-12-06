@@ -1,7 +1,8 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { Auth0AdminStrategy } from '../../admin';
-import { AUTH_PROVIDER_KEY } from '../../../../types';
-import { Auth0Options, AUTH0_ADMIN_STRATEGY_NAME, Profile, ExtraParams } from '../../types';
+import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
+import { AUTH0_ADMIN_STRATEGY_NAME, Auth0Options, ExtraParams } from '../../types';
+import { Profile } from 'passport-auth0';
+import { getAuth0AdminStrategy } from '../../admin';
 
 describe('Auth0 admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -12,9 +13,9 @@ describe('Auth0 admin strategy verify callback', function () {
 	let req: Request;
 	let accessToken: string;
 	let refreshToken: string;
-	let profile: Profile;
+	let profile: Partial<Profile>;
 	let extraParams: ExtraParams;
-	let auth0AdminStrategy: Auth0AdminStrategy;
+	let auth0AdminStrategy: IStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -38,7 +39,7 @@ describe('Auth0 admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: AUTH0_ADMIN_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: AUTH0_ADMIN_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -64,6 +65,7 @@ describe('Auth0 admin strategy verify callback', function () {
 
 	describe('when strict is set to admin', function () {
 		beforeEach(() => {
+			const Auth0AdminStrategy = getAuth0AdminStrategy('test');
 			auth0AdminStrategy = new Auth0AdminStrategy(
 				container,
 				{} as ConfigModule,
@@ -130,6 +132,7 @@ describe('Auth0 admin strategy verify callback', function () {
 
 	describe('when strict is set for store only', function () {
 		beforeEach(() => {
+			const Auth0AdminStrategy = getAuth0AdminStrategy('test');
 			auth0AdminStrategy = new Auth0AdminStrategy(
 				container,
 				{} as ConfigModule,

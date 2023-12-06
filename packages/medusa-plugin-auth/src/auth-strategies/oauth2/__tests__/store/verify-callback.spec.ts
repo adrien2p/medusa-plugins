@@ -1,9 +1,9 @@
-import { OAuth2StoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
 import { OAUTH2_STORE_STRATEGY_NAME, OAuth2AuthOptions, Profile } from '../../types';
+import { getOAuth2StoreStrategy } from '../../store';
 
-describe('OAuth2 store strategy verify callback', function() {
+describe('OAuth2 store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
 	const existsEmailWithMeta = 'exist2s@test.fr';
 	const existsEmailWithMetaAndProviderKey = 'exist3s@test.fr';
@@ -14,7 +14,7 @@ describe('OAuth2 store strategy verify callback', function() {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let oauth2StoreStrategy: OAuth2StoreStrategy;
+	let oauth2StoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -34,12 +34,12 @@ describe('OAuth2 store strategy verify callback', function() {
 			resolve: <T>(name: string): T => {
 				const container_ = {
 					manager: {
-						transaction: function(cb) {
+						transaction: function (cb) {
 							return cb();
 						},
 					},
 					customerService: {
-						withTransaction: function() {
+						withTransaction: function () {
 							return this;
 						},
 						update: updateFn,
@@ -65,7 +65,7 @@ describe('OAuth2 store strategy verify callback', function() {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: OAUTH2_STORE_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: OAUTH2_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -90,8 +90,9 @@ describe('OAuth2 store strategy verify callback', function() {
 		} as MedusaContainer;
 	});
 
-	describe('when strict is set to store', function() {
+	describe('when strict is set to store', function () {
 		beforeEach(() => {
+			const OAuth2StoreStrategy = getOAuth2StoreStrategy('test');
 			oauth2StoreStrategy = new OAuth2StoreStrategy(
 				container,
 				{} as ConfigModule,
@@ -102,7 +103,7 @@ describe('OAuth2 store strategy verify callback', function() {
 					clientSecret: 'fake',
 					store: {},
 				} as OAuth2AuthOptions,
-				'store',
+				'store'
 			);
 		});
 
@@ -119,7 +120,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -141,7 +142,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -153,7 +154,7 @@ describe('OAuth2 store strategy verify callback', function() {
 
 			const err = await oauth2StoreStrategy.validate(req, accessToken, refreshToken, profile).catch((err) => err);
 			expect(err).toEqual(
-				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`),
+				new Error(`Customer with email ${existsEmailWithMetaButWrongProviderKey} already exists`)
 			);
 		});
 
@@ -170,14 +171,15 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});
 	});
 
-	describe('when strict is set to admin only', function() {
+	describe('when strict is set to admin only', function () {
 		beforeEach(() => {
+			const OAuth2StoreStrategy = getOAuth2StoreStrategy('test');
 			oauth2StoreStrategy = new OAuth2StoreStrategy(
 				container,
 				{} as ConfigModule,
@@ -188,7 +190,7 @@ describe('OAuth2 store strategy verify callback', function() {
 					clientSecret: 'fake',
 					store: {},
 				} as OAuth2AuthOptions,
-				'admin',
+				'admin'
 			);
 		});
 
@@ -205,7 +207,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test3',
-				}),
+				})
 			);
 		});
 
@@ -218,7 +220,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 		});
 
@@ -231,7 +233,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test2',
-				}),
+				})
 			);
 			expect(updateFn).toHaveBeenCalledTimes(1);
 		});
@@ -245,7 +247,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test4',
-				}),
+				})
 			);
 		});
 
@@ -262,7 +264,7 @@ describe('OAuth2 store strategy verify callback', function() {
 			expect(data).toEqual(
 				expect.objectContaining({
 					id: 'test',
-				}),
+				})
 			);
 			expect(createFn).toHaveBeenCalledTimes(1);
 		});

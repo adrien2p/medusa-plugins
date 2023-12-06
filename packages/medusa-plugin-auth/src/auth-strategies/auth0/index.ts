@@ -1,34 +1,38 @@
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions, StrategyExport } from '../../types';
+import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getAuth0AdminAuthRouter, Auth0AdminStrategy } from './admin';
-import { getAuth0StoreAuthRouter, Auth0StoreStrategy } from './store';
+import { getAuth0AdminAuthRouter, getAuth0AdminStrategy } from './admin';
+import { getAuth0StoreAuthRouter, getAuth0StoreStrategy } from './store';
+import { Auth0Options } from './types';
 
 export * from './admin';
 export * from './store';
 export * from './types';
 
 export default {
-	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.auth0?.admin) {
-			new Auth0AdminStrategy(container, configModule, options.auth0, options.strict);
+	load: (container, configModule, option): void => {
+		const id = option.identifier ?? option.type;
+		if (option.admin) {
+			const Clazz = getAuth0AdminStrategy(id);
+			new Clazz(container, configModule, option, option.strict);
 		}
 
-		if (options.auth0?.store) {
-			new Auth0StoreStrategy(container, configModule, options.auth0, options.strict);
+		if (option.store) {
+			const Clazz = getAuth0StoreStrategy(id);
+			new Clazz(container, configModule, option, option.strict);
 		}
 	},
-	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+	getRouter: (configModule, option): Router[] => {
 		const routers = [];
+		const id = option.identifier ?? option.type;
 
-		if (options.auth0?.admin) {
-			routers.push(getAuth0AdminAuthRouter(options.auth0, configModule));
+		if (option.admin) {
+			routers.push(getAuth0AdminAuthRouter(id, option, configModule));
 		}
 
-		if (options.auth0?.store) {
-			routers.push(getAuth0StoreAuthRouter(options.auth0, configModule));
+		if (option.store) {
+			routers.push(getAuth0StoreAuthRouter(id, option, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport;
+} as StrategyExport<Auth0Options>;

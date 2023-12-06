@@ -1,7 +1,7 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { FacebookAdminStrategy } from '../../admin';
-import { AUTH_PROVIDER_KEY } from '../../../../types';
-import { FacebookAuthOptions, FACEBOOK_ADMIN_STRATEGY_NAME, Profile } from '../../types';
+import { AUTH_PROVIDER_KEY, IStrategy } from '../../../../types';
+import { FACEBOOK_ADMIN_STRATEGY_NAME, FacebookAuthOptions, Profile } from '../../types';
+import { getFacebookAdminStrategy } from '../../admin';
 
 describe('Facebook admin strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -13,7 +13,7 @@ describe('Facebook admin strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let facebookAdminStrategy: FacebookAdminStrategy;
+	let facebookAdminStrategy: IStrategy;
 
 	beforeEach(() => {
 		profile = {
@@ -35,7 +35,7 @@ describe('Facebook admin strategy verify callback', function () {
 								return {
 									id: 'test2',
 									metadata: {
-										[AUTH_PROVIDER_KEY]: FACEBOOK_ADMIN_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: FACEBOOK_ADMIN_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -61,6 +61,7 @@ describe('Facebook admin strategy verify callback', function () {
 
 	describe('when strict is set to admin', function () {
 		beforeEach(() => {
+			const FacebookAdminStrategy = getFacebookAdminStrategy('test');
 			facebookAdminStrategy = new FacebookAdminStrategy(
 				container,
 				{} as ConfigModule,
@@ -126,6 +127,7 @@ describe('Facebook admin strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
+			const FacebookAdminStrategy = getFacebookAdminStrategy('test');
 			facebookAdminStrategy = new FacebookAdminStrategy(
 				container,
 				{} as ConfigModule,

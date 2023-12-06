@@ -1,34 +1,38 @@
-import { AuthOptions, StrategyExport } from '../../types';
+import { StrategyExport } from '../../types';
 import { Router } from 'express';
-import { getGoogleAdminAuthRouter, GoogleAdminStrategy } from './admin';
-import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { getGoogleStoreAuthRouter, GoogleStoreStrategy } from './store';
+import { getGoogleAdminAuthRouter, getGoogleAdminStrategy } from './admin';
+import { getGoogleStoreAuthRouter, getGoogleStoreStrategy } from './store';
+import { GoogleAuthOptions } from './types';
 
 export * from './types';
 export * from './admin';
 export * from './store';
 
 export default {
-	load: (container: MedusaContainer, configModule: ConfigModule, options: AuthOptions): void => {
-		if (options.google?.admin) {
-			new GoogleAdminStrategy(container, configModule, options.google, options.strict);
+	load: (container, configModule, options): void => {
+		const id = options.identifier ?? options.type;
+		if (options.admin) {
+			const Clazz = getGoogleAdminStrategy(id);
+			new Clazz(container, configModule, options, options.strict);
 		}
 
-		if (options.google?.store) {
-			new GoogleStoreStrategy(container, configModule, options.google, options.strict);
+		if (options.store) {
+			const Clazz = getGoogleStoreStrategy(id);
+			new Clazz(container, configModule, options, options.strict);
 		}
 	},
-	getRouter: (configModule: ConfigModule, options: AuthOptions): Router[] => {
+	getRouter: (configModule, options): Router[] => {
+		const id = options.identifier ?? options.type;
 		const routers = [];
 
-		if (options.google?.admin) {
-			routers.push(getGoogleAdminAuthRouter(options.google, configModule));
+		if (options.admin) {
+			routers.push(getGoogleAdminAuthRouter(id, options, configModule));
 		}
 
-		if (options.google?.store) {
-			routers.push(getGoogleStoreAuthRouter(options.google, configModule));
+		if (options.store) {
+			routers.push(getGoogleStoreAuthRouter(id, options, configModule));
 		}
 
 		return routers;
 	},
-} as StrategyExport;
+} as StrategyExport<GoogleAuthOptions>;

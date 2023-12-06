@@ -1,7 +1,7 @@
-import { LinkedinStoreStrategy } from '../../store';
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { CUSTOMER_METADATA_KEY, AUTH_PROVIDER_KEY } from '../../../../types';
-import { LinkedinAuthOptions, LINKEDIN_STORE_STRATEGY_NAME, Profile } from '../../types';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
+import { LINKEDIN_STORE_STRATEGY_NAME, LinkedinAuthOptions, Profile } from '../../types';
+import { getLinkedinStoreStrategy } from '../../store';
 
 describe('Linkedin store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -14,7 +14,7 @@ describe('Linkedin store strategy verify callback', function () {
 	let accessToken: string;
 	let refreshToken: string;
 	let profile: Profile;
-	let linkedinStoreStrategy: LinkedinStoreStrategy;
+	let linkedinStoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -65,7 +65,7 @@ describe('Linkedin store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: LINKEDIN_STORE_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: LINKEDIN_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -92,6 +92,7 @@ describe('Linkedin store strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
+			const LinkedinStoreStrategy = getLinkedinStoreStrategy('test');
 			linkedinStoreStrategy = new LinkedinStoreStrategy(
 				container,
 				{} as ConfigModule,
@@ -180,6 +181,7 @@ describe('Linkedin store strategy verify callback', function () {
 
 	describe('when strict is set to admn', function () {
 		beforeEach(() => {
+			const LinkedinStoreStrategy = getLinkedinStoreStrategy('test');
 			linkedinStoreStrategy = new LinkedinStoreStrategy(
 				container,
 				{} as ConfigModule,

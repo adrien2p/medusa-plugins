@@ -1,5 +1,5 @@
 import { MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AuthOptions } from '../../types';
+import { AuthProvider } from '../../types';
 
 export const OAUTH2_STORE_STRATEGY_NAME = 'oauth2.store.medusa-auth-plugin';
 export const OAUTH2_ADMIN_STRATEGY_NAME = 'oauth2.admin.medusa-auth-plugin';
@@ -7,6 +7,7 @@ export const OAUTH2_ADMIN_STRATEGY_NAME = 'oauth2.admin.medusa-auth-plugin';
 export type Profile = { emails: { value: string }[]; name?: { givenName?: string; familyName?: string } };
 
 export type OAuth2AuthOptions = {
+	type: 'oauth2';
 	authorizationURL: string;
 	tokenURL: string;
 	clientID: string;
@@ -32,7 +33,7 @@ export type OAuth2AuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;
@@ -58,7 +59,7 @@ export type OAuth2AuthOptions = {
 			accessToken: string,
 			refreshToken: string,
 			profile: Profile,
-			strict?: AuthOptions['strict']
+			strict?: AuthProvider['strict']
 		) => Promise<null | { id: string } | never>;
 
 		expiresIn?: number;

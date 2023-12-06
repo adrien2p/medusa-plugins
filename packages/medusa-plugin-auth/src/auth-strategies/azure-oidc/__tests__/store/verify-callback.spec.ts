@@ -1,7 +1,7 @@
 import { ConfigModule, MedusaContainer } from '@medusajs/medusa/dist/types/global';
-import { AzureStoreStrategy } from '../../store';
-import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY } from '../../../../types';
-import { AzureAuthOptions, AZURE_STORE_STRATEGY_NAME } from '../../types';
+import { getAzureStoreStrategy } from '../../store';
+import { AUTH_PROVIDER_KEY, CUSTOMER_METADATA_KEY, IStrategy } from '../../../../types';
+import { AZURE_STORE_STRATEGY_NAME, AzureAuthOptions } from '../../types';
 
 describe('Google store strategy verify callback', function () {
 	const existsEmail = 'exists@test.fr';
@@ -12,7 +12,7 @@ describe('Google store strategy verify callback', function () {
 	let container: MedusaContainer;
 	let req: Request;
 	let profile: { upn: string; name?: { givenName?: string; familyName?: string } };
-	let azureStoreStrategy: AzureStoreStrategy;
+	let azureStoreStrategy: IStrategy;
 	let updateFn;
 	let createFn;
 
@@ -63,7 +63,7 @@ describe('Google store strategy verify callback', function () {
 									id: 'test3',
 									metadata: {
 										[CUSTOMER_METADATA_KEY]: true,
-										[AUTH_PROVIDER_KEY]: AZURE_STORE_STRATEGY_NAME,
+										[AUTH_PROVIDER_KEY]: AZURE_STORE_STRATEGY_NAME + '_test',
 									},
 								};
 							}
@@ -90,7 +90,8 @@ describe('Google store strategy verify callback', function () {
 
 	describe('when strict is set to store', function () {
 		beforeEach(() => {
-			azureStoreStrategy = new AzureStoreStrategy(
+			const Class = getAzureStoreStrategy('test');
+			azureStoreStrategy = new Class(
 				container,
 				{} as ConfigModule,
 				{
@@ -180,7 +181,8 @@ describe('Google store strategy verify callback', function () {
 
 	describe('when strict is set to admin', function () {
 		beforeEach(() => {
-			azureStoreStrategy = new AzureStoreStrategy(
+			const Class = getAzureStoreStrategy('test');
+			azureStoreStrategy = new Class(
 				container,
 				{} as ConfigModule,
 				{

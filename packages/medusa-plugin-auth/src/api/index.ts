@@ -9,23 +9,43 @@ import FirebaseStrategy from '../auth-strategies/firebase';
 import Auth0Strategy from '../auth-strategies/auth0';
 import AzureStrategy from '../auth-strategies/azure-oidc';
 
-import { AuthOptions } from '../types';
+import { AuthOptions, AuthOptionsWrapper, handleOption } from '../types';
 
-export default function (rootDirectory, pluginOptions: AuthOptions): Router[] {
-	const configModule = loadConfig(rootDirectory) as ConfigModule;
+export default async function (rootDirectory, pluginOptions: AuthOptions[]): Promise<Router[]> {
+	const configModule = loadConfig(rootDirectory);
 	return loadRouters(configModule, pluginOptions);
 }
 
-function loadRouters(configModule: ConfigModule, options: AuthOptions): Router[] {
+async function loadRouters(configModule: ConfigModule, options: AuthOptionsWrapper[]): Promise<Router[]> {
 	const routers: Router[] = [];
 
-	routers.push(...OAuth2Strategy.getRouter(configModule, options));
-	routers.push(...GoogleStrategy.getRouter(configModule, options));
-	routers.push(...FacebookStrategy.getRouter(configModule, options));
-	routers.push(...LinkedinStrategy.getRouter(configModule, options));
-	routers.push(...FirebaseStrategy.getRouter(configModule, options));
-	routers.push(...Auth0Strategy.getRouter(configModule, options));
-	routers.push(...AzureStrategy.getRouter(configModule, options));
+	for (const opt of options) {
+		const option = await handleOption(opt, configModule);
+
+		switch (option.type) {
+			case 'azure_oidc':
+				routers.push(...AzureStrategy.getRouter(configModule, option));
+				break;
+			case 'google':
+				routers.push(...GoogleStrategy.getRouter(configModule, option));
+				break;
+			case 'facebook':
+				routers.push(...FacebookStrategy.getRouter(configModule, option));
+				break;
+			case 'linkedin':
+				routers.push(...LinkedinStrategy.getRouter(configModule, option));
+				break;
+			case 'firebase':
+				routers.push(...FirebaseStrategy.getRouter(configModule, option));
+				break;
+			case 'auth0':
+				routers.push(...Auth0Strategy.getRouter(configModule, option));
+				break;
+			case 'oauth2':
+				routers.push(...OAuth2Strategy.getRouter(configModule, option));
+				break;
+		}
+	}
 
 	return routers;
 }

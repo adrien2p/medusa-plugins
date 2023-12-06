@@ -1,7 +1,7 @@
 import passport from 'passport';
 import cors from 'cors';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
-import { Router, Request, Response } from 'express';
+import { Request, Response, Router } from 'express';
 import { authenticateSessionFactory, signToken } from '../../core/auth-callback-middleware';
 
 function firebaseCallbackMiddleware(domain: 'admin' | 'store', configModule: ConfigModule, expiresIn?: number) {
