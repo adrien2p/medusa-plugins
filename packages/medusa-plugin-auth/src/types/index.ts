@@ -26,8 +26,7 @@ export type AuthOptions = AuthProvider & ProviderOptions;
 
 export type AuthOptionsWrapper =
 	| AuthOptions
-	| ((configModule?: ConfigModule, container?: MedusaContainer) => PromiseLike<AuthOptions>)
-	| PromiseLike<AuthOptions>;
+	| ((configModule?: ConfigModule, container?: MedusaContainer) => AuthOptions);
 
 export type ProviderOptions =
 	| GoogleAuthOptions
@@ -61,14 +60,16 @@ export function handleOption(
 	opt: AuthOptionsWrapper,
 	configModule?: ConfigModule,
 	container?: MedusaContainer
-): PromiseLike<AuthOptions> {
+): AuthOptions {
 	if (typeof opt === 'function') {
 		return handleOption(opt(configModule, container), configModule, container);
 	}
 
-	if (typeof opt === 'object' && typeof (opt as any).then === 'function') {
+	/*if (typeof opt === 'object' && typeof (opt as any).then === 'function') {
 		return opt as PromiseLike<AuthOptions>;
 	}
 
-	return Promise.resolve(opt);
+	return Promise.resolve(opt);*/
+
+	return opt;
 }

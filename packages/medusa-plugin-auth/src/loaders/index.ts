@@ -21,7 +21,7 @@ export default async function authStrategiesLoader(
 }
 
 async function handleStrategyLoading(opt: AuthOptionsWrapper, configModule: ConfigModule, container: MedusaContainer) {
-	const option = await handleOption(opt, configModule, container);
+	const option = handleOption(opt, configModule, container);
 
 	switch (option.type) {
 		case 'azure_oidc':

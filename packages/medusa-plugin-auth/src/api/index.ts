@@ -11,20 +11,17 @@ import AzureStrategy from '../auth-strategies/azure-oidc';
 
 import { AuthOptions, AuthOptionsWrapper, handleOption } from '../types';
 
-export default async function (rootDirectory, pluginOptions: AuthOptions | AuthOptions[]): Promise<Router[]> {
+export default function (rootDirectory, pluginOptions: AuthOptions | AuthOptions[]): Router[] {
 	const configModule = loadConfig(rootDirectory);
 	return loadRouters(configModule, pluginOptions);
 }
 
-async function loadRouters(
-	configModule: ConfigModule,
-	options: AuthOptionsWrapper | AuthOptionsWrapper[]
-): Promise<Router[]> {
+function loadRouters(configModule: ConfigModule, options: AuthOptionsWrapper | AuthOptionsWrapper[]): Router[] {
 	const routers: Router[] = [];
 
 	const options_ = Array.isArray(options) ? options : [options];
 	for (const opt of options_) {
-		const option = await handleOption(opt, configModule);
+		const option = handleOption(opt, configModule);
 
 		switch (option.type) {
 			case 'azure_oidc':
