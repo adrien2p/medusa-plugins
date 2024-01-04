@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.8.2...medusa-plugin-auth@1.9.0) (2024-01-04)
+
+
+### Bug Fixes
+
+* **auth:** loadRouters ([356fff4](https://github.com/adrien2p/medusa-plugins/commit/356fff49cc3ca24c5efbeb26a6ae12d764ba9333))
+
+
+### Features
+
+* **medusa-plugin-auth:** added oauth2 as login strategy ([#119](https://github.com/adrien2p/medusa-plugins/issues/119)) ([4dde834](https://github.com/adrien2p/medusa-plugins/commit/4dde8343dc0bd5de65d501e6b12fdb8dc678e3a9))
+
+
+
+
+
 ## [1.8.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.8.1...medusa-plugin-auth@1.8.2) (2023-11-28)
 
 
