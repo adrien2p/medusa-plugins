@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.9.0...medusa-plugin-auth@1.9.1) (2024-01-04)
+
+
+### Bug Fixes
+
+* **auth:** Remove promise options resolution as it is not supported by medusa for now ([8852c3e](https://github.com/adrien2p/medusa-plugins/commit/8852c3ed9c1038e115c99108068a3582877092d3))
+
+
+
+
+
 # [1.9.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.8.2...medusa-plugin-auth@1.9.0) (2024-01-04)
 
 
