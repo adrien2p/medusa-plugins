@@ -30,11 +30,15 @@ newly added plugins. To do so here are the steps
     Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
     just add the `firebase` options to your auth plugin options
     ```js
-    {
-        resolve: "medusa-plugin-auth",
-        /** @type {import('medusa-plugin-auth').AuthOptions} */
-        options: {
+{
+    resolve: "medusa-plugin-auth",
+    /** @type {import('medusa-plugin-auth').AuthOptions} */
+    options: [
+        {
+            type: "firebase",
             // strict: "all", // or "none" or "store" or "admin"
+            strict: "none",
+            identifier: "firebase",
             firebase: {
                 credentialJsonPath: CredentialJsonPath,
 
@@ -55,7 +59,9 @@ newly added plugins. To do so here are the steps
                 }
             }
         }
-    }
+    ]
+}
+
     ```
     The options that are commented are `optional` and the value that you see are the default values
 </CircleStep>

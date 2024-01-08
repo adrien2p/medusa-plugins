@@ -31,23 +31,25 @@ newly added plugins. To do so here are the steps
     Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
     just add the `linkedin` options to your auth plugin options
     ```js
-    {
-        resolve: "medusa-plugin-auth",
-        /** @type {import('medusa-plugin-auth').AuthOptions} */
-        options: {
+{
+    resolve: "medusa-plugin-auth",
+    /** @type {import('medusa-plugin-auth').AuthOptions} */
+    options: [
+        {
+            type: "linkedin",
             // strict: "all", // or "none" or "store" or "admin"
+            strict: "none",
+            identifier: "linkedin",
             linkedin: {
                 clientID: LinkedinClientId,
                 clientSecret: LinkedinClientSecret,
 
                 admin: {
-                    callbackUrl:`${BACKEND_URL}/admin/auth/linkedin/cb`,
+                    callbackUrl: `${BACKEND_URL}/admin/auth/linkedin/cb`,
                     failureRedirect: `${ADMIN_URL}/login`,
-
-					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-					// This query param will have the priority over this configuration
+                    // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+                    // This query param will have the priority over this configuration
                     successRedirect: `${ADMIN_URL}/`,
-
                     // authPath: '/admin/auth/linkedin',
                     // authCallbackPath: '/admin/auth/linkedin/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
@@ -57,13 +59,11 @@ newly added plugins. To do so here are the steps
                 },
 
                 store: {
-                    callbackUrl:`${BACKEND_URL}/store/auth/linkedin/cb`,
+                    callbackUrl: `${BACKEND_URL}/store/auth/linkedin/cb`,
                     failureRedirect: `${STORE_URL}/login`,
-
-					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-					// This query param will have the priority over this configuration
+                    // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+                    // This query param will have the priority over this configuration
                     successRedirect: `${STORE_URL}/`,
-
                     // authPath: '/store/auth/linkedin',
                     // authCallbackPath: '/store/auth/linkedin/cb',
                     // expiresIn: 24 * 60 * 60 * 1000,
@@ -73,7 +73,8 @@ newly added plugins. To do so here are the steps
                 }
             }
         }
-    }
+    ]
+}
     ```
     The options that are commented are `optional` and the value that you see are the default values
 </CircleStep>

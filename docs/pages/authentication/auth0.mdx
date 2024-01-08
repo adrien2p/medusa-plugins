@@ -35,46 +35,33 @@ newly added plugins. To do so here are the steps
     {
         resolve: "medusa-plugin-auth",
         /** @type {import('medusa-plugin-auth').AuthOptions} */
-        options: {
-            // strict: "all", // or "none" or "store" or "admin"
-            auth0: {
-                clientID: Auth0ClientId,
-                clientSecret: Auth0ClientSecret,
-                auth0Domain: Auth0Domain,
+        options: [{
+                type: "auth0",
+                // strict: "all", // or "none" or "store" or "admin"
+                strict: "none",
+                identifier: "auth0",
+                auth0: {
+                    clientID: Auth0ClientId,
+                    clientSecret: Auth0ClientSecret,
+                    auth0Domain: Auth0Domain,
 
-                admin: {
-                    callbackUrl:`${BACKEND_URL}/admin/auth/auth0/cb`,
-                    failureRedirect: `${ADMIN_URL}/login`,
+                    admin: {
+                        callbackUrl: `${BACKEND_URL}/admin/auth/auth0/cb`,
+                        failureRedirect: `${ADMIN_URL}/login`,
+                        // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+                        // This query param will have the priority over this configuration
+                        successRedirect: `${ADMIN_URL}/`,
+                    },
 
-					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-					// This query param will have the priority over this configuration
-                    successRedirect: `${ADMIN_URL}/`,
-
-                    // authPath: '/admin/auth/auth0',
-                    // authCallbackPath: '/admin/auth/auth0/cb',
-                    // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile, strict) => {
-                    //    // implement your custom verify callback here if you need it
-                    // }
-                },
-
-                store: {
-                    callbackUrl:`${BACKEND_URL}/store/auth/auth0/cb`,
-                    failureRedirect: `${STORE_URL}/login`,
-
-					// The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-					// This query param will have the priority over this configuration
-                    successRedirect: `${STORE_URL}/`,
-
-                    // authPath: '/store/auth/auth0',
-                    // authCallbackPath: '/store/auth/auth0/cb',
-                    // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, req, accessToken, refreshToken, extraParams, profile, strict) => {
-                    //    // implement your custom verify callback here if you need it
-                    // }
+                    store: {
+                        callbackUrl: `${BACKEND_URL}/store/auth/auth0/cb`,
+                        failureRedirect: `${STORE_URL}/login`,
+                        // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+                        // This query param will have the priority over this configuration
+                        successRedirect: `${STORE_URL}/`,
+                    }
                 }
-            }
-        }
+            }]
     }
     ```
     The options that are commented are `optional` and the value that you see are the default values
