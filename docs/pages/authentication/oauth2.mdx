@@ -42,40 +42,36 @@ newly added plugins. To do so here are the steps
             type: "oauth2",
             strict: "all", // or "none" or "store" or "admin"
             identifier: "oauth2",
-            oauth2: {
-                authorizationURL: OAuth2AuthorizationURL,
-                tokenURL: OAuth2TokenURL,
-                clientID: OAuth2ClientId,
-                clientSecret: OAuth2ClientSecret,
-                scope: OAuth2Scope.split(","),
-
-                admin: {
-                    callbackUrl: `${BACKEND_URL}/admin/auth/oauth2/cb`,
-                    failureRedirect: `${ADMIN_URL}/login`,
-                    // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
-                    // This query param will have the priority over this configuration
-                    successRedirect: `${ADMIN_URL}/`,
-                    // authPath: '/admin/auth/oauth2',
-                    // authCallbackPath: '/admin/auth/oauth2/cb',
-                    // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-                    //    // implement your custom verify callback here if you need it
-                    // }
-                },
-
-                store: {
-                    callbackUrl: `${BACKEND_URL}/store/auth/oauth2/cb`,
-                    failureRedirect: `${STORE_URL}/login`,
-                    // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
-                    // This query param will have the priority over this configuration
-                    successRedirect: `${STORE_URL}/`,
-                    // authPath: '/store/auth/oauth2',
-                    // authCallbackPath: '/store/auth/oauth2/cb',
-                    // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-                    //    // implement your custom verify callback here if you need it
-                    // }
-                }
+            authorizationURL: OAuth2AuthorizationURL,
+            tokenURL: OAuth2TokenURL,
+            clientID: OAuth2ClientId,
+            clientSecret: OAuth2ClientSecret,
+            scope: OAuth2Scope.split(","),
+            admin: {
+                callbackUrl: `${BACKEND_URL}/admin/auth/oauth2/cb`,
+                failureRedirect: `${ADMIN_URL}/login`,
+                // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+                // This query param will have the priority over this configuration
+                successRedirect: `${ADMIN_URL}/`,
+                // authPath: '/admin/auth/oauth2',
+                // authCallbackPath: '/admin/auth/oauth2/cb',
+                // expiresIn: 24 * 60 * 60 * 1000,
+                // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+                //    // implement your custom verify callback here if you need it
+                // }
+            },
+            store: {
+                callbackUrl: `${BACKEND_URL}/store/auth/oauth2/cb`,
+                failureRedirect: `${STORE_URL}/login`,
+                // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+                // This query param will have the priority over this configuration
+                successRedirect: `${STORE_URL}/`,
+                // authPath: '/store/auth/oauth2',
+                // authCallbackPath: '/store/auth/oauth2/cb',
+                // expiresIn: 24 * 60 * 60 * 1000,
+                // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+                //    // implement your custom verify callback here if you need it
+                // }
             }
         }
     ]

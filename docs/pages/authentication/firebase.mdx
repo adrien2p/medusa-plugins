@@ -39,26 +39,22 @@ newly added plugins. To do so here are the steps
             // strict: "all", // or "none" or "store" or "admin"
             strict: "none",
             identifier: "firebase",
-            firebase: {
-                credentialJsonPath: CredentialJsonPath,
-
-                admin: {
-                    // authPath: '/admin/auth/firebase',
-                    // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, decodedToken, strict) => {
-                    //    // implement your custom verify callback here if you need it
-                    // }
-                },
-
-                store: {
-                    // authPath: '/store/auth/firebase',
-                    // expiresIn: 24 * 60 * 60 * 1000,
-                    // verifyCallback: (container, decodedToken, strict) => {
-                    //    // implement your custom verify callback here if you need it
-                    // }
-                }
+            credentialJsonPath: CredentialJsonPath,
+            admin: {
+                // authPath: '/admin/auth/firebase',
+                // expiresIn: 24 * 60 * 60 * 1000,
+                // verifyCallback: (container, decodedToken, strict) => {
+                //    // implement your custom verify callback here if you need it
+                // }
+            },
+            store: {
+                // authPath: '/store/auth/firebase',
+                // expiresIn: 24 * 60 * 60 * 1000,
+                // verifyCallback: (container, decodedToken, strict) => {
+                //    // implement your custom verify callback here if you need it
+                // }
             }
-        }
+    }
     ]
 }
 
