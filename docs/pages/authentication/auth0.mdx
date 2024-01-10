@@ -32,33 +32,35 @@ newly added plugins. To do so here are the steps
     Then in your `plugins` collections, if you did not already inserted the plugin, add the following otherwise, you can
     just add the `auth0` options to your auth plugin options
     ```js
-    {
-        resolve: "medusa-plugin-auth",
-        /** @type {import('medusa-plugin-auth').AuthOptions} */
-        options: [{
-                type: "auth0",
-                // strict: "all", // or "none" or "store" or "admin"
-                strict: "none",
-                identifier: "auth0",
-                clientID: Auth0ClientId,
-                clientSecret: Auth0ClientSecret,
-                auth0Domain: Auth0Domain,
-                admin: {
-                        callbackUrl: `${BACKEND_URL}/admin/auth/auth0/cb`,
-                        failureRedirect: `${ADMIN_URL}/login`,
-                        // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
-                        // This query param will have the priority over this configuration
-                        successRedirect: `${ADMIN_URL}/`,
-                },
-                store: {
-                    callbackUrl: `${BACKEND_URL}/store/auth/auth0/cb`,
-                    failureRedirect: `${STORE_URL}/login`,
-                    // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
-                    // This query param will have the priority over this configuration
-                    successRedirect: `${STORE_URL}/`,
-                }
-            }]
-    }
+  {
+    resolve: "medusa-plugin-auth",
+    /** @type {import('medusa-plugin-auth').AuthOptions} */
+    options: [
+      {
+        type: "auth0",
+        // strict: "all", // or "none" or "store" or "admin"
+        strict: "none",
+        identifier: "auth0",
+        clientID: Auth0ClientId,
+        clientSecret: Auth0ClientSecret,
+        auth0Domain: Auth0Domain,
+        admin: {
+          callbackUrl: `${BACKEND_URL}/admin/auth/auth0/cb`,
+          failureRedirect: `${ADMIN_URL}/login`,
+          // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+          // This query param will have the priority over this configuration
+          successRedirect: `${ADMIN_URL}/`
+        },
+        store: {
+          callbackUrl: `${BACKEND_URL}/store/auth/auth0/cb`,
+          failureRedirect: `${STORE_URL}/login`,
+          // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+          // This query param will have the priority over this configuration
+          successRedirect: `${STORE_URL}/`
+        }
+      }
+    ]
+  }
     ```
     The options that are commented are `optional` and the value that you see are the default values
 </CircleStep>
