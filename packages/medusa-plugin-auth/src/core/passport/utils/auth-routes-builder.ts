@@ -144,6 +144,9 @@ function successActionHandlerFactory(
 		const url = new URL(redirectUrl);
 		url.searchParams.append('access_token', token);
 
+		// Add support for medusa latest store front
+		res.cookie('_medusa_jwt', token);
+
 		res.redirect(url.toString());
 	};
 }
