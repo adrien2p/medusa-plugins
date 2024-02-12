@@ -15,8 +15,8 @@ type PassportCallbackAuthenticateMiddlewareOptions = {
 	failureRedirect: string;
 };
 
-const extractDomain = (url) => {
-	const domain = url.match(/^(?:https|http?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
+export const extractDomain = (url) => {
+	const domain = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
 	return domain;
 };
 
