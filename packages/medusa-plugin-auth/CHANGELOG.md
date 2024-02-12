@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.9.1...medusa-plugin-auth@1.10.0) (2024-02-12)
+
+
+### Features
+
+* Support for medusa latest storefron ([3a44446](https://github.com/adrien2p/medusa-plugins/commit/3a444462a71d8a5c1ca92183e28aab2120d1b104))
+
+
+
+
+
 ## [1.9.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.9.0...medusa-plugin-auth@1.9.1) (2024-01-04)
 
 
