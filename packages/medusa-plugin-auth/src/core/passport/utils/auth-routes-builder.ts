@@ -127,9 +127,8 @@ function successActionHandlerFactory(
 ) {
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
-	const isProdOrStaging = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
-	const originHost =
-		isProdOrStaging ? req.get('referer') : undefined;
+	const isProdOrStaging = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging';
+	const originHost = isProdOrStaging ? req.get('referer') : undefined;
 
 	if (returnAccessToken) {
 		return (req: Request, res: Response) => {
