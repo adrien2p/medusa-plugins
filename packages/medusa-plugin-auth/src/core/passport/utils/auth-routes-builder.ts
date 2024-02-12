@@ -3,6 +3,7 @@ import passport from 'passport';
 import cors from 'cors';
 import { authCallbackMiddleware, authenticateSessionFactory, signToken } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
+import { CookieOptions } from 'express-serve-static-core';
 
 type PassportAuthenticateMiddlewareOptions = {
 	[key: string]: unknown;
@@ -126,6 +127,9 @@ function successActionHandlerFactory(
 ) {
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
+	const isProdOrStaging = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging'
+	const originHost =
+		isProdOrStaging ? req.get('referer') : undefined;
 
 	if (returnAccessToken) {
 		return (req: Request, res: Response) => {
@@ -144,8 +148,12 @@ function successActionHandlerFactory(
 		const url = new URL(redirectUrl);
 		url.searchParams.append('access_token', token);
 
-		// Add support for medusa latest store front
-		res.cookie('_medusa_jwt', token);
+		// Add support for medusa latest storefront
+		res.cookie('_medusa_jwt', token, {
+			domain: originHost,
+			secure: isProdOrStaging,
+			httpOnly: true,
+		});
 
 		res.redirect(url.toString());
 	};
