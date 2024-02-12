@@ -15,6 +15,11 @@ type PassportCallbackAuthenticateMiddlewareOptions = {
 	failureRedirect: string;
 };
 
+const extractDomain = (url) => {
+	const domain = url.match(/^(?:https|http?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
+	return domain;
+};
+
 /**
  * Build and return a router including the different route and configuration for a passport strategy
  * @param domain
@@ -128,7 +133,7 @@ function successActionHandlerFactory(
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 	const isProdOrStaging = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging';
-	const originHost = isProdOrStaging ? req.get('referer') : undefined;
+	const originHost = isProdOrStaging ? req.get('referer') && extractDomain(req.get('referer')) : undefined;
 
 	if (returnAccessToken) {
 		return (req: Request, res: Response) => {
