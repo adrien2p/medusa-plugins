@@ -81,6 +81,7 @@ export async function validateStoreCallback<
 			email_verified?: boolean;
 		};
 		emails?: { value: string }[];
+		phoneNumbers?: { value: string }[];
 	} = {
 		emails?: { value: string }[];
 	}
@@ -173,6 +174,7 @@ export async function validateStoreCallback<
 			last_name: profile.name?.familyName ?? '',
 			has_account: true,
 			password: generatePassword(),
+			phone: profile.phoneNumbers?.[0]?.value ?? '',
 		});
 
 		return { id: customer.id };
