@@ -65,4 +65,5 @@ export type OAuth2AuthOptions = {
 		expiresIn?: number;
 	};
 	scope?: string[];
+	parseProfile?: (profile: any) => any;
 };

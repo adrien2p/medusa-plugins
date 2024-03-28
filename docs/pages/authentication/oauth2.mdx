@@ -73,7 +73,37 @@ newly added plugins. To do so here are the steps
           // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
           //    // implement your custom verify callback here if you need it
           // }
-        }
+        },
+        // parseProfile: (json) => {
+        //   const profile = {
+        //     provider: "keycloak",
+        //     id: json.sub,
+        //     username: json.preferred_username,
+        //     displayName: json.name,
+        //     email: json.email,
+        //     name: {
+        //       familyName: json.family_name,
+        //       givenName: json.given_name,
+        //     },
+        //     emails: json.email
+        //       ? [
+        //           {
+        //             value: json.email,
+        //           },
+        //         ]
+        //       : [],
+        //     _json: json,
+        //     phoneNumbers: json.phone_number
+        //       ? [
+        //           {
+        //             value: json.phone_number ?? "",
+        //           },
+        //         ]
+        //       : [],
+        //   };
+
+        //   return profile;
+        // },
       }
     ]
   }

@@ -51,6 +51,23 @@ export function getOAuth2StoreStrategy(id: string): StrategyFactory<OAuth2AuthOp
 				strategyName,
 			});
 		}
+
+		userProfile(accessToken, done: (err: any, profile?: any) => void) {
+			if (this.strategyOptions.parseProfile !== undefined) {
+				let json;
+
+				try {
+					json = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString());
+				} catch (ex) {
+					return done(new Error('Failed to parse access token'));
+				}
+
+				const profile = this.strategyOptions.parseProfile(json);
+				done(null, profile);
+			} else {
+				super.userProfile(accessToken, done);
+			}
+		}
 	};
 }
 
