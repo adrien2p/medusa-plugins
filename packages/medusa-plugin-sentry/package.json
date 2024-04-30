@@ -50,8 +50,8 @@
     "typeorm": "^0.3.15"
   },
   "dependencies": {
-    "@sentry/node": "^7.50.0",
-    "@sentry/tracing": "^7.50.0",
+    "@sentry/node": "latest",
+    "@sentry/tracing": "latest",
     "axios": "^1.0.0",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
