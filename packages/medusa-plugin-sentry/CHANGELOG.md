@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.4.2...medusa-plugin-sentry@1.5.0) (2024-04-30)
+
+
+### Features
+
+* Add environment support ([8376066](https://github.com/adrien2p/medusa-plugins/commit/8376066c8ec0cd50a6f0ee6ebddb57cf084aa20c))
+
+
+
+
+
 ## [1.4.2](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-sentry@1.4.1...medusa-plugin-sentry@1.4.2) (2023-05-03)
 
 **Note:** Version bump only for package medusa-plugin-sentry
