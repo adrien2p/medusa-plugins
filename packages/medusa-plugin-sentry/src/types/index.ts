@@ -1,9 +1,9 @@
 import { NodeOptions } from '@sentry/node/types/types';
-import { Integration } from '@sentry/types/types/integration';
 import { Router } from 'express';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import { RequestHandlerOptions } from '@sentry/node/types/handlers';
+import { Integration } from '@sentry/types/types-ts3.8/integration';
 
 export type SentryWebHookOptions = {
 	path: string;
@@ -22,6 +22,7 @@ export type SentryOptions = Omit<NodeOptions, 'integrations'> & {
 	enableRequestHandler?: boolean;
 	enableTracing?: boolean;
 	webHookOptions?: SentryWebHookOptions;
+	environment?: string;
 };
 
 export enum SentryWebHookEvent {

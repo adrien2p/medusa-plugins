@@ -22,6 +22,7 @@ export default function (rootDirectory, pluginOptions: SentryOptions): Router {
 		enableRequestHandler = true,
 		webHookOptions,
 		apiToken,
+		environment,
 		...options
 	} = pluginOptions;
 
