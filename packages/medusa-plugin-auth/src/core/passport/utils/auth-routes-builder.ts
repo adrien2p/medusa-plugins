@@ -17,6 +17,11 @@ type PassportCallbackAuthenticateMiddlewareOptions = {
 
 export const extractDomain = (url) => {
 	const domain = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
+	const mainDomain = domain.split('.');
+	if (mainDomain.length > 2) {
+		// Return the domain and top-level domain (TLD)
+		return mainDomain.slice(-2).join('.');
+	}
 	return domain;
 };
 

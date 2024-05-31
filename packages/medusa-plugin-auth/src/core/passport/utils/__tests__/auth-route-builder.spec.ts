@@ -13,5 +13,17 @@ describe('auth route builder', () => {
 		url = 'http://google.com';
 		domain = extractDomain(url);
 		expect(domain).toBe('google.com');
+
+		url = 'http://auth.google.com/';
+		domain = extractDomain(url);
+		expect(domain).toBe('google.com');
+
+		url = 'https://auth.google.com/';
+		domain = extractDomain(url);
+		expect(domain).toBe('google.com');
+
+		url = 'https://www.auth.google.com/';
+		domain = extractDomain(url);
+		expect(domain).toBe('google.com');
 	});
 });
