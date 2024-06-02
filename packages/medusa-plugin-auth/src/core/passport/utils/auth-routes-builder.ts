@@ -4,6 +4,7 @@ import cors from 'cors';
 import { authCallbackMiddleware, authenticateSessionFactory, signToken } from '../../auth-callback-middleware';
 import { ConfigModule } from '@medusajs/medusa/dist/types/global';
 import { CookieOptions } from 'express-serve-static-core';
+import { getDomain } from 'tldjs'
 
 type PassportAuthenticateMiddlewareOptions = {
 	[key: string]: unknown;
@@ -13,16 +14,6 @@ type PassportAuthenticateMiddlewareOptions = {
 type PassportCallbackAuthenticateMiddlewareOptions = {
 	[key: string]: unknown;
 	failureRedirect: string;
-};
-
-export const extractDomain = (url) => {
-	const domain = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/im)[1];
-	const mainDomain = domain.split('.');
-	if (mainDomain.length > 2) {
-		// Return the domain and top-level domain (TLD)
-		return mainDomain.slice(-2).join('.');
-	}
-	return domain;
 };
 
 /**
@@ -138,7 +129,7 @@ function successActionHandlerFactory(
 	const returnAccessToken = req.query.returnAccessToken == 'true';
 	const redirectUrl = (req.query.redirectTo ? req.query.redirectTo : defaultRedirect) as string;
 	const isProdOrStaging = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging';
-	const originHost = isProdOrStaging ? req.get('referer') && extractDomain(req.get('referer')) : undefined;
+	const originHost = isProdOrStaging ? req.get('referer') && getDomain(req.get('referer')) : undefined;
 
 	if (returnAccessToken) {
 		return (req: Request, res: Response) => {
