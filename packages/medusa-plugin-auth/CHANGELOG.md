@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.10.4...medusa-plugin-auth@1.11.0) (2024-06-03)
+
+
+### Features
+
+* top level domain set in the cookie ([#166](https://github.com/adrien2p/medusa-plugins/issues/166)) ([c226927](https://github.com/adrien2p/medusa-plugins/commit/c2269278001a0669fec482d26c96d84c69bd8681))
+
+
+
+
+
 ## [1.10.4](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.10.3...medusa-plugin-auth@1.10.4) (2024-03-29)
 
 **Note:** Version bump only for package medusa-plugin-auth
