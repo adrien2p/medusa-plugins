@@ -3,14 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.11.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.11.1...medusa-plugin-auth@1.11.2) (2024-06-07)
-
-### Bug Fixes
-admin.scope and store.scope parameters from medusa-config.js not passed through to passport
-
-
-
-
 ## [1.11.1](https://github.com/adrien2p/medusa-plugins/compare/medusa-plugin-auth@1.11.0...medusa-plugin-auth@1.11.1) (2024-06-07)
 
 **Note:** Version bump only for package medusa-plugin-auth
