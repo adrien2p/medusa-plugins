@@ -33,7 +33,7 @@ export function getAzureStoreStrategy(id: string): StrategyFactory<AzureAuthOpti
 				isB2C: strategyOptions.store.isB2C ?? false,
 				issuer: strategyOptions.store.issuer,
 				passReqToCallback: true,
-				scope: strategyOptions.admin.scope,
+				scope: strategyOptions.store.scope,
 			} as IOIDCStrategyOptionWithRequest);
 		}
 
