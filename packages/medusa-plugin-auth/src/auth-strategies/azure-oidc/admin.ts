@@ -32,6 +32,7 @@ export function getAzureAdminStrategy(id: string): StrategyFactory<AzureAuthOpti
 				isB2C: strategyOptions.admin.isB2C ?? false,
 				issuer: strategyOptions.admin.issuer,
 				passReqToCallback: true,
+				scope: strategyOptions.admin.scope,
 			} as IOIDCStrategyOptionWithRequest);
 		}
 
